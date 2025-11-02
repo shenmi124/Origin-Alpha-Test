@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html id="html" style="transition-duration: 1s;">
+
+<head>
+	<title>起源</title>
+	<link rel="icon" type="image/png" sizes="64x64" href="logo.png">
+	<meta charset="utf-8">
+
+	<script src="js/initialize/ins/jQ.js"></script>
+	<script src="js/function/base.js"></script>
+	<script src="js/player.js"></script>
+
+	<script src="js/function/tooltip.js"></script>
+	<script src="js/function/systemComponents.js"></script>
+	<script src="js/function/events.js"></script>
+	<script src="js/function/resourceSystem.js"></script>
+	<script src="js/function/mainSystem.js"></script>
+	<script src="js/function/civicsSystem.js"></script>
+	<script src="js/function/fix.js"></script>
+
+	<script src="js/game/resource/main.js"></script>
+
+	<script src="js/game/main/action.js"></script>
+	<script src="js/game/main/building.js"></script>
+	<script src="js/game/main/research.js"></script>
+	<script src="js/game/main/craft.js"></script>
+	<script src="js/game/main/efficient.js"></script>
+
+	<script src="js/game/civics/citizens.js"></script>
+	<script src="js/game/civics/workshop.js"></script>
+
+	<script src="js/game/main.js"></script>
+	<script src="js/game/data.js"></script>
+	<script src="js/game/game.js"></script>
+	<script src="js/config/setting.js"></script>
+	<script src="js/config/information.js"></script>
+	<script src="js/config/stats.js" ></script>
+	<script src="js/config/pointer.js" defer></script>
+	
+	<script src="js/initialize/ins/break_eternity.js"></script>
+	<script src="js/initialize/ins/LZString.js"></script>
+	<script src="js/initialize/ins/save.js"></script>
+	<script src="js/initialize/ins/saveload.js"></script>
+	<script src='js/initialize/ins/color.js'></script>
+	<script src='js/initialize/ins/vis.js'></script>
+	<script src='js/initialize/ins/i18n.js'></script>
+	<!--<script src='js/initialize/ins/HackTimer.js'></script>-->
+
+	<script src="js/easyAccess.js"></script>
+	<script src="js/initialize.js"></script>
+	<script src="js/interval.js"></script>
+
+	<script src="js/initialize/loading.js"></script>
+	<script src="js/initialize/log.js"></script>
+	<script src="js/initialize/format.js"></script>
+
+	<script src="js/game/verson.js"></script>
+	<script src="js/config/lag.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/game/style.css"/>
+
+	<link rel="stylesheet" type="text/css" href="css/building.css"/>
+	<link rel="stylesheet" type="text/css" href="css/button.css"/>
+	<link rel="stylesheet" type="text/css" href="css/civics.css"/>
+	<link rel="stylesheet" type="text/css" href="css/column.css"/>
+	<link rel="stylesheet" type="text/css" href="css/font.css"/>
+	<link rel="stylesheet" type="text/css" href="css/load.css"/>
+	<link rel="stylesheet" type="text/css" href="css/logs.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mainbody.css"/>
+	<link rel="stylesheet" type="text/css" href="css/tabButton.css"/>
+	<link rel="stylesheet" type="text/css" href="css/others.css"/>
+	<link rel="stylesheet" type="text/css" href="css/resource.css"/>
+	<link rel="stylesheet" type="text/css" href="css/side.css"/>
+	<link rel="stylesheet" type="text/css" href="css/tooltip.css"/>
+</head>
+
+<body onclick="getBodyOnclick()">
+	<div id="loading">
+		<div id="loading_bg">
+			<div class="loader">
+				<img src="logo.png"><br><br>
+				<big>加载中...</big><br>
+			</div>
+		</div>
+	</div>
+	<div id="bottomTab" style="opacity: 0; visibility: hidden; transition-duration: 0.1s;">
+		<a target="_blank" id="version" class="version"></a>
+		<a href="https://afdian.com/a/Shinwmyste" target="_blank" class="donate">捐助</a>
+		<a href="https://qm.qq.com/q/uZSGcIjhKK" target="_blank" class="QQ">QQ群</a>
+	</div>
+	<div id="game">
+		<div id="leftColumn" class="column">
+			<a id="loadResource" style="vertical-align: top; opacity: 0; visibility: hidden;"></a>
+			<a id="loadRightColumn" style="width: 430px; padding-top: 50px;"></a>
+		</div>
+		<div id="midColumn" class="column" style="vertical-align: top;">
+			<div id="tabButton" style="opacity: 0; visibility: hidden;"></div>
+			<div id="subtabButton" style="opacity: 0; visibility: hidden;"></div>
+			<div id="midTab" style="overflow-y: auto;"></div>
+		</div>
+		<div id="rightColumn" class="column">
+			<div id="datePage">
+				<div>标记</div>
+			</div>
+			<div>日志<a id="logTime"></a></div>
+			<div id="logPage" class="log">
+				<div id="logLoadID"></div>
+			</div>
+		</div>
+	</div>
+	<div id="tooltip" style="display: none; padding-bottom: 8px; border-bottom: 1px solid gray; text-align: center;"></div>
+</body>
+</html>

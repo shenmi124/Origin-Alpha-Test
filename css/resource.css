@@ -1,0 +1,22 @@
+.resourceTitle {
+    padding-left: 2px;
+    display: table-cell;
+    white-space: nowrap !important;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+}
+
+.resourceName {
+    width: 90px;
+}
+
+.resourceBorder {
+    width: 430px;
+    height: 2px;
+    transition-duration: .2s;
+}
+
+.box {
+    text-shadow: 1px 1px 0px;
+}

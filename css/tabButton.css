@@ -1,0 +1,26 @@
+.tabButton {
+    transition-duration: 0.2s;
+    padding-right: 8px;
+    font-size: 17px;
+}
+
+.tabButton.subtab {
+    color: #000a;
+}
+
+.tabButton:hover {
+    opacity: 0.8;
+}
+
+.tabButton.setting {
+    float: right;
+    padding-right: 0px;
+    padding-left: 2px;
+    color: #888;
+}
+
+.tabButton.data {
+    float: right;
+    padding-right: 0px;
+    padding-left: 2px;
+}

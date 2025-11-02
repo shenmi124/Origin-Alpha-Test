@@ -1,0 +1,14 @@
+.log {
+    height: calc(100% - 63px);
+    border-top: 1px solid rgb(78, 78, 78);
+    overflow-x: auto;
+    overflow-y: auto;
+    text-align: left;
+    text-wrap: pretty;
+}
+
+.logTimes {
+    width: var(--rightColumnWidth);
+    flex-wrap: wrap;
+    display: inline-flex;
+}

@@ -1,0 +1,24 @@
+#leftColumn {
+    padding-right: 15px;
+    overflow-y: auto;
+    transition-duration: 0.1s;
+}
+
+#midColumn {
+    overflow-y: auto;
+    display: inline-grid;
+    align-content: flex-start;
+}
+
+#rightColumn {
+    width: 450px;
+    transition-duration: 0.1s;
+    vertical-align: top;
+}
+
+.column {
+    min-height: 100%;
+    height: 100%;
+    display: inline-block;
+    margin-top: 4px;
+}

@@ -1,0 +1,76 @@
+li::marker {
+    content: '●';
+    font-size: 16px;
+    font-weight: bold;
+    color: #888;
+}
+
+li-hid {
+    margin-left: 23px
+}
+
+li-log {
+    margin-left: 14px
+}
+
+left {
+    margin-left: 3px;
+    display: block;
+    text-align: left;
+}
+
+right {
+    margin-left: 3px;
+    display: block;
+    text-align: right;
+}
+
+righttip {
+    margin-left: 3px;
+    display: block;
+    text-align: center;
+    margin-bottom: -5px;
+    font-size: 10px;
+    color: rgb(0, 0, 0);
+    display: block;
+}
+
+joker {
+    margin-top: 2px;
+    font-size: 12px;
+    font-style: italic;
+    color: rgb(32, 51, 112);
+    display: block;
+    text-align: right;
+}
+
+red { 
+    color: red;
+}
+
+green { 
+    color: green;
+}
+
+yellow { 
+    color: yellowgreen;
+}
+
+grey {
+    color: #888;
+}
+
+black {
+    color: black;
+}
+
+pollution {
+    color: #603708;
+}
+
+mul {
+    margin-left: -3px;
+    margin-right: -3px;
+    font-size: small;
+    vertical-align: middle;
+}
