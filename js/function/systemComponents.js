@@ -42,8 +42,8 @@ function componentBuilding(id){
     if(MAIN['building'][id]['allocation'] ?? false){
         buildingAllocation = `
         <div style="width: 0;">
-            <div class="buildingAllocationAdd" onclick="buildingAllocation(n(1), 'add', '`+id+`')">+</div>
-            <div class="buildingAllocationSub" onclick="buildingAllocation(n(1), 'sub', '`+id+`')">-</div>
+            <div class="buildingAllocationAdd" onclick="buildingAllocation('`+id+`', n(1))">+</div>
+            <div class="buildingAllocationSub" onclick="buildingAllocation('`+id+`', n(1).neg())">-</div>
         </div>`
     }
     getByID(id+'LoadBuildingAllocationID', buildingAllocation)

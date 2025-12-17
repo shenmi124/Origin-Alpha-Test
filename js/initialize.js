@@ -146,23 +146,14 @@ function loadGame(){
 
 	calcGame()
 	gameLoader()
-
-    for(let i in MAIN['action']){
-        if(MAIN['action'][i]['cooldown']!==undefined){
-			player.action[i+'Cooldown'] = n(0)
-        }
-    }
-    for(let i in MAIN['craft']){
-        if(MAIN['craft'][i]['cooldown']!==undefined){
-			player.craft[i+'Cooldown'] = n(0)
-        }
-    }
 	
 	getByID('loadRightColumn', document.getElementById('rightColumn').innerHTML)
 }
 
 let loadingGame = function(){
 	calcPlayer()
+
+	getTmpValue()
 
 	loadTab()
 	loadBase()

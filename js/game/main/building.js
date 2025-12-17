@@ -13,16 +13,32 @@ var MainBuilding = {
             dirt(){return n(10)}
         },
         costPower(){return n(0)},
-        effect: {
-            capped:{
-                add: {
-                    food(){return n(20)},
-                    dirt(){return n(20)},
-                    wood(){return n(20)},
-                    stone(){return n(20)},
-                }
-            }
-        }
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'food'},
+                value(){return n(20)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'dirt'},
+                value(){return n(20)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'wood'},
+                value(){return n(20)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'stone'},
+                value(){return n(20)},
+            },
+        ]
     },
     shelter: {
         name(){
@@ -42,13 +58,14 @@ var MainBuilding = {
             dirt(){return n(8)},
         },
         costPower(){return n(0.15)},
-        effect: {
-            capped: {
-                add: {
-                    citizens(){return n(1)},
-                }
-            }
-        }
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'citizens'},
+                value(){return n(1)},
+            },
+        ]
     },
     hut: {
         name(){
@@ -62,20 +79,22 @@ var MainBuilding = {
             plank(){return n(80)},
         },
         costPower(){return n(0.15)},
-        effect: {
-            other:{
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){return n(1)},
-                    display(){return ['+','%']},
-                }
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'citizens'},
+                value(){return n(2)},
             },
-            capped: {
-                add: {
-                    citizens(){return n(2)},
-                }
-            }
-        }
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'add'},
+                name(){return '幸福度'},
+                display(){return ['+','%']},
+                value(){return n(1)},
+            },
+        ]
     },
     brickHouse: {
         name(){
@@ -89,20 +108,22 @@ var MainBuilding = {
             brick(){return n(30)}
         },
         costPower(){return n(0.15)},
-        effect: {
-            other:{
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){return n(3)},
-                    display(){return ['+','%']},
-                }
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'citizens'},
+                value(){return n(2)},
             },
-            capped: {
-                add: {
-                    citizens(){return n(2)},
-                }
-            }
-        }
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'add'},
+                name(){return '幸福度'},
+                display(){return ['+','%']},
+                value(){return n(3)},
+            },
+        ]
     },
     circus: {
         name(){
@@ -132,15 +153,16 @@ var MainBuilding = {
             brick(){return n(1)}
         },
         costPower(){return n(0.025)},
-        effect: {
-            other:{
-                forging: {
-                    name(){return '锻造资源'},
-                    effect(){return n(4)},
-                    display(){return ['+','%']},
-                }
-            }
-        }
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'forging'},
+                formula(){return 'add'},
+                name(){return '锻造资源'},
+                display(){return ['+','%']},
+                value(){return n(4)},
+            },
+        ]
     },
     granary: {
         name(){return '粮仓'},
@@ -152,13 +174,14 @@ var MainBuilding = {
             stone(){return n(10)},
         },
         costPower(){return n(0.1)},
-        effect: {
-            capped: {
-                add: {
-                    food(){return n(150)},
-                }
-            }
-        },
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'food'},
+                value(){return n(150)},
+            },
+        ],
         unlocked(){return player.workshop.campfire},
     },
     warehouse: {
@@ -169,17 +192,38 @@ var MainBuilding = {
             plank(){return n(5)},
         },
         costPower(){return n(0.15)},
-        effect: {
-            capped: {
-                add: {
-                    leather(){return n(25)},
-                    dirt(){return n(80)},
-                    wood(){return n(50)},
-                    stone(){return n(50)},
-                    copper(){return n(0)},
-                }
-            }
-        },
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'leather'},
+                value(){return n(25)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'dirt'},
+                value(){return n(80)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'wood'},
+                value(){return n(50)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'stone'},
+                value(){return n(50)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'copper'},
+                value(){return n(0)},
+            },
+        ],
         unlocked(){return player.workshop.campfire},
     },
     school: {
@@ -190,20 +234,32 @@ var MainBuilding = {
             parchment(){return n(2)}
         },
         costPower(){return n(0.2)},
-        effect: {
-            capped: {
-                add: {
-                    knowledge(){return n(100)},
-                }
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'knowledge'},
+                value(){return n(100)},
             },
-            citizens: {
-                scholar: {
-                    effect: {
-                        addmul(){return n(0.15)}
-                    }
-                }
-            }
-        },
+            {
+                type(){return 'adjustment'},
+                main(){return 'civics'},
+                submain(){return 'citizens'},
+                target(){return 'scholar'},
+                side(){return ['gain', 'idea', 'add']},
+                formula(){return 'addmul'},
+                value(){return n(0.15)},
+            },
+            {
+                type(){return 'adjustment'},
+                main(){return 'civics'},
+                submain(){return 'citizens'},
+                target(){return 'scholar'},
+                side(){return ['gain', 'knowledge', 'add']},
+                formula(){return 'addmul'},
+                value(){return n(0.15)},
+            },
+        ],
         onBuy(){
             CitizensFix()
         },
@@ -215,15 +271,14 @@ var MainBuilding = {
             food(){return n(2.5)}
         },
         costPower(){return n(0.14)},
-        effect: {
-            gain: {
-                add: {
-                    food(){
-                        return n(0.1)
-                    },
-                }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'food'},
+                value(){return n(0.1)},
             }
-        }
+        ],
     },
     lumberyards: {
         name(){return '伐木场'},
@@ -233,13 +288,14 @@ var MainBuilding = {
             dirt(){return n(25)}
         },
         costPower(){return n(0.065)},
-        effect: {
-            gain: {
-                add: {
-                    wood(){return n(0.25)},
-                }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'wood'},
+                value(){return n(0.25)},
             }
-        },
+        ],
         onBuy(){
             CitizensFix()
         },
@@ -268,22 +324,38 @@ var MainBuilding = {
             stone(){return n(150)}
         },
         costPower(){return n(0.1)},
-        effect: {
-            gain: {
-                add: {
-                    stone(){return n(2).mul(MAIN['craft']['stone']['speed']())},
-                    copper(){return n(0.01).mul(MAIN['craft']['stone']['speed']()).mul(MAIN['craft']['stone']['lucky']())},
-                    coal(){return n(0.001).mul(MAIN['craft']['stone']['speed']()).mul(MAIN['craft']['stone']['lucky']())},
-                    iron(){
-                        let base = n(0)
-                        if(player.workshop.elevator){
-                            base = base.add(0.01)
-                        }
-                        return n(base).mul(MAIN['craft']['stone']['speed']()).mul(MAIN['craft']['stone']['lucky']())
-                    },
-                }
-            }
-        },
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'stone'},
+                value(){return n(2).mul(MAIN['craft']['stone']['speed']())},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'copper'},
+                value(){return n(0.01).mul(MAIN['craft']['stone']['speed']())},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'coal'},
+                value(){return n(0.001).mul(MAIN['craft']['stone']['speed']())},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'iron'},
+                value(){
+                    let base = n(0)
+                    if(player.workshop.elevator){
+                        base = base.add(0.01)
+                    }
+                    return n(base).mul(MAIN['craft']['stone']['speed']()).mul(MAIN['craft']['stone']['lucky']())
+                },
+            },
+        ],
         onBuy(){
             CitizensFix()
         },
@@ -297,16 +369,32 @@ var MainBuilding = {
             dirt(){return n(500)}
         },
         costPower(){return n(0.05)},
-        effect: {
-            gain: {
-                add: {
-                    pollution(){return n(10)},
-                    dirt(){return n(5).neg()},
-                    coal(){return n(0.05).neg()},
-                    brick(){return n(0.005)},
-                }
-            }
-        }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'pollution'},
+                value(){return n(10)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'dirt'},
+                value(){return n(5)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'coal'},
+                value(){return n(0.05)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'brick'},
+                value(){return n(0.005)},
+            },
+        ],
     },
     steel: {
         name(){return '高炉'},
@@ -319,16 +407,32 @@ var MainBuilding = {
             blueprint(){return n(5)}
         },
         costPower(){return n(0.05)},
-        effect: {
-            gain: {
-                add: {
-                    pollution(){return n(50)},
-                    coal(){return n(0.1).neg()},
-                    iron(){return n(0.002).neg()},
-                    steel(){return n(0.002)},
-                }
-            }
-        }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'pollution'},
+                value(){return n(50)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'coal'},
+                value(){return n(0.1)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'iron'},
+                value(){return n(0.002)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'steel'},
+                value(){return n(0.002)},
+            },
+        ],
     },
     brewery: {
         name(){return '酿酒厂'},
@@ -340,25 +444,25 @@ var MainBuilding = {
             food(){return n(600)}
         },
         costPower(){return n(0.04)},
-        effect: {
-            resource: {
-                citizens: {
-                    gain: {
-                        add: {
-                            food: {
-                                addmul(){return n(0.2)}
-                            }
-                        }
-                    }
-                }
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'add'},
+                name(){return '幸福度'},
+                display(){return ['+','%']},
+                value(){return n(6)},
             },
-            other:{
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){return n(6)},
-                    display(){return ['+','%']},
-                },
-            }
-        }
+            {
+                type(){return 'adjustment'},
+                main(){return 'resource'},
+                submain(){return 'main'},
+                target(){return 'citizens'},
+                side(){return ['gain', 'food', 'sub']},
+                formula(){return 'addmul'},
+                value(){return n(0.2)},
+                Class(){return 'red'},
+            },
+        ],
     },
 }

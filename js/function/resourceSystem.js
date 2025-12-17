@@ -1,4 +1,8 @@
-function gainResource(res,gain){
+function gainResource(res, gain){
+    if(isNaN(player['resource'][res])){
+        player['resource'][res] = n(0)
+        console.log(res+' 资源变成了NaN')
+    }
     if(gain.gte(0)){
         if(getResourceCapped(res)!==null){
             gain = gain.min(n(getResourceCapped(res)).sub(player['resource'][res]))
@@ -11,7 +15,7 @@ function gainResource(res,gain){
     }
 }
 
-function getResourceTitleID(id,res){
+function getResourceTitleID(id, res){
 	let Class = ''
 	if(RESOURCE['main'][res]['Class']!==undefined){
 		Class = RESOURCE['main'][res]['Class']()
@@ -157,174 +161,12 @@ function resourceUpdate(id){
 	player['resource'][id+'Best'] = player['resource'][id+'Best'].max(player['resource'][id])
 }
 
-function getResourceEffectGainBase(i,im){
-    let base = RESOURCE['main'][i]['effect']['gain']['add'][im]()
-    for(let building in MAIN['building']){
-        if(MAIN['building'][building]['effect']?.['resource']!==undefined){
-            for(let ib in MAIN['building'][building]['effect']['resource']){
-                if(MAIN['building'][building]['effect']['resource'][ib]['gain']?.['add']!==undefined){
-                    for(let iga in MAIN['building'][building]['effect']['resource'][i]['gain']?.['add']){
-                        if(MAIN['building'][building]['effect']['resource'][ib]['gain']?.['add'][iga]['addmul']!==undefined){
-                            base = base.mul(n(MAIN['building'][building]['effect']['resource'][ib]['gain']['add'][iga]['addmul']()).mul(player['building'][building+'Allocation'] ?? player['building'][building]).add(1))
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return base
-}
-
-function getResourceGainBase(res){
-    let gain = n(0)
-    if(RESOURCE['main'][res]['gain']!==undefined){
-        gain = gain.add(RESOURCE['main'][res]['gain']())
-        for(let i in RESOURCE['main']){
-            if(RESOURCE['main'][i]['effect']?.['gain']?.['add']!==undefined){
-                for(let im in RESOURCE['main'][i]['effect']['gain']['add']){
-                    if(res==im){
-                        gain = gain.add(n(getResourceEffectGainBase(i, im)).mul(player['resource'][i]))
-                    }
-                }
-            }
-        }
-        for(let i in MAIN['building']){
-            if(MAIN['building'][i]['effect']?.['gain']?.['add']!==undefined){
-                for(let ib in MAIN['building'][i]['effect']['gain']['add']){
-                    if(res==ib){
-                        gain = gain.add(getBuildGain(i, ib))
-                    }
-                }
-            }
-        }
-		for(let i in CIVICS['citizens']){
-            if(CIVICS['citizens'][i]['effect']?.['gain']?.['add']!==undefined){
-                for(let ic in CIVICS['citizens'][i]['effect']['gain']['add']){
-                    if(res==ic){
-                        gain = gain.add(getCitizensGain(i, ic))
-                    }
-                }
-            }
-        }
-    }
-    return gain
-}
-
-function getResourceGainMul(res){
-    let gain = n(1)
-    if(RESOURCE['main'][res]['gain']!==undefined){
-        if(RESOURCE['main'][res]['mul']!==undefined){
-            gain = gain.mul(n(RESOURCE['main'][res]['mul']()))
-        }
-        for(let i in RESOURCE['main']){
-            if(RESOURCE['main'][i]['effect']?.['gain']?.['mul']!==undefined){
-                for(let im in RESOURCE['main'][i]['effect']['gain']['mul']){
-                    if(res==im){
-                        gain = gain.mul(n(RESOURCE['main'][i]['effect']['gain']['mul'][im]()).mul(player['resource'][i]))
-                    }
-                }
-            }
-        }
-        for(let i in CIVICS['workshop']){
-            if(player['workshop'][i]){
-                if(CIVICS['workshop'][i]['effect']?.['resource']!==undefined){
-                    for(let iw in CIVICS['workshop'][i]['effect']['resource']){
-                        if(CIVICS['workshop'][i]['effect']['resource'][iw]['gain']?.['mul']!==undefined){
-                            if(res==iw){
-                                gain = gain.mul(CIVICS['workshop'][i]['effect']['resource'][iw]['gain']['mul']())
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return gain
-}
-
 function getResourceGain(res){
-    if(RESOURCE['main'][res]['gain']==undefined){
-        return null
-    }
-    return n(getResourceGainBase(res)).mul(getResourceGainMul(res))
-}
-
-function getResourceCappedBase(res){
-    let capped = n(0)
-    if(RESOURCE['main'][res]['capped']!==undefined){
-        capped = capped.add(RESOURCE['main'][res]['capped']())
-        for(let i in RESOURCE['main']){
-            if(RESOURCE['main'][i]['effect']?.['capped']?.['add']!==undefined){
-                for(let im in RESOURCE['main'][i]['effect']['capped']['add']){
-                    if(res==im){
-                        capped = capped.add(n(RESOURCE['main'][i]['effect']['capped']['add'][im]()).mul(player['resource'][i]))
-                    }
-                }
-            }
-        }
-        for(let i in MAIN['building']){
-            if(MAIN['building'][i]['effect']?.['capped']?.['add']!==undefined){
-                for(let im in MAIN['building'][i]['effect']['capped']['add']){
-                    if(res==im){
-                        capped = capped.add(getBuildCapped(i, im))
-                    }
-                }
-            }
-        }
-        for(let i in CIVICS['workshop']){
-            if(player['workshop'][i]){
-                if(CIVICS['workshop'][i]['effect']?.['resource']!==undefined){
-                    for(let iw in CIVICS['workshop'][i]['effect']['resource']){
-                        if(CIVICS['workshop'][i]['effect']['resource'][iw]['capped']?.['add']!==undefined){
-                            if(res==iw){
-                                capped = capped.add(CIVICS['workshop'][i]['effect']['resource'][iw]['capped']['add']())
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return capped
-}
-
-function getResourceCappedMul(res){
-    let capped = n(1)
-    if(RESOURCE['main'][res]['capped']!==undefined){
-        if(RESOURCE['main'][res]['cappedMul']!==undefined){
-            capped = capped.mul(n(RESOURCE['main'][res]['cappedMul']()))
-        }
-        for(let i in RESOURCE['main']){
-            if(RESOURCE['main'][i]['effect']?.['capped']?.['mul']!==undefined){
-                for(let im in RESOURCE['main'][i]['effect']['capped']['mul']){
-                    if(res==im){
-                        capped = capped.mul(n(RESOURCE['main'][i]['effect']['capped']['mul'][im]()).pow(player['resource'][i]))
-                    }
-                }
-            }
-        }
-        for(let i in CIVICS['workshop']){
-            if(player['workshop'][i]){
-                if(CIVICS['workshop'][i]['effect']?.['resource']!==undefined){
-                    for(let iw in CIVICS['workshop'][i]['effect']['resource']){
-                        if(CIVICS['workshop'][i]['effect']['resource'][iw]['capped']?.['mul']!==undefined){
-                            if(res==iw){
-                                capped = capped.mul(CIVICS['workshop'][i]['effect']['resource'][iw]['capped']['mul']())
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return capped
+    return getEffectValue(tmpEffect.resource.main[res]?.gain, RESOURCE['main'][res]['gain']!==undefined)
 }
 
 function getResourceCapped(res){
-    if(RESOURCE['main'][res]['capped']==undefined){
-        return null
-    }
-    return n(getResourceCappedBase(res)).mul(getResourceCappedMul(res))
+    return getEffectValue(tmpEffect.resource.main[res]?.capped, RESOURCE['main'][res]['capped']!==undefined)
 }
 
 function getResourceBaseNumber(res){

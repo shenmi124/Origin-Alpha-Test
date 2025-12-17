@@ -105,7 +105,7 @@ var settings = {
 			},
 		},
 	},
-	action:{
+	action: {
 		name(){return '行动动画'},
 		type(){return 'choose'},
 		choose:{
@@ -120,7 +120,19 @@ var settings = {
 			},
 		}
 	},
-	mouse:{
+	effectDisplay: {
+		name(){return '效果显示'},
+		type(){return 'choose'},
+		choose:{
+			default:{
+				name(){return '默认'},
+			},
+			short:{
+				name(){return '简短'}
+			},
+		}
+	},
+	mouse: {
 		title(){return '调试'},
 		name(){return '鼠标优化'},
 		type(){return 'boolean'},

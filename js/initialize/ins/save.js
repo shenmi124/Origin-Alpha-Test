@@ -1,6 +1,6 @@
-﻿var player = {};
+﻿var player = {}
 var saveObj = {}
-const THISKEY = 'OriginBeta'
+const THISKEY = 'OriginAlpha'
 var DONOTSAVE = false
 
 function n(number){

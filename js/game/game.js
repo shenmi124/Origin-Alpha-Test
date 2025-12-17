@@ -33,67 +33,6 @@ function gameOpenMaking(id){
     }
 }
 
-function gameGetBuildingHappiness(){
-    let happy = n(0)
-    for(let i in MAIN['building']){
-        if(MAIN['building'][i]['effect']?.['other']?.['happiness']!==undefined){
-            happy = happy.add(n(MAIN['building'][i]['effect']['other']['happiness']['effect']()).mul(player['building'][i+'Allocation'] ?? player['building'][i]))
-        }
-    }
-    return happy
-}
-
-function gameGetJobHappiness(){
-    let happy = n(0)
-    for(let i in CIVICS['citizens']){
-            if(CIVICS['citizens'][i]['effect']?.['other']?.['happiness']!==undefined){
-                happy = happy.add(n(CIVICS['citizens'][i]['effect']['other']['happiness']['effect']()).mul(player['citizens'][i]))
-            }
-        }
-    return happy
-}
-
-function gameGetForging(){
-    let forging = n(0)
-    for(let i in MAIN['building']){
-        if(MAIN['building'][i]['effect']?.['other']?.['forging']!==undefined){
-            forging = forging.add(n(MAIN['building'][i]['effect']['other']['forging']['effect']()).mul(player['building'][i+'Allocation'] ?? player['building'][i]))
-        }
-    }
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['other']?.['forging']!==undefined){
-            if(player['workshop'][i]){
-                forging = forging.add(CIVICS['workshop'][i]['effect']['other']['forging']['effect']())
-            }
-        }
-    }
-    return n(forging).div(100).add(1)
-}
-
-function gameGetWorkshopAction(){
-    let action = n(0)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['other']?.['action']!==undefined){
-            if(player['workshop'][i]){
-                action = action.add(CIVICS['workshop'][i]['effect']['other']['action']['effect']())
-            }
-        }
-    }
-    return action
-}
-
-function gameGetWorkshopHappiness(){
-    let happy = n(0)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['other']?.['happiness']!==undefined){
-            if(player['workshop'][i]){
-                happy = happy.add(CIVICS['workshop'][i]['effect']['other']['happiness']['effect']())
-            }
-        }
-    }
-    return happy
-}
-
 function calcGame(){
     loader(['game','stage'],n(0))
     loader(['game','time'],n(0))

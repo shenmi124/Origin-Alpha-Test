@@ -34,7 +34,7 @@ function statsDiff(){
             }
             resU = true
             res += `
-            <div style="display: inline-grid; width: 100px">`+colorText(i)[1]+`</div>
+            <div style="display: inline-grid; width: 100px">`+getResourceColorText(i)+`</div>
             <div style="display: inline-grid; width: 100px">`+format(player['resource'][i])+`</div>
             <div style="display: inline-grid; width: 100px">`+format(player['resource'][i+'Best'])+`</div>
             <div style="display: inline-grid; width: 100px">`+format(player['resource'][i+'Total'])+`</div>

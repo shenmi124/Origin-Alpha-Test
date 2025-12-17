@@ -366,7 +366,7 @@ var MainAction = {
             }else{
                 effect = '暂停'
             }
-            let gain = `<br><grey>`+format(MAIN['action']['blueprint']['costSecond']()[0])+colorText('parchment')[1]+`/s + `+format(MAIN['action']['blueprint']['costSecond']()[1])+colorText('knowledge')[1]+`/s -> `+format(MAIN['action']['blueprint']['gainSecond']())+colorText('blueprint')[1]+`/s</grey>`
+            let gain = `<br><grey>`+format(MAIN['action']['blueprint']['costSecond']()[0])+getResourceColorText('parchment')[1]+`/s + `+format(MAIN['action']['blueprint']['costSecond']()[1])+colorText('knowledge')[1]+`/s -> `+format(MAIN['action']['blueprint']['gainSecond']())+colorText('blueprint')[1]+`/s</grey>`
             if(n(MAIN['action']['blueprint']['gainSecond']()).eq(0)){
                 gain = ``
             }

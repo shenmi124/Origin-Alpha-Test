@@ -15,7 +15,7 @@ let MainCraft = {
     },
     citizens: {
         name(){return '原住民'},
-        capped(){return n(2).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(2).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         tooltip(){
             let times = '<hr>已标记: '+formatWhole(player.action.explore.citizens,0)+' <grey>/ '+formatWhole(this.capped(),0)+' (遗忘)</grey>'
             return '他们为你工作,而你给与他们住所与食物<br>公平的交易<hr><grey>你需要提供食物与住所,否则他们不会跟随你</grey>'+times
@@ -33,7 +33,7 @@ let MainCraft = {
     },
     collect: {
         name(){return '土堆'},
-        capped(){return n(5).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(5).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         gain: {
             dirt: {
                 probability(){return n(100)},
@@ -121,7 +121,7 @@ let MainCraft = {
     },
     stone: {
         name(){return '石料'},
-        capped(){return n(10).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(10).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         speed(){
             let base = n(1)
             if(player.workshop.binding){
@@ -202,7 +202,7 @@ let MainCraft = {
     },
     drop: {
         name(){return '树枝'},
-        capped(){return n(4).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(4).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         gain:{
             wood:{
                 probability(){return n(100)},
@@ -244,7 +244,7 @@ let MainCraft = {
     },
     harvest: {
         name(){return '收割'},
-        capped(){return n(5).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(5).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         gain:{
             food:{
                 probability(){return n(100)},
@@ -287,7 +287,7 @@ let MainCraft = {
     },
     beast: {
         name(){return '野兽'},
-        capped(){return n(20).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(20).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         gain:{
             food:{
                 probability(){return n(100)},
@@ -359,7 +359,7 @@ let MainCraft = {
     },
     tree: {
         name(){return '树'},
-        capped(){return n(5).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(5).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         gain:{
             wood:{
                 probability(){return n(100)},
@@ -393,7 +393,7 @@ let MainCraft = {
     },
     meteorite: {
         name(){return '陨铁'},
-        capped(){return n(5).mul(n(getCitizensEffect('explorer', 'memory')).add(1)).floor()},
+        capped(){return n(5).mul(n(getCitizensspecialEffect('explorer', 'memory')).add(1)).floor()},
         gain:{
             iron:{
                 probability(){return n(100)},

@@ -61,7 +61,7 @@ function getBr(){
 				br += 1
 			}
 		}else{
-			if(unlocked && preliminary && player['workshop'][i]){
+			if(unlocked && player['workshop'][i]){
 				br += 1
 			}
 		}
@@ -111,7 +111,7 @@ function dataDiff(){
 				player['action'][i+'Cooldown'] = n(0)
 			}
 
-			player['action'][i+'Cooldown'] = player['action'][i+'Cooldown'].add(n(actionSpeed).mul(DIFF))
+			player['action'][i+'Cooldown'] = player['action'][i+'Cooldown'].add(n(actionSpeed).mul(DIFF)).min(n(getActionCooldown(i)).mul(20))
 
 			if(player['action'][i+'Cooldown'].gte(getActionCooldown(i)) && getActionCanClick(i)){
 				MAIN['action'][i]['onClick']()
@@ -163,7 +163,7 @@ function dataDiff(){
 				player['craft'][i+'Cooldown'] = n(0)
 			}
 
-			player['craft'][i+'Cooldown'] = player['craft'][i+'Cooldown'].add(n(actionSpeed).mul(DIFF))
+			player['craft'][i+'Cooldown'] = player['craft'][i+'Cooldown'].add(n(actionSpeed).mul(DIFF)).min(n(getCraftCooldown(i)).mul(20))
 
 			if(player['craft'][i+'Cooldown'].gte(getCraftCooldown(i)) && getCraftCanClick(i)){
 				MAIN['craft'][i]['onClick']()
@@ -258,6 +258,8 @@ function dataDiff(){
 var RESOURCEUNLOCKEDTIMES = 0
 function intervalID(){
 	dataDiff()
+	getTmpValue()
+
 	for(let i in TABBUTTON){
 		let unlocked = true
 		if(TABBUTTON[i]['unlocked']!==undefined){
@@ -300,6 +302,11 @@ function intervalID(){
 		if(MAIN['building'][i]['unlocked']!==undefined){
 			unlocked = MAIN['building'][i]['unlocked']()
 		}
+		for(let res in tmp.main.building[i].effect?.gain){
+			if(Object.keys(tmp.main.building[i].effect.gain[res])[0]=='sub'){
+				CheckBuildAllocation(i, res)
+			}
+		}
 		unlockedLoad(i+'LoadBuilding', unlocked)
 	}
 
@@ -315,6 +322,11 @@ function intervalID(){
 		let unlocked = true
 		if(CIVICS['citizens'][i]['unlocked']!==undefined){
 			unlocked = CIVICS['citizens'][i]['unlocked']()
+		}
+		for(let res in tmp.civics.citizens[i].effect?.gain){
+			if(Object.keys(tmp.civics.citizens[i].effect.gain[res])[0]=='sub'){
+				CheckCitizensAllocation(i, res)
+			}
 		}
 		unlockedLoad(i+'LoadCitizens', unlocked)
 	}

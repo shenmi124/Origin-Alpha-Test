@@ -9,7 +9,8 @@ var ResourceMain = {
         name(){return "污染"},
         tooltip(){return '每分钟污染会减少1%外加2000点<joker>- GregTech</joker>'},
         color(){return '#603708'},
-        gain(){return n(2000).add(player.resource.pollution.mul(0.01)).div(60).neg()},
+        gain(){return n(0)},
+        gainCost(){return n(2000).add(player.resource.pollution.mul(0.01)).div(60)},
         unlocked(){return getResourceUnlocked('pollution') || player.building.kiln.gte(1)},
         negative(){return true}
     },
@@ -19,37 +20,44 @@ var ResourceMain = {
     },
 
     citizens: {
-        name(){return "居民"},
+        name(){return i18n("居民")},
         color(){return '#000'},
         capped(){return n(0)},
-        effect: {
-            gain: {
-                add: {
-                    idea(){return n(1).mul(getEfficient('happiness'))},
-                    food(){return n(-0.1).mul(getEfficient('happiness').max(1))}
-                }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'idea'},
+                value(){return n(1).mul(getEfficient('happiness'))},
             },
-            capped: {
-                add: {
-                    idea(){return n(1000)},
-                }
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'idea'},
+                value(){return n(1000)},
             },
-            other:{
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){return n(1)},
-                    display(){return ['-','%']},
-                }
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'food'},
+                value(){return n(0.1).mul(getEfficient('happiness').max(1))},
             },
-        },
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'sub'},
+                name(){return '幸福度'},
+                display(){return ['-','%']},
+                value(){return n(1)},
+            },
+        ],
         tooltip(){
             return `一旦居民不再幸福他们很可能会离开你<br>同时居民的增加意味着安定度的降低`
         },
         unlockAction(){
             getStage(3)
             addLog('你招揽到了第一批原住民,看起来他们和普通的人类没什么区别,你也能与他们正常交流')
-            addLog('检查村庄选项卡', '#888')
-            addLog('居民产生思想,但思想也会枯竭')
+            addLog('检查村庄选项卡', 'red')
         },
         unlocked(){return getResourceUnlocked('citizens')},
     },
@@ -79,7 +87,8 @@ var ResourceMain = {
         name(){return "粮食"},
         color(){return '#cf7004'},
         capped(){return n(20)},
-        gain(){return n(-0.1)},
+        gain(){return n(0)},
+        gainCost(){return n(0.1)},
         gainTooltip(){return '食用'},
         tooltip(){return '立足根本'},
         unlocked(){return true},
@@ -187,13 +196,14 @@ var ResourceMain = {
         color(){return '#00aaff'},
         gain(){return MAIN['action']['blueprint']['gainSecond']()},
         gainTooltip(){return '加工'},
-        effect: {
-            capped: {
-                add: {
-                    knowledge(){return n(5)}
-                }
-            }
-        },
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'knowledge'},
+                value(){return n(5)},
+            },
+        ],
         mul(){return gameGetForging()},
         unlocked(){return getResourceUnlocked('blueprint')},
     },
@@ -207,15 +217,16 @@ var ResourceMain = {
         color(){return '#0000ff88'},
         Class(){return 'stardust'},
         capped(){return n(1)},
-        effect: {
-            other:{
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){return n(2)},
-                    display(){return ['+','%']},
-                }
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'add'},
+                name(){return '幸福度'},
+                display(){return ['+','%']},
+                value(){return n(2)},
             },
-        },
+        ],
         unlockAction(){
         },
         unlocked(){return getResourceUnlocked('stardust')},
@@ -225,15 +236,16 @@ var ResourceMain = {
         color(){return '#ff000088'},
         Class(){return 'bloodStone'},
         capped(){return n(1)},
-        effect: {
-            other:{
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){return n(2)},
-                    display(){return ['+','%']},
-                }
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'add'},
+                name(){return '幸福度'},
+                display(){return ['+','%']},
+                value(){return n(2)},
             },
-        },
+        ],
         unlockAction(){
         },
         unlocked(){return getResourceUnlocked('bloodStone')},

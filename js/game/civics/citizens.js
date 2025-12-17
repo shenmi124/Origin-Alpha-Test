@@ -5,29 +5,35 @@ var CivicsCitizens = {
         allocated: {
             unemployed(){return n(1)},
         },
-        effect: {
-            craft: {
-                harvest(){return n(0.255)},
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'food'},
+                value(){return n(getBuildBase('farm', 'gain', 'food', 'add'))},
             },
-            gain: {
-                add: {
-                    food(){return n(getBuildGainBase('farm', 'food'))},
-                }
+            {
+                type(){return 'craft'},
+                side(){return 'auto'},
+                target(){return 'harvest'},
+                formula(){return 'add'},
+                value(){return n(0.255)},
             },
-            other: {
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){
-                        let base = n(1)
-                        if(player.workshop.copperPoe){
-                            base = base.sub(0.5)
-                        }
-                        return n(base).neg()
-                    },
-                    display(){return ['','%']},
-                }
-            }
-        }
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'sub'},
+                name(){return '幸福度'},
+                display(){return ['','%']},
+                value(){
+                    let base = n(1)
+                    if(player.workshop.copperPoe){
+                        base = base.sub(0.5)
+                    }
+                    return n(base)
+                },
+            },
+        ],
     },
     explorer: {
         name(){
@@ -36,33 +42,41 @@ var CivicsCitizens = {
             }
             return '开拓者'
         },
-        tooltip(){return '自动进行探索行动'},
+        tooltip(){return this.name()+'可以自动进行探索行动并且提供遗忘延迟<br><grey>遗忘延迟可以提高行动的上限</grey>'},
         allocated: {
             unemployed(){return n(1)},
         },
-        effect: {
-            action: {
-                explore(){return n(0.15)},
+        effect: [
+            {
+                type(){return 'action'},
+                side(){return 'auto'},
+                target(){return 'explore'},
+                formula(){return 'add'},
+                value(){return n(0.15)},
             },
-            other: {
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){
-                        let base = n(0.5)
-                        if(player.workshop.mountaineeringPickaxe){
-                            base = base.sub(0.5)
-                        }
-                        return n(base).neg()
-                    },
-                    display(){return ['','%']},
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'sub'},
+                name(){return '幸福度'},
+                display(){return ['','%']},
+                value(){
+                    let base = n(0.5)
+                    if(player.workshop.mountaineeringPickaxe){
+                        base = base.sub(0.5)
+                    }
+                    return n(base)
                 },
-                memory: {
-                    name(){return '遗忘延迟'},
-                    effect(){return n(0.5)},
-                    display(){return ['<mul>×</mul>+','']},
-                }
-            }
-        },
+            },
+            {
+                type(){return 'special'},
+                side(){return 'memory'},
+                formula(){return 'addmul'},
+                name(){return '遗忘延迟'},
+                display(){return ['<mul>×</mul>+','']},
+                value(){return n(0.5)},
+            },
+        ],
         active(){
             GameCraftFix()
         },
@@ -74,40 +88,42 @@ var CivicsCitizens = {
         allocated: {
             unemployed(){return n(1)},
         },
-        effect: {
-            craft: {
-                collect(){
-                    if(MAIN['craft']['collect']['unlocked']()){
-                        return n(0.1)
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'dirt'},
+                value(){return n(0.5)},
+            },
+            {
+                type(){return 'craft'},
+                side(){return 'auto'},
+                target(){return 'collect'},
+                formula(){return 'add'},
+                value(){return n(0.1)},
+            },
+            {
+                type(){return 'craft'},
+                side(){return 'auto'},
+                target(){return 'drop'},
+                formula(){return 'add'},
+                value(){return n(0.05)},
+            },
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'sub'},
+                name(){return '幸福度'},
+                display(){return ['','%']},
+                value(){
+                    let base = n(1.5)
+                    if(player.workshop.copperShovel){
+                        base = base.sub(0.5)
                     }
-                    return n(0)
-                },
-                drop(){
-                    if(MAIN['craft']['collect']['unlocked']()){
-                        return n(0.05)
-                    }
-                    return n(0)
+                    return n(base)
                 },
             },
-            gain: {
-                add: {
-                    dirt(){return n(0.5)},
-                }
-            },
-            other: {
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){
-                        let base = n(1.5)
-                        if(player.workshop.copperShovel){
-                            base = base.sub(0.5)
-                        }
-                        return n(base).neg()
-                    },
-                    display(){return ['','%']},
-                },
-            }
-        },
+        ],
     },
     hunt: {
         name(){return '猎人'},
@@ -116,23 +132,32 @@ var CivicsCitizens = {
         allocated: {
             unemployed(){return n(1)},
         },
-        effect: {
-            gain: {
-                add: {
-                    leather(){return n(0.5)}
-                }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'leather'},
+                value(){return n(0.5)},
             },
-            craft: {
-                beast(){return n(0.4)},
+            {
+                type(){return 'craft'},
+                side(){return 'auto'},
+                target(){return 'beast'},
+                formula(){return 'add'},
+                value(){return n(0.4)},
             },
-            other: {
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){return n(1).neg()},
-                    display(){return ['','%']},
-                }
-            }
-        },
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'sub'},
+                name(){return '幸福度'},
+                display(){return ['','%']},
+                value(){
+                    let base = n(1)
+                    return n(base)
+                },
+            },
+        ],
         active(){
             GameCraftFix()
         },
@@ -145,32 +170,42 @@ var CivicsCitizens = {
             unemployed(){return n(1)},
             lumberyards(){return n(1)},
         },
-        effect: {
-            action: {
-                plank(){return n(0.5)},
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'wood'},
+                value(){return n(0.5)},
             },
-            craft: {
-                tree(){return n(0.2)},
+            {
+                type(){return 'action'},
+                side(){return 'auto'},
+                target(){return 'plank'},
+                formula(){return 'add'},
+                value(){return n(0.5)},
             },
-            gain: {
-                add: {
-                    wood(){return n(0.5)},
-                }
+            {
+                type(){return 'craft'},
+                side(){return 'auto'},
+                target(){return 'tree'},
+                formula(){return 'add'},
+                value(){return n(0.2)},
             },
-            other: {
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){
-                        let base = n(2.5)
-                        if(player.workshop.copperAxe){
-                            base = base.sub(0.5)
-                        }
-                        return n(base).neg()
-                    },
-                    display(){return ['','%']},
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'sub'},
+                name(){return '幸福度'},
+                display(){return ['','%']},
+                value(){
+                    let base = n(2.5)
+                    if(player.workshop.copperAxe){
+                        base = base.sub(0.5)
+                    }
+                    return n(base)
                 },
-            }
-        },
+            },
+        ],
     },
     miner: {
         name(){return '矿工'},
@@ -180,32 +215,49 @@ var CivicsCitizens = {
             unemployed(){return n(1)},
             mine(){return n(1)},
         },
-        effect: {
-            gain: {
-                add: {
-                    stone(){return n(getBuildGain('mine', 'stone'))},
-                    copper(){return n(getBuildGain('mine', 'copper')).mul(2)},
-                    coal(){return n(getBuildGain('mine', 'coal')).mul(5)},
-                    iron(){return n(getBuildGain('mine', 'iron')).mul(0.25)},
-                }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'stone'},
+                value(){return n(getBuildBase('mine', 'gain', 'stone', 'add'))},
             },
-            other: {
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){
-                        let base = n(7.5)
-                        if(player.workshop.supportBeam){
-                            base = base.sub(2.5)
-                        }
-                        if(player.workshop.copperPickaxe){
-                            base = base.sub(1)
-                        }
-                        return n(base).neg()
-                    },
-                    display(){return ['','%']},
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'copper'},
+                value(){return n(getBuildBase('mine', 'gain', 'copper', 'add')).mul(2)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'coal'},
+                value(){return n(getBuildBase('mine', 'gain', 'coal', 'add')).mul(5)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'iron'},
+                value(){return n(getBuildBase('mine', 'gain', 'iron', 'add')).mul(0.25)},
+            },
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'sub'},
+                name(){return '幸福度'},
+                display(){return ['','%']},
+                value(){
+                    let base = n(7.5)
+                    if(player.workshop.supportBeam){
+                        base = base.sub(2.5)
+                    }
+                    if(player.workshop.copperPickaxe){
+                        base = base.sub(1)
+                    }
+                    return n(base)
                 },
-            }
-        },
+            },
+        ],
     },
     scholar: {
         name(){return '学者'},
@@ -215,14 +267,20 @@ var CivicsCitizens = {
             unemployed(){return n(1)},
             scholar(){return n(1)},
         },
-        effect: {
-            gain: {
-                add: {
-                    idea(){return n(5)},
-                    knowledge(){return n(0.1)}
-                }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'idea'},
+                value(){return n(5)},
             },
-        },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'knowledge'},
+                value(){return n(0.1)},
+            },
+        ],
     },
     joker: {
         name(){return '小丑'},
@@ -231,23 +289,25 @@ var CivicsCitizens = {
             unemployed(){return n(1)},
             circus(){return n(1)},
         },
-        effect: {
-            gain: {
-                add: {
-                    idea(){return n(10).neg()}
-                }
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'idea'},
+                value(){return n(10)},
             },
-            other: {
-                happiness: {
-                    name(){return '幸福度'},
-                    effect(){
-                        let base = n(7)
-                        return n(base)
-                    },
-                    display(){return ['','%']},
-                }
-            }
-        },
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'add'},
+                name(){return '幸福度'},
+                display(){return ['+','%']},
+                value(){
+                    let base = n(7)
+                    return n(base)
+                },
+            },
+        ],
     },
 }
 

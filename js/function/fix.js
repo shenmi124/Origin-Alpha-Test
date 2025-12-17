@@ -7,6 +7,30 @@ function NumberFix(){
 	}
 }
 
+function CheckBuildAllocation(build, res){
+    let cost = n(tmp.main.building[build].effect.gain[res].sub.getValue().neg()).mul(player['building'][build+'Allocation'] ?? player['building'][build])
+    if(n(cost).lt(0)){
+        if(player['resource'][res].lte(n(cost).abs())){
+            if(player['building'][build+'Allocation']!==undefined){
+                buildingAllocation(build, n(1).neg())
+            }
+            return n(0)
+        }
+    }
+}
+
+function CheckCitizensAllocation(citizen, res){
+    let cost = n(tmp.civics.citizens[citizen].effect.gain[res].sub.getValue().neg()).mul(player['citizens'][citizen])
+    if(n(cost).lt(0)){
+        if(player['resource'][res].lte(n(cost).abs())){
+            if(player['citizens'][citizen]!==undefined){
+                citizensAllocate(citizen, n(1).neg())
+            }
+            return n(0)
+        }
+    }
+}
+
 function CitizensFix(){
     for(let i in CIVICS['citizens']){
         if(CIVICS['citizens'][i]['unlocked']!==undefined){

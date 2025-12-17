@@ -68,9 +68,13 @@ pollution {
     color: #603708;
 }
 
+normal {
+    color: auto;
+}
+
 mul {
     margin-left: -3px;
     margin-right: -3px;
     font-size: small;
-    vertical-align: middle;
+    vertical-align: text-top;
 }

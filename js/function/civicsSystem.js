@@ -14,6 +14,7 @@ function citizensAllocate(type,allocate){
         addLog('*无人任职','#888')
     }
     CitizensFix()
+    intervalID()
 }
 
 function getUnemployedJobs(job){
@@ -104,7 +105,7 @@ function Upgrade(id){
         for(i in CIVICS['workshop'][id]['cost']){
             let res = n(CIVICS['workshop'][id]['cost'][i]())
             if(n(player['resource'][i]).lt(res)){
-                let name = colorText(i)[1]
+                let name = getResourceColorText(i)
                 canbuy = false
                 if(RESOURCE['main'][i]['unlocked']!==undefined){
                     if(!RESOURCE['main'][i]['unlocked']()){
@@ -133,111 +134,24 @@ function Upgrade(id){
     componentWorkshop(id)
 }
 
-function getCitizensGainBase(id,res){
-    let mul = n(1)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['citizens']!==undefined){
-            for(let ib in CIVICS['workshop'][i]['effect']['citizens']){
-                if(CIVICS['workshop'][i]['effect']['citizens'][ib]['gain']?.['add']!==undefined){
-                    for(let ibga in CIVICS['workshop'][i]['effect']['citizens'][ib]['gain']['add']){
-                        if(CIVICS['workshop'][i]['effect']['citizens'][ib]['gain']['add'][ibga]['mul']!==undefined){
-                            if(ib==id && res==ibga && player['workshop'][i]){
-                                mul = mul.mul(CIVICS['workshop'][i]['effect']['citizens'][ib]['gain']['add'][ibga]['mul']())
-                            }
-                        }
-                    }
-                }
-                if(CIVICS['workshop'][i]['effect']['citizens'][ib]['effect']?.['mul']!==undefined){
-                    if(ib==id && player['workshop'][i]){
-                        mul = mul.mul(CIVICS['workshop'][i]['effect']['citizens'][ib]['effect']['mul']())
-                    }
-                }
-            }
-        }
+function getCitizensBase(citizen, type, res, operator){
+    if(tmp.civics.citizens[citizen].effect[type][res][operator]==undefined){
+        return n(0)
     }
-    for(let i in MAIN['building']){
-        if(MAIN['building'][i]['effect']?.['citizens']!==undefined){
-            for(let ie in MAIN['building'][i]['effect']['citizens']){
-                if(MAIN['building'][i]['effect']['citizens'][ie]['effect']?.['addmul']!==undefined){
-                    if(ie==id){
-                        mul = mul.mul(n(MAIN['building'][i]['effect']['citizens'][ie]['effect']['addmul']()).mul(player['building'][i+'Allocation'] ?? player['building'][i]).add(1))
-                    }
-                }
-            }
-        }
+    if(operator=='add'){
+        return tmp.civics.citizens[citizen].effect[type][res][operator].getValue()
+    }else if(operator=='sub'){
+        return tmp.civics.citizens[citizen].effect[type][res][operator].getValue().neg()
     }
-    return n(CIVICS['citizens'][id]['effect']['gain']['add'][res]()).mul(mul)
 }
 
-function getCitizensGain(id,res){
-    if(CIVICS['citizens'][id]['effect']?.['gain']?.['add']!==undefined){
-        for(let i in CIVICS['citizens'][id]['effect']['gain']['add']){
-            let cost = n(getCitizensGainBase(id, i)).mul(player['citizens'][id] ?? player['citizens'][id])
-            if(n(cost).lt(0)){
-                if(player['resource'][i].lte(n(cost).abs())){
-                    if(player['citizens'][id]!==undefined){
-                        citizensAllocate(id, n(1).neg())
-                    }
-                    return n(0)
-                }
-            }
-        }
+function getCitizensActionBase(citizen, type, effect, action, operator){
+    if(tmp.civics.citizens[citizen].effect[type][effect][action][operator]==undefined){
+        return n(0)
     }
-    return nc(getCitizensGainBase(id, res)).mul(player['citizens'][id])
-}
-
-function getCitizensActionBase(id,action){
-    let base = n(0)
-    let mul = n(1)
-    if(CIVICS['citizens'][id]['effect']?.['action']!==undefined){
-        for(let ia in CIVICS['citizens'][id]['effect']['action']){
-            if(ia==action){
-                base = base.add(CIVICS['citizens'][id]['effect']['action'][ia]())
-            }
-        }
+    if(operator=='add'){
+        return tmp.civics.citizens[citizen].effect[type][effect][action][operator].getValue()
+    }else if(operator=='sub'){
+        return tmp.civics.citizens[citizen].effect[type][effect][action][operator].getValue().neg()
     }
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['citizens']!==undefined){
-            for(let ie in CIVICS['workshop'][i]['effect']['citizens']){
-                if(CIVICS['workshop'][i]['effect']['citizens'][ie]['effect']?.['mul']!==undefined){
-                    if(ie==id && player['workshop'][i]){
-                        mul = mul.mul(CIVICS['workshop'][i]['effect']['citizens'][ie]['effect']['mul']())
-                    }
-                }
-            }
-        }
-    }
-    return base.mul(mul)
-}
-
-function getCitizensAction(id,action){
-    return nc(getCitizensActionBase(id, action)).mul(player['citizens'][id])
-}
-
-function getCitizensCraftBase(id,craft){
-    let base = n(0)
-    let mul = n(1)
-    if(CIVICS['citizens'][id]['effect']?.['craft']!==undefined){
-        for(let ia in CIVICS['citizens'][id]['effect']['craft']){
-            if(ia==craft){
-                base = base.add(CIVICS['citizens'][id]['effect']['craft'][ia]())
-            }
-        }
-    }
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['citizens']!==undefined){
-            for(let ie in CIVICS['workshop'][i]['effect']['citizens']){
-                if(CIVICS['workshop'][i]['effect']['citizens'][ie]['effect']?.['mul']!==undefined){
-                    if(ie==id && player['workshop'][i]){
-                        mul = mul.mul(CIVICS['workshop'][i]['effect']['citizens'][ie]['effect']['mul']())
-                    }
-                }
-            }
-        }
-    }
-    return base.mul(mul)
-}
-
-function getCitizensCraft(id,craft){
-    return nc(getCitizensCraftBase(id, craft)).mul(player['citizens'][id])
 }

@@ -37,38 +37,11 @@ function getActionCoerciveClick(id){
 }
 
 function getActionCooldown(id){
-    let div = n(1)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['action']!==undefined){
-            for(let ia in CIVICS['workshop'][i]['effect']['action']){
-                if(CIVICS['workshop'][i]['effect']['action'][ia]['speed']?.['mul']!==undefined){
-                    if(id==ia && player['workshop'][i]){
-                        div = div.mul(CIVICS['workshop'][i]['effect']['action'][ia]['speed']?.['mul']())
-                    }
-                }
-            }
-        }
-    }
-    return n(MAIN['action'][id]['cooldown']()).div(div)
+    return getEffectValue(tmpEffect.main?.action[id]?.cooldown, MAIN['action'][id]['cooldown']!==undefined)
 }
 
 function getActionAuto(id){
-    let auto = n(0)
-    if(MAIN['action'][id]['auto']!==undefined){
-        auto = auto.add(MAIN['action'][id]['auto']())
-    }
-    for(let i in CIVICS['citizens']){
-        if(CIVICS['citizens'][i]['effect']!==undefined){
-            if(CIVICS['citizens'][i]['effect']['action']!==undefined){
-                for(let im in CIVICS['citizens'][i]['effect']['action']){
-                    if(id==im){
-                        auto = auto.add(getCitizensAction(i, im))
-                    }
-                }
-            }
-        }
-    }
-    return auto
+    return getEffectValue(tmpEffect.main?.action[id]?.auto, MAIN['action'][id]['cooldown']!==undefined)
 }
 
 function getCraftClick(id){
@@ -110,41 +83,11 @@ function getCraftCoerciveClick(id){
 }
 
 function getCraftCooldown(id){
-    let div = n(1)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['craft']!==undefined){
-            for(let ia in CIVICS['workshop'][i]['effect']['craft']){
-                if(CIVICS['workshop'][i]['effect']['craft'][ia]['speed']?.['mul']!==undefined){
-                    if(id==ia && player['workshop'][i]){
-                        div = div.mul(CIVICS['workshop'][i]['effect']['craft'][ia]['speed']?.['mul']())
-                    }
-                }
-            }
-        }
-    }
-    return n(MAIN['craft'][id]['cooldown']()).div(div)
+    return getEffectValue(tmpEffect.main?.craft[id]?.cooldown, MAIN['craft'][id]['cooldown']!==undefined)
 }
 
 function getCraftAuto(id){
-    let auto = n(0)
-    if(MAIN['craft'][id]['auto']!==undefined){
-        auto = auto.add(MAIN['craft'][id]['auto']())
-    }
-    for(let i in CIVICS['citizens']){
-        if(CIVICS['citizens'][i]['effect']!==undefined){
-            if(CIVICS['citizens'][i]['effect']['craft']!==undefined){
-                for(let im in CIVICS['citizens'][i]['effect']['craft']){
-                    if(id==im){
-                        auto = auto.add(getCitizensCraft(i, im))
-                    }
-                }
-            }
-        }
-    }
-    if(!getCraftCanClick(id)){
-        auto = n(0)
-    }
-    return auto
+    return getEffectValue(tmpEffect.main?.craft[id]?.auto, MAIN['craft'][id]['cooldown']!==undefined)
 }
 
 function Build(id){
@@ -153,7 +96,7 @@ function Build(id){
     for(let i in MAIN['building'][id]['cost']){
         let res = getBuildCost(id, i)
         if(n(player['resource'][i]).lt(res)){
-            let name = colorText(i)[1]
+            let name = getResourceColorText(i)
             canbuy = false
             if(RESOURCE['main'][i]['unlocked']!==undefined){
                 if(!RESOURCE['main'][i]['unlocked']()){
@@ -185,99 +128,22 @@ function Build(id){
 
 function getBuildCost(building, res){
     let base = n(MAIN['building'][building]['cost'][res]()).add(1).mul(player['building'][building].mul(0.1).add(1)).pow(player['building'][building].mul(MAIN['building'][building]['costPower']()).add(1)).sub(1)
-    let div = n(1)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['markdown']?.['building']!==undefined){
-            for(let iw in CIVICS['workshop'][i]['effect']['markdown']['building']){
-                if(CIVICS['workshop'][i]['effect']['markdown']['building'][iw]['effect']?.['mul']!==undefined){
-                    if(building==iw && player['workshop'][i]){
-                        div = div.mul(CIVICS['workshop'][i]['effect']['markdown']['building'][iw]['effect']['mul']())
-                    }
-                }
-            }
-        }
-    }
-    return base.div(div)
+    return base
 }
 
-function getBuildGainBase(building,res){
-    let mul = n(1)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['building']!==undefined){
-            for(let ib in CIVICS['workshop'][i]['effect']['building']){
-                if(CIVICS['workshop'][i]['effect']['building'][ib]['gain']?.['add']!==undefined){
-                    for(let ibga in CIVICS['workshop'][i]['effect']['building'][ib]['gain']['add']){
-                        if(CIVICS['workshop'][i]['effect']['building'][ib]['gain']['add'][ibga]['mul']!==undefined){
-                            if(ib==building && res==ibga && player['workshop'][i]){
-                                mul = mul.mul(CIVICS['workshop'][i]['effect']['building'][ib]['gain']['add'][ibga]['mul']())
-                            }
-                        }
-                    }
-                }
-                if(CIVICS['workshop'][i]['effect']['building'][ib]['effect']?.['mul']!==undefined){
-                    if(ib==building && player['workshop'][i]){
-                        mul = mul.mul(CIVICS['workshop'][i]['effect']['building'][ib]['effect']['mul']())
-                    }
-                }
-            }
-        }
+function getBuildBase(build, type, res, operator){
+    if(tmp.main.building[build].effect[type][res][operator]==undefined){
+        return n(0)
     }
-    return n(MAIN['building'][building]['effect']['gain']['add'][res]()).mul(mul)
+    if(operator=='add'){
+        return tmp.main.building[build].effect[type][res][operator].getValue()
+    }else if(operator=='sub'){
+        return tmp.main.building[build].effect[type][res][operator].getValue().neg()
+    }
 }
 
-function getBuildGain(building, res){
-    if(MAIN['building'][building]['effect']?.['gain']?.['add']!==undefined){
-        for(let i in MAIN['building'][building]['effect']['gain']['add']){
-            let cost = n(getBuildGainBase(building, i)).mul(player['building'][building+'Allocation'] ?? player['building'][building])
-            if(n(cost).lt(0)){
-                if(player['resource'][i].lte(n(cost).abs())){
-                    if(player['building'][building+'Allocation']!==undefined){
-                        buildingAllocation(n(1), 'sub', building)
-                    }
-                    return n(0)
-                }
-            }
-        }
-    }
-    return n(getBuildGainBase(building, res)).mul(player['building'][building+'Allocation'] ?? player['building'][building])
-}
-
-function getBuildCappedBase(building,res){
-    let base = MAIN['building'][building]['effect']['capped']['add'][res]()
-    let mul = n(1)
-    for(let i in CIVICS['workshop']){
-        if(CIVICS['workshop'][i]['effect']?.['building']!==undefined){
-            for(let ib in CIVICS['workshop'][i]['effect']['building']){
-                if(CIVICS['workshop'][i]['effect']['building'][ib]['capped']?.['add']!==undefined){
-                    for(let ibga in CIVICS['workshop'][i]['effect']['building'][ib]['capped']['add']){
-                        if(CIVICS['workshop'][i]['effect']['building'][ib]['capped']['add'][ibga]['add']!==undefined){
-                            if(building==ib && res==ibga && player['workshop'][i]){
-                                base = base.add(CIVICS['workshop'][i]['effect']['building'][ib]['capped']['add'][ibga]['add']())
-                            }
-                        }
-                    }
-                }
-
-                if(CIVICS['workshop'][i]['effect']['building'][ib]['effect']?.['mul']!==undefined){
-                    if(building==ib && player['workshop'][i]){
-                        mul = mul.mul(CIVICS['workshop'][i]['effect']['building'][ib]['effect']['mul']())
-                    }
-                }
-            }
-        }
-    }
-    return n(base).mul(mul)
-}
-
-function getBuildCapped(building,res){
-    return n(getBuildCappedBase(building, res)).mul(player['building'][building+'Allocation'] ?? player['building'][building])
-}
-
-function buildingAllocation(amount,type,id){
-    if(type=='add'){
-        player['building'][id+'Allocation'] = player['building'][id+'Allocation'].add(amount).min(player['building'][id])
-    }else{
-        player['building'][id+'Allocation'] = player['building'][id+'Allocation'].sub(amount).max(0)
-    }
-    componentBuilding(id)
+function buildingAllocation(build, amount){
+    player['building'][build+'Allocation'] = player['building'][build+'Allocation'].add(amount).max(0)
+    componentBuilding(build)
+    intervalID()
 }
