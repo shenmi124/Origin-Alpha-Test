@@ -56,6 +56,10 @@ yellow {
     color: yellowgreen;
 }
 
+darkblue {
+    color: darkblue;
+}
+
 grey {
     color: #888;
 }
@@ -66,10 +70,6 @@ black {
 
 pollution {
     color: #603708;
-}
-
-normal {
-    color: auto;
 }
 
 mul {

@@ -2,417 +2,186 @@ var MainAction = {
     wakeUp: {
         name(){return '醒来'},
         onClick(){
-            getStage(1)
-            addLog('头痛欲裂')
-            addLog('你醒在一片草原上')
-            addLog('你貌似损失了一些记忆,尤其是关于你的“身世”')
+            player.stage.wakeUp = true
+            addLog('头痛欲裂,我好像缺失了一些记忆')
+            addLog('我想我应该先探索一下我所处的环境')
         },
-        tooltip(){return '苏醒...'},
-        unlocked(){return player.game.stage.eq(0)},
-        cooldown(){return n(2.5)},
+        tooltip(){return '我在哪...<hr>- 帮助1 -<br>点击进行行动<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'},
+        unlocked(){return !player.stage.wakeUp},
+        cooldown(){return n(2)},
     },
     explore: {
         name(){return '探索'},
-        lucky(){
-            let base = n(1)
-            if(player.workshop.mountaineeringPickaxe){
-                base = base.add(0.1)
-            }
-            return base
-        },
-        tooltip(){
-            let con = '<br>即使没有工具与食物走不了多远'
-            if(player.resource.food.gt(0)){
-                con += '<hr>食物帮助你深入探索'
-            }
-            if(player.workshop.mountaineeringPickaxe){
-                con += '<hr>工具帮助你深入探索'
-            }
-            if(player.resource.food.gt(0) && player.workshop.mountaineeringPickaxe){
-                con = ''
-            }
-            let lucky = ''
-            let hr = ''
-            if(n(MAIN['action']['explore']['lucky']()).gt(1)){
-                lucky = '<left>幸运倍率: <mul>×</mul>'+format(MAIN['action']['explore']['lucky']())+'</left>'
-                hr = '<hr>'
-            }
-            return '在茫茫无际的草原中寻找可用资源'+con+hr+lucky
-        },
         onClick(){
-            let find = []
-            let special = []
-            for(let i in MAIN['action']['explore']['gain']){
-                if(MAIN['action']['explore']['gain'][i]['unlocked']()){
-                    let exp = n(Math.random() * 100)
-                    if(n(MAIN['action']['explore']['gain'][i]['probability']()).mul(MAIN['action']['explore']['lucky']()).mul(player['action']['explore'][i+'LuckyUp'].add(1)).gte(exp)){
-                        if(!MAIN['action']['explore']['gain'][i]['instant']()){
-                            let random = n(Math.random()).mul(MAIN['action']['explore']['gain'][i]['float']())
-                            let gain = n(MAIN['action']['explore']['gain'][i]['base']()).add(random).ceil()
-                            player['action']['explore'][i] = player['action']['explore'][i].add(gain).min(MAIN['craft'][i]['capped']())
-                            if(!player['action']['explore'][i+'Found']){
-                                player['action']['explore'][i+'Found'] = true
-                            }
-                            find.push(i)
-                        }else{
-                            if(!player['action']['explore'][i+'Found']){
-                                player['action']['explore'][i+'Found'] = true
-                                special.push(i)
-                            }
-                        }
-                        player['action']['explore'][i+'LuckyUp'] = n(0)
-                    }else{
-                        player['action']['explore'][i+'LuckyUp'] = player['action']['explore'][i+'LuckyUp'].add(0.1)
-                    }
-                }
+            if(player.stage.explore.eq(0)){
+                addLog('意识逐渐清醒,随之而来的是强烈的饥饿')
+                addLog('这好像是一片平原')
+                addLog('四周未见活物,但好在我看见了有不少的浆果可以采集')
             }
-            if(find[0]!==undefined){
-                let t = ''
-                for(let i in find){
-                    t += (i!==0 ? ' ' : '')+MAIN['action']['explore']['gain'][find[i]]['name']()
-                    if(find[i]=='stone' && !player.action.explore.stoneFound){
-                        addLog('你找到了一处裸露的矿石,或许你可以从中开采到石料和矿石')
-                    }
-                    if(find[i]=='tree' && !player.action.explore.treeFound){
-                        addLog('你找到了一片山丘,零零落落的有几棵树在山尖上')
-                    }
-                    if(find[i]=='meteorite' && !player.action.explore.meteoriteFound){
-                        addLog('你找到了一块陨石')
-                        addLog('陨石有较高的含铁量')
-                        addLog('这给你带来了一些启发')
-                    }
-                    if(find[i]=='bloodStone' && !player.action.explore.bloodStoneFound){
-                        addLog('奇怪,指南针突然猛的指向一个方向')
-                        addLog('你们向那走去,发现了一块发光的<red>血石</red>')
-                    }
-                    if(find[i]=='bloodStone'){
-                        addLog('你发现了一块<span style="color: #ff000088">血石</style>')
-                    }
-                }
-                if(n(getActionAuto('explore')).lte(0)){
-                    addLog('*你找到了一些'+t+'*','#888')
-                }
+            if(player.stage.explore.eq(1)){
+                gainResource('food', n(-10))
+
+                addLog('我用浆果解决了我的饥饿感')
+                addLog('老实说我也不确定这些浆果是否有毒,不过当下的条件我也想不了那么多了,起码我现在没事,不是吗?')
+                addLog('饱腹之后,我想我应该去采集一些其他资源')
             }
-            if(special[0]!==undefined){
-                for(let i in special){
-                    if(special[i]=='civics'){
-                        addLog('你找到了一片平坦的地方,这里貌似挺适合当做栖息地的')
-                        addLog('你决定在此定居')
-                    }
-                    if(special[i]=='magnet'){
-                        addLog('你偶然发现了一些磁铁')
-                        addLog('它有着吸引铁磁性物质的特质')
-                        addLog('这给你带来了一些启发')
-                    }
-                }
+            if(player.stage.explore.eq(2)){
+                gainResource('food', n(-20))
+
+                addLog('很可惜,这次的探索并没有带来什么有价值的东西')
+                addLog('看来附近已经没有什么新鲜的东西了,我可能需要探索到更远的地方')
+                addLog('在此之前我可以先在此处安定下来并想一下我下一步的行动')
             }
-            if(special[0]===undefined && find[0]===undefined && n(getActionAuto('explore')).lte(0)){
-                addLog('*什么都没找到*','#888')
+            if(player.stage.explore.eq(3)){
+                gainResource('food', n(-60))
+
+                addLog('我看见了一些“人”,他们徘徊,游荡,看似毫无目的,貌似是这里的“原住民”')
+                addLog('无论如何我需要人们去帮助我,如果我提供充足的食物与住所也许他们会追随我')
+                addLog('我去和他们进行交谈,即使我并不能保证这一定能成功')
             }
 
-            gainResource('explore', n(10).pow(n(Math.random() * 2)))
-        },
-        gain:{
-            citizens: {
-                name(){return '原住民'},
-                instant(){return false},
-                unlocked(){return player.building.civics.gte(1)},
-                probability(){return n(10)},
-                base(){return n(1)},
-                float(){return n(0)},
-            },
-            collect: {
-                name(){return '土堆'},
-                instant(){return false},
-                unlocked(){return true},
-                probability(){return n(33.3)},
-                base(){return n(1)},
-                float(){return n(2)},
-            },
-            stone: {
-                name(){return '石头'},
-                instant(){return false},
-                unlocked(){return player.building.civics.gte(1)},
-                probability(){return n(8)},
-                base(){return n(1)},
-                float(){return n(2)},
-            },
-            drop: {
-                name(){return '树枝'},
-                instant(){return false},
-                unlocked(){return true},
-                probability(){return n(7.5)},
-                base(){return n(1)},
-                float(){return n(2)},
-            },
-            harvest: {
-                name(){return '植被'},
-                instant(){return false},
-                unlocked(){return true},
-                probability(){return n(22.5)},
-                base(){return n(1)},
-                float(){return n(2)},
-            },
-            beast: {
-                name(){return '野兽'},
-                instant(){return false},
-                unlocked(){return player.building.civics.gte(1)},
-                probability(){return n(5)},
-                base(){return n(2)},
-                float(){return n(6)},
-            },
-            tree: {
-                name(){return '树'},
-                instant(){return false},
-                unlocked(){return player.workshop.mountaineeringPickaxe},
-                probability(){return n(7.5)},
-                base(){return n(1)},
-                float(){return n(1)},
-            },
-            meteorite: {
-                name(){return '陨铁'},
-                instant(){return false},
-                unlocked(){return player.workshop.map},
-                probability(){return n(5)},
-                base(){return n(2)},
-                float(){return n(2)},
-            },
-            bloodStone: {
-                name(){return '血石'},
-                instant(){return false},
-                unlocked(){return player.workshop.compass && !player.action.explore.bloodStoneFound},
-                probability(){return n(1e-9)},
-                base(){return n(1)},
-                float(){return n(0)},
-            },
+            player.stage.explore = player.stage.explore.add(1)
 
-            civics: {
-                name(){return '定居地'},
-                instant(){return true},
-                unlocked(){return player.craft.harvestTotal.gte(1)},
-                probability(){return n(20)},
-            },
-            magnet: {
-                name(){return '磁石'},
-                instant(){return true},
-                unlocked(){return player.workshop.map},
-                probability(){return n(2)},
-            },
+            getStage()
         },
-        data: {
-            citizens(){return n(0)},
-            citizensLuckyUp(){return n(0)},
-            citizensFound(){return false},
-            collect(){return n(0)},
-            collectLuckyUp(){return n(0)},
-            collectFound(){return false},
-            stone(){return n(0)},
-            stoneLuckyUp(){return n(0)},
-            stoneFound(){return false},
-            harvest(){return n(0)},
-            harvestLuckyUp(){return n(0)},
-            harvestFound(){return false},
-            drop(){return n(0)},
-            dropLuckyUp(){return n(0)},
-            dropFound(){return false},
-            beast(){return n(0)},
-            beastLuckyUp(){return n(0)},
-            beastFound(){return false},
-            tree(){return n(0)},
-            treeLuckyUp(){return n(0)},
-            treeFound(){return false},
-            bloodStone(){return n(0)},
-            bloodStoneLuckyUp(){return n(0)},
-            bloodStoneFound(){return false},
-            meteorite(){return n(0)},
-            meteoriteLuckyUp(){return n(0)},
-            meteoriteFound(){return false},
-
-            civicsFound(){return false},
-            civicsLuckyUp(){return n(0)},
-            magnetFound(){return false},
-            magnetLuckyUp(){return n(0)},
-        },
-        cooldown(){return n(7.5)},
-        unlocked(){return player.game.stage.gte(1)},
-    },
-    plank: {
-        name(){return '加工木板'},
         tooltip(){
-            let effect = ''
-            if(player.action.plank.make){
-                effect = '持续'
-            }else{
-                effect = '暂停'
+            let hint = ''
+            if(player.stage.explore.eq(0)){
+                hint = '<hr>- 帮助2 -<br>日志记录了一些事件<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
             }
-            let gain = `<br><grey>`+format(MAIN['action']['plank']['costSecond']())+colorText('wood')[1]+`/s -> `+format(MAIN['action']['plank']['gainSecond']())+colorText('plank')[1]+`/s</grey>`
-            if(n(MAIN['action']['plank']['gainSecond']()).eq(0)){
-                gain = ``
+            if(player.stage.explore.eq(1)){
+                hint = '<hr>- 帮助3 -<br>你可以选择一项你想要进行的行为,随后行为将自动进行<br>但注意你同时只能进行一项行为,多次点击可以切换你想要进行的行为(亦或是什么也不干)<br>保持足够的食物可以获得速度的加成,左上角的效率对其有更加详细说明<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
             }
-            return `将木材加工<hr>点击切换制造状态<br>当前: `+effect+`<left><hr>`
-            +format(MAIN['action']['plank']['cost']())+colorText('wood')[1]+` -> `+format(MAIN['action']['plank']['gain']())+colorText('plank')[1]
-            +gain+`<br></left>`
+            if(player.stage.explore.eq(2)){
+                hint = '<hr>- 帮助4 -<br>将鼠标移动到资源的名字上可以看见其详细的计算<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
+            }
+            if(player.stage.explore.eq(3)){
+                hint = ''
+            }
+
+            let cost = ''
+            if(player.stage.explore.eq(1)){
+                cost = '<br>'+format(player.resource.food)+' / 10 '+getResourceColorText('food')
+            }
+            if(player.stage.explore.eq(2)){
+                cost = '<br>'+format(player.resource.food)+' / 20 '+getResourceColorText('food')
+            }
+            if(player.stage.explore.eq(3)){
+                cost = '<br>'+format(player.resource.food)+' / 60 '+getResourceColorText('food')
+            }
+
+            let explore = '( '+formatWhole(player.stage.explore.add(1))+' / 5 )'
+            let display = player.stage.explore.eq(4) ? '暂时不需要探索了<br>' : '周边还有不少可以探索的东西<br>'
+            return display+explore+cost+hint
         },
-        cost(){
-            let base = n(20)
-            if(player.workshop.copperAxe){
-                base = base.mul(0.5)
+        canClick(){
+            if(player.stage.explore.eq(1)){
+                return player.resource.food.gte(10)
             }
-            if(player.workshop.ironAxe){
-                base = base.mul(0.5)
+            if(player.stage.explore.eq(2)){
+                return player.resource.food.gte(20)
             }
-            return base
-        },
-        costSecond(){
-            let cost = MAIN['action']['plank']['cost']()
-            return cost.div(getActionCooldown('plank')).mul(getActionAuto('plank'))
-        },
-        gain(){return n(1)},
-        gainSecond(){
-            if(!getActionCanClick('plank')){
-                player.action.plank.make = false
-                return n(0)
+            if(player.stage.explore.eq(3)){
+                return player.resource.food.gte(60)
             }
-            let gain = MAIN['action']['plank']['gain']()
-            return gain.div(getActionCooldown('plank')).mul(getActionAuto('plank'))
+            if(player.stage.explore.eq(4)){
+                return false
+            }
+            return true
         },
-        onClick(){},
+        unlocked(){return player.stage.wakeUp},
+        cooldown(){return n(2).mul(player.stage.explore.pow(2).add(1))},
+    },
+
+    ideaOfPlant: {
+        name(){return '种植的想法'},
+        tooltip(){return format(player.resource.idea)+' / 2 '+getResourceColorText('idea')+'<hr>思考如何种植<hr>允许购买建筑: 农田'},
+        onClick(){
+            gainResource('idea', n(-2))
+            player.action.ideaOfPlant.study = true
+            addLog('<darkblue>已学习: 种植的想法</darkblue>')
+        },
         data: {
-            make(){return false},
+            study(){return false}
         },
-        auto(){
-            if(player.action.plank.make){
-                return getEfficient('action')
-            }
-            return n(0)
+        unlocked(){return !player.action.ideaOfPlant.study && player.stage.explore.gte(3)},
+        canClick(){return player.resource.idea.gte(2)},
+        cooldown(){return n(10)},
+    },
+    ideaOfCabin: {
+        name(){return '居住的想法'},
+        tooltip(){return format(player.resource.idea)+' / 10 '+getResourceColorText('idea')+'<hr>建造小屋提供住所<hr>允许购买建筑: 小屋'},
+        onClick(){
+            gainResource('idea', n(-10))
+            player.action.ideaOfCabin.study = true
+            addLog('<darkblue>已学习: 居住的想法</darkblue>')
         },
-        handoff(){
-            gameOpenMaking('plank')
-            if(player.resource.wood.lt(MAIN['action']['plank']['costSecond']())){
-                player.action.plank.make = false
-            }
+        data: {
+            study(){return false}
         },
+        unlocked(){return !player.action.ideaOfCabin.study && player.stage.explore.gte(4)},
+        canClick(){return player.resource.idea.gte(10)},
+        cooldown(){return n(10)},
+    },
+    ideaOfTool: {
+        name(){return '工具的想法'},
+        tooltip(){return format(player.resource.idea)+' / 20 '+getResourceColorText('idea')+'<hr>学习一些关键技术用于加工燧石并尝试制造工具<hr>在工坊中解锁有关工具的研究'},
+        onClick(){
+            gainResource('idea', n(-20))
+            player.action.ideaOfTool.study = true
+            addLog('<darkblue>已学习: 工具的想法</darkblue>')
+        },
+        data: {
+            study(){return false}
+        },
+        unlocked(){return !player.action.ideaOfTool.study && player.stage.explore.gte(4) && getResourceUnlocked('citizens')},
+        canClick(){return player.resource.idea.gte(20)},
         cooldown(){return n(20)},
-        coerciveClick(){return player.resource.wood.gte(MAIN['action']['plank']['costSecond']()) || hasActionClick('plank')},
-        player(){return n(0)},
-        canClick(){return player.resource.wood.gte(MAIN['action']['plank']['costSecond']())},
-        unlocked(){return player.workshop.axe},
     },
-    parchment: {
-        name(){return '加工羊皮纸'},
-        tooltip(){
-            let effect = ''
-            if(player.action.parchment.make){
-                effect = '持续'
-            }else{
-                effect = '暂停'
-            }
-            let gain = `<br><grey>`+format(MAIN['action']['parchment']['costSecond']())+colorText('leather')[1]+`/s -> `+format(MAIN['action']['parchment']['gainSecond']())+colorText('parchment')[1]+`/s</grey>`
-            if(n(MAIN['action']['parchment']['gainSecond']()).eq(0)){
-                gain = ``
-            }
-            return `将皮革加工<hr>点击切换制造状态<br>当前: `+effect+`<left><hr>`
-            +format(MAIN['action']['parchment']['cost']())+colorText('leather')[1]+` -> `+format(MAIN['action']['parchment']['gain']())+colorText('parchment')[1]
-            +gain+`<br></left>`
+    /*
+    ideaOfTime: {
+        name(){return '时间的想法'},
+        tooltip(){return format(player.resource.idea)+' / 200 '+getResourceColorText('idea')+'<hr>设法观测时间<hr>在日志下方记录游戏时'},
+        onClick(){
+            gainResource('idea', n(-200))
+            player.action.ideaOfTime.study = true
+            addLog('<darkblue>已学习: 时间的想法</darkblue>')
         },
-        cost(){
-            let cost = n(50)
-            if(player.workshop.papermaking){
-                cost = cost.mul(0.8)
-            }
-            return cost
-        },
-        costSecond(){
-            let cost = MAIN['action']['parchment']['cost']()
-            return cost.div(getActionCooldown('parchment')).mul(getActionAuto('parchment'))
-        },
-        gain(){return n(1)},
-        gainSecond(){
-            if(!getActionCanClick('parchment')){
-                player.action.parchment.make = false
-                return n(0)
-            }
-            let gain = MAIN['action']['parchment']['gain']()
-            return gain.div(getActionCooldown('parchment')).mul(getActionAuto('parchment'))
-        },
-        onClick(){},
         data: {
-            make(){return false},
+            study(){return false}
         },
-        auto(){
-            if(player.action.parchment.make){
-                return getEfficient('action')
-            }
-            return n(0)
-        },
-        handoff(){
-            gameOpenMaking('parchment')
-            if(player.resource.leather.lt(MAIN['action']['parchment']['costSecond']())){
-                player.action.parchment.make = false
-            }
-        },
-        cooldown(){return n(60)},
-        coerciveClick(){return player.resource.leather.gte(MAIN['action']['parchment']['costSecond']()) || hasActionClick('parchment')},
-        player(){return n(0)},
-        canClick(){return player.resource.leather.gte(MAIN['action']['parchment']['costSecond']())},
-        unlocked(){return player.workshop.parchment},
+        unlocked(){return !player.action.ideaOfTime.study && player.stage.explore.gte(3)},
+        canClick(){return player.resource.idea.gte(200)},
+        cooldown(){return n(10)},
     },
-    blueprint: {
-        name(){return '加工蓝图'},
-        tooltip(){
-            let effect = ''
-            if(player.action.blueprint.make){
-                effect = '持续'
-            }else{
-                effect = '暂停'
-            }
-            let gain = `<br><grey>`+format(MAIN['action']['blueprint']['costSecond']()[0])+getResourceColorText('parchment')[1]+`/s + `+format(MAIN['action']['blueprint']['costSecond']()[1])+colorText('knowledge')[1]+`/s -> `+format(MAIN['action']['blueprint']['gainSecond']())+colorText('blueprint')[1]+`/s</grey>`
-            if(n(MAIN['action']['blueprint']['gainSecond']()).eq(0)){
-                gain = ``
-            }
-            return `将羊皮纸刻画<hr>点击切换制造状态<br>当前: `+effect+`<left><hr>`
-            +format(MAIN['action']['blueprint']['cost']()[0])+colorText('parchment')[1]+` + `+format(MAIN['action']['blueprint']['cost']()[1])+colorText('knowledge')[1]+` -> `+format(MAIN['action']['blueprint']['gain']())+colorText('blueprint')[1]
-            +gain+`<br></left>`
+    ideaOfMath: {
+        name(){return '数学的想法'},
+        tooltip(){return format(player.resource.idea)+' / 800 '+getResourceColorText('idea')+'<hr>计算所需'},
+        onClick(){
+            gainResource('idea', n(-800))
+            player.action.ideaOfEfficiency.study = true
+            addLog('<darkblue>已学习: 效率的想法</darkblue>')
         },
-        cost(){
-            let cost = n(1)
-            let cost2 = n(100)
-            return [cost,cost2]
-        },
-        costSecond(){
-            let cost = MAIN['action']['blueprint']['cost']()[0]
-            let cost2 = MAIN['action']['blueprint']['cost']()[1]
-            return [cost.div(getActionCooldown('blueprint')).mul(getActionAuto('blueprint')),cost2.div(getActionCooldown('blueprint')).mul(getActionAuto('blueprint'))]
-        },
-        gain(){return n(1)},
-        gainSecond(){
-            if(!getActionCanClick('blueprint')){
-                player.action.blueprint.make = false
-                return n(0)
-            }
-            let gain = MAIN['action']['blueprint']['gain']()
-            return gain.div(getActionCooldown('blueprint')).mul(getActionAuto('blueprint'))
-        },
-        onClick(){},
         data: {
-            make(){return false},
+            study(){return false}
         },
-        auto(){
-            if(player.action.blueprint.make){
-                return getEfficient('action')
-            }
-            return n(0)
-        },
-        handoff(){
-            gameOpenMaking('blueprint')
-            if(player.resource.parchment.lt(MAIN['action']['blueprint']['costSecond']()[0]) && player.resource.knowledge.lt(MAIN['action']['blueprint']['costSecond']()[1])){
-                player.action.blueprint.make = false
-            }
-        },
-        cooldown(){return n(120)},
-        coerciveClick(){return (player.resource.parchment.gte(MAIN['action']['blueprint']['costSecond']()[0]) && player.resource.knowledge.gte(MAIN['action']['blueprint']['costSecond']()[1])) || hasActionClick('blueprint')},
-        player(){return n(0)},
-        canClick(){return player.resource.parchment.gte(MAIN['action']['blueprint']['costSecond']()[0]) && player.resource.knowledge.gte(MAIN['action']['blueprint']['costSecond']()[1])},
-        unlocked(){return player.workshop.blueprint},
+        unlocked(){return !player.action.ideaOfEfficiency.study && player.stage.explore.gte(3)},
+        cooldown(){return n(10)},
     },
+    ideaOfEfficiency: {
+        name(){return '效率的想法'},
+        tooltip(){return format(player.resource.idea)+' / 2000 '+getResourceColorText('idea')+'<hr>反思行动的效率'},
+        onClick(){
+            gainResource('idea', n(-2000))
+            player.action.ideaOfEfficiency.study = true
+            addLog('<darkblue>已学习: 效率的想法</darkblue>')
+        },
+        data: {
+            study(){return false}
+        },
+        unlocked(){return !player.action.ideaOfEfficiency.study && player.stage.explore.gte(3)},
+        cooldown(){return n(10)},
+    },*/
 }
+
+var ForecastActionTime = false

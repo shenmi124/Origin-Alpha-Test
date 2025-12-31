@@ -1,9 +1,6 @@
 function getWorldTime(){
-    if(player.workshop.camp){
-        return '蒸汽时代'
-    }
-    if(player.workshop.campfire){
-        return '手工工场时代'
+    if(getResourceUnlocked('citizens')){
+        return '城市革命'
     }
     return ''
 }
@@ -21,17 +18,17 @@ function getGametime(){
     let logHour = ''
     let logMinute = ''
     let night = true
-    if(player.workshop.minute){
+    if(false){
         logMinute = n(minute%60).floor()+' 分 '
     }
-    if(player.workshop.hour){
+    if(false){
         logHour = n(hour%24).floor()+' 时 '
     }
-    if(player.workshop.month){
+    if(false){
         logMonth = n(month).floor()+' 月 '
         logDay = n(day%30).floor()+' 天 '
     }
-    if(player.workshop.year){
+    if(false){
         logYear = n(year).floor()+' 年 '
         logMonth = n(month%12).floor()+' 月 '
     }
@@ -40,7 +37,7 @@ function getGametime(){
     }else{
         night = false
     }
-    if(player.workshop.day){
+    if(false){
         let logTime = ''
         if(night){
             logTime = ' <grey>(夜晚)</grey>'
@@ -50,22 +47,18 @@ function getGametime(){
         getByID('logTime', '<small><grey>'+getWorldTime()+'</grey><br>'+logYear+logMonth+logDay+logHour+logMinute+logTime+'</small>')
         document.title = '起源 - '+logYear+logMonth+logDay
     }
+    getByID('logTime', '<small><grey>'+getWorldTime()+'</grey></small>')
     return [logYear+logMonth+logDay+logHour, night]
 }
 
-function getStage(num){
-	if(num!==null){
-		player.game.stage = player.game.stage.max(num)
-	}
-	if(player.game.stage.gte(1)){
-	}
-	if(player.game.stage.gte(2)){
+function getStage(){
+	if(player.stage.explore.gte(1)){
 		document.getElementById("loadResource").style.visibility = ''
         setTimeout(function(){
 			document.getElementById("loadResource").style.opacity = 1
         },100)
 	}
-	if(player.game.stage.gte(3)){
+	if(getResourceUnlocked('citizens')){
 		document.getElementById("tabButton").style.visibility = ''
 		document.getElementById("subtabButton").style.visibility = ''
         setTimeout(function(){

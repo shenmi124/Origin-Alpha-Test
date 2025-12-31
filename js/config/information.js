@@ -16,4 +16,8 @@ function loadInformation(){
     <li-hid>感谢捐赠者对我的帮助<br><br>
     <li-hid>感谢各位提供想法与测试<br><br>
     <li-hid>感谢您的参与`)
+
+    getByID('tipsSubtab', `
+    <br>
+    <li-hid>WIP`)
 }

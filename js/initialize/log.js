@@ -2,9 +2,9 @@ let logQueue = []
 let logTimes = 0
 let logComplete = 0
 
-function addLog(id,color="#000"){
+function addLog(id, color="#000"){
     logQueue.push(
-        '<div class="logTimes" style="color: '+color+'; transition-duration: 1s; opacity: 0;" id="logTimes'+logTimes+'"><span style="padding: 0px 0px 2px 0px; font-size: 14px;">'+id+'<br></span></div><br>'
+        '<div class="logTimes" style="color: '+color+'; transition-duration: 1s; opacity: 0;" id="logTimes'+logTimes+'"><span style="padding: 0px 0px 2px 0px; font-size: 14px;">'+id+' <small><grey>'+new Date().getHours()+':'+new Date().getMinutes()+':'+new Date().getSeconds()+'</grey></small><br></span></div><br>'
     )
     logTimes += 1
     if(logQueue[0]==undefined){

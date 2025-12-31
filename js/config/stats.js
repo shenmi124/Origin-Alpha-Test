@@ -93,7 +93,7 @@ function statsDiff(){
     let craft = ''
     let craftU = false
     craft += `
-    <div style="display: inline-grid; width: 100px">采集</div>
+    <div style="display: inline-grid; width: 100px">行为</div>
     <div style="display: inline-grid; width: 100px">完成次数</div>
     <div style="display: inline-grid; width: 100px">基础耗时</div>
     <div style="display: inline-grid; width: 100px">自动耗时</div>

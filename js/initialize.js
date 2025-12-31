@@ -46,10 +46,10 @@ function loadTab(){
 	}
 }
 
-function loadBase(){	
+function loadBase(){
 	let resourceStr = `
 		<div id="actionEfficientID" style="font-size: 12px"><tooltip `+loadTooltip(`action`, `efficient`, null)+`>效率</tooltip>: <span id="actionEfficient"></span></div>
-		<div id="happinessEfficientID" style="font-size: 12px"><tooltip `+loadTooltip(`happiness`, `efficient`, null)+`>幸福度</tooltip>: <span id="happinessEfficient"></span></div>
+		<div id="happinessEfficientID" style="font-size: 12px"><tooltip `+loadTooltip(`happiness`, `efficient`, null)+`>幸福</tooltip>: <span id="happinessEfficient"></span></div>
 		<br>
 	`
 	for(let i in RESOURCE['main']){
@@ -76,7 +76,7 @@ function loadBase(){
 	for(let i in MAIN['action']){
 		actionStr += '<a style="transition-duration: 1s;" id='+i+'LoadAction></a>'
 	}
-	getByID('actionLoadID',actionStr)
+	getByID('actionLoadID', actionStr)
 	for(let i in MAIN['action']){
 		getByID(i+'LoadAction',`<br id="`+i+`actionBrID"><a id="`+i+`LoadActionID" class="action"></a><button id="action`+i+`BorderID" class="bar" style="clip-path: inset(0% 0% 0% 0%);"></button>`)
 		componentAction(i)
@@ -86,7 +86,7 @@ function loadBase(){
 	for(let i in MAIN['craft']){
 		craftStr += '<a style="transition-duration: 1s;" id='+i+'LoadCraft></a>'
 	}
-	getByID('craftLoadID',craftStr)
+	getByID('craftLoadID', craftStr)
 	for(let i in MAIN['craft']){
 		getByID(i+'LoadCraft',`<br id="`+i+`craftBrID"><a id="`+i+`LoadCraftID" class="action"></a><button id="craft`+i+`BorderID" class="bar" style="clip-path: inset(0% 0% 0% 0%);"></button>`)
 		componentCraft(i)
@@ -96,7 +96,7 @@ function loadBase(){
 	for(let i in MAIN['building']){
 		buildingStr += '<a style="transition-duration: 1s;" id='+i+'LoadBuilding></a>'
 	}
-	getByID('buildingLoadID',buildingStr)
+	getByID('buildingLoadID', buildingStr)
 	for(let i in MAIN['building']){
 		getByID(i+'LoadBuilding',`<br id="`+i+`buildingBrID"><a id="`+i+`LoadBuildingID" style="display: inline-flex; padding-right: 8px"></a>`)
 		componentBuilding(i)

@@ -228,21 +228,23 @@ function getTmpValue(){
             for(let it in temp){
                 tmp.civics.citizens[i].effect[temp[it]['type']()] ??= {}
 
+                let value = n(temp[it]['value']()).mul(getEfficient('happiness'))
+
                 if(temp[it]['type']()=='gain' || temp[it]['type']()=='capped'){
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['resource']()] ??= {}
-                    tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(temp[it]['value']())
+                    tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(value)
                 }
                 
                 if(temp[it]['type']()=='action' || temp[it]['type']()=='craft'){
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()] ??= {}
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['target']()] ??= {}
-                    tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['target']()][temp[it]['formula']()] ??= v(temp[it]['value']())
+                    tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['target']()][temp[it]['formula']()] ??= v(value)
                 }
 
                 if(temp[it]['type']()=='resource'){
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()] ??= {}
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['resource']()] ??= {}
-                    tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(temp[it]['value']())
+                    tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(value)
                 }
 
                 if(temp[it]['type']()=='citizens'){
@@ -250,10 +252,10 @@ function getTmpValue(){
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()] ??= {}
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['formula']()] ??= {}
                     if(temp[it]['side']()=='effect'){
-                        tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['formula']()]['effect'] ??= v(temp[it]['value']())
+                        tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['formula']()]['effect'] ??= v(value)
                     }
                     if(temp[it]['side']()=='gain' || temp[it]['side']()=='capped'){
-                        tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['formula']()][temp[it]['resource']()] ??= v(temp[it]['value']())
+                        tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['formula']()][temp[it]['resource']()] ??= v(value)
                     }
                 }
 

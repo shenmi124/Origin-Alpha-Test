@@ -25,6 +25,7 @@ function resourceTooltipDisplay(effect){
 	let value = effect.value
 	let totalValue = effect.totalValue
 	let tooltipOperator = effect.tooltipOperator
+	let tooltipType = effect.tooltipType
 
 	if(value.eq(0)){return ''}
 
@@ -72,6 +73,16 @@ function resourceTooltipDisplay(effect){
 	name += ': '+tmp[type][side][target]['name']
 	if(id==target){
 		name = '初始数值'
+		if(tooltipType=='gain'){
+			if(RESOURCE['main'][id]['gainTooltip']!==undefined){
+				name = RESOURCE['main'][id]['gainTooltip']()
+			}
+		}
+		if(tooltipType=='capped'){
+			if(RESOURCE['main'][id]['cappedTooltip']!==undefined){
+				name = RESOURCE['main'][id]['cappedTooltip']()
+			}
+		}
 	}
 
 	let amountDisplay = ` <mul>×</mul> `+formatWhole(amount)
@@ -144,7 +155,7 @@ function gainTooltipDisplay(effect){
 	}
 	if(n(base).neq(0)){
 		return effectText({
-			name: getResourceColorText(i), 
+			name: getResourceText(i), 
 			firstDisplay: getOperator(operator),
 			lastDisplay: display,
 			value: n(base).abs(),
@@ -165,11 +176,15 @@ function adjustmentTooltipDisplay(id, i, type, side, multiplication='true'){
 	let Class = temp['Class'] ?? null
 
 	let lastEffectDisplay = ''
-	if(temp['side'][0]=='gain'){
+	if(temp['side'][0]=='gain' || temp['side'][0]=='capped'){
 		lastEffectDisplay += getResourceColorText(temp['side'][1])
 
 		if(temp['side'][2]=='add'){
-			lastEffectDisplay += '获取'
+			if(temp['side'][0]=='gain'){
+				lastEffectDisplay += '获取每秒'
+			}else{
+				lastEffectDisplay += '储存'
+			}
 		}
 		if(temp['side'][2]=='sub'){
 			lastEffectDisplay += '消耗'
@@ -250,11 +265,13 @@ function tooltip(id,id2){
 		let gain = ''
 		let time = ''
 		let totalGainValue = n(0)
+		let gainValue = true
 		if(RESOURCE['main'][id]['gain']!==undefined){
 			for(let i in tooltipOperator){
 				for(let target in tmpEffect.resource.main[id].gain?.[tooltipOperator[i]]){
 					let effect = tmpEffect.resource.main[id].gain[tooltipOperator[i]][target]
 					totalGainValue = setOperator(totalGainValue, tooltipOperator[i], effect['value'])
+					if(totalGainValue.neq(0)){gainValue = false}
 					gain += resourceTooltipDisplay({
 						id: id,
 						realValue: getResourceGain(id),
@@ -265,12 +282,13 @@ function tooltip(id,id2){
 						base: effect['base'],
 						value: effect['value'],
 						totalValue: totalGainValue,
-						tooltipOperator: tooltipOperator[i]
+						tooltipOperator: tooltipOperator[i],
+						tooltipType: 'gain',
 					})
 				}
 			}
 			gain = "<hr><a style='font-size: 14px'>资源生产</a>" + gain
-			if(totalGainValue.eq(0)){
+			if(gainValue){
 				gain = ''
 			}
 			if(RESOURCE['main'][id]['capped']!==undefined){
@@ -292,11 +310,13 @@ function tooltip(id,id2){
 
 		let capped = ''
 		let totalCappedValue = n(0)
+		let cappedValue = true
 		if(RESOURCE['main'][id]['capped']!==undefined){
 			for(let i in tooltipOperator){
 				for(let target in tmpEffect.resource.main[id].capped?.[tooltipOperator[i]]){
 					let effect = tmpEffect.resource.main[id].capped[tooltipOperator[i]][target]
 					totalCappedValue = setOperator(totalCappedValue, tooltipOperator[i], effect['value'])
+					if(totalCappedValue.neq(0)){cappedValue = false}
 					capped += resourceTooltipDisplay({
 						id: id,
 						realValue: getResourceCapped(id),
@@ -307,12 +327,13 @@ function tooltip(id,id2){
 						base: effect['base'],
 						value: effect['value'],
 						totalValue: totalCappedValue,
-						tooltipOperator: tooltipOperator[i]
+						tooltipOperator: tooltipOperator[i],
+						tooltipType: 'capped',
 					})
 				}
 			}
 			capped = "<hr><a style='font-size: 14px'>资源储存</a>" + capped
-			if(totalCappedValue.eq(0)){
+			if(cappedValue){
 				capped = ''
 			}
 		}
@@ -352,9 +373,12 @@ function tooltip(id,id2){
 			}
 			action = action.add(n(base).mul(getEfficient('action')))
 		}
-		let time = '<hr><left>'+format(player['action'][id+'Cooldown'])+' / '+format(getActionCooldown(id))+' | '+format(n(player['action'][id+'Cooldown']).div(getActionCooldown(id)).mul(100))+'% | '+format(n(getActionCooldown(id)).div(action))+'s | (+'+format(getActionAuto(id))+'/s)</left>'
+		let time = '<hr><left>'+format(player['action'][id+'Cooldown'])+' / '+format(getActionCooldown(id))+' | '+format(n(player['action'][id+'Cooldown']).div(getActionCooldown(id)).mul(100))+'% | '+format(n(getActionCooldown(id)).div(action))+'s | (+'+format(action)+'/s)</left>'
 		if(isNaN(n(getActionCooldown(id)).div(action))){
 			time = '<hr><left>'+format(player['action'][id+'Cooldown'])+' / '+format(getActionCooldown(id))+'</left>'
+		}
+		if(!ForecastActionTime){
+			time = ''
 		}
 		if(MAIN['action'][id]['tooltip']!=undefined){
 			return getTooltipID(name+'<hr><small>'+MAIN['action'][id]['tooltip']()+time)
@@ -376,9 +400,12 @@ function tooltip(id,id2){
 			}
 			craft = craft.add(n(base).mul(getEfficient('action')))
 		}
-		let time = '<hr><left>'+format(player['craft'][id+'Cooldown'])+' / '+format(getCraftCooldown(id))+' | '+format(n(player['craft'][id+'Cooldown']).div(getCraftCooldown(id)).mul(100))+'% | '+format(n(getCraftCooldown(id)).div(craft))+'s</left>'
+		let time = '<hr><left>'+format(player['craft'][id+'Cooldown'])+' / '+format(getCraftCooldown(id))+' | '+format(n(player['craft'][id+'Cooldown']).div(getCraftCooldown(id)).mul(100))+'% | '+format(n(getCraftCooldown(id)).div(craft))+'s | (+'+format(craft)+'/s)</left>'
 		if(isNaN(n(getCraftCooldown(id)).div(craft))){
 			time = '<hr><left>'+format(player['craft'][id+'Cooldown'])+' / '+format(getCraftCooldown(id))+'</left>'
+		}
+		if(!ForecastActionTime){
+			time = ''
 		}
 		if(MAIN['craft'][id]['tooltip']!=undefined){
 			return getTooltipID(name+'<hr><small>'+MAIN['craft'][id]['tooltip']()+time)
@@ -648,9 +675,9 @@ function tooltip(id,id2){
 		}
 
 		let unlocked = ''
-		if(CIVICS['workshop'][id]['effect']?.['unlocked']!==undefined){
-			for(let i in CIVICS['workshop'][id]['effect']['unlocked']){
-				unlocked += `<left><green>+</green> `+CIVICS['workshop'][id]['effect']['unlocked'][i]()+`</left>`
+		if(CIVICS['workshop'][id]['unlockedDisplay']!==undefined){
+			for(let i in CIVICS['workshop'][id]['unlockedDisplay']){
+				unlocked += `<left><green>+</green> `+CIVICS['workshop'][id]['unlockedDisplay'][i]+`</left>`
 			}
 			if(unlocked!==''){
 				unlocked = `<hr><a style='font-size: 14px'>解锁</a>` + unlocked

@@ -24,7 +24,7 @@ var TABBUTTON = {
                 unlocked(){return player.setting.network}
             },
         },
-        unlocked(){return player.game.stage.gte(4)}
+        unlocked(){return getResourceUnlocked('citizens')}
     },
     setting: {
         name(){return "其他"},
@@ -32,14 +32,18 @@ var TABBUTTON = {
             setting: {
                 name(){return "设置"},
             },
+            tips: {
+                name(){return "记录"},
+            },
             stats: {
                 name(){return "统计"},
-            },
-            donate: {
-                name(){return "捐助"},
+                unlocked(){return false}
             },
             information: {
                 name(){return "信息"},
+            },
+            donate: {
+                name(){return "捐助"},
             },
         }
     },
@@ -77,7 +81,7 @@ var MainActionData = {
         id(){return 'building'},
     },
     craft: {
-        name(){return '探索'},
+        name(){return '行为'},
         id(){return 'craft'},
     },
 }

@@ -164,7 +164,7 @@ function effectText(effect){
             </span></left>`
 }
 
-function costText(name,res,cost,type){
+function costText(name, res, cost, type){
     let time = ''
     if(player['resource'][res].lt(cost)){
         if((n(getResourceGain(res)).gt(0)) && (n(getResourceCapped(res)).gte(cost) || getResourceCapped(res)==null)){
@@ -215,10 +215,16 @@ function getResourceColorText(id){
 			}
 		}
 	}
-	if(id=='none'){
-		return ['#888',"<a style='color: #888'>未知</a>",'rgba(136, 136, 136, 0.5)']
-	}
 	return "<a style='color:"+color+"' class='"+Class+"'>"+Text+"</a>"
+}
+
+function getResourceText(id){
+    if(RESOURCE['main'][id]['unlocked']!==undefined){
+        if(!RESOURCE['main'][id]['unlocked']()){
+            return '<gery>???</gery>'
+        }
+    }
+	return getResourceColorText(id)
 }
 
 function colorText(id){
@@ -243,4 +249,8 @@ function colorText(id){
 	}
 	let color2 = tinycolor(color).setAlpha(.5);
 	return [color,"<a style='color:"+color+"' class='"+Class+"'>"+Text+"</a>",color2]
+}
+
+function getCraftName(id){
+    return MAIN['craft'][id]['name']()
 }

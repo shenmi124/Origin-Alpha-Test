@@ -33,7 +33,11 @@ function getBr(){
 			}
 			if(unlocked){
 				br += 1
-				getByID(MainActionData[maini]['id']()+"TextID",(u ? '<br><br>' : '')+MainActionData[maini]['name']()+'<br>')
+			}
+			if(br>=0){
+				getByID(MainActionData[maini]['id']()+"TextID", (u ? '<br><br>' : '')+MainActionData[maini]['name']()+'<br>')
+			}else{
+				getByID(MainActionData[maini]['id']()+"TextID", '')
 			}
 			if(br%MID===0 && br!==0){
 				document.getElementById(i+maini+'BrID').style.display = ''
@@ -109,6 +113,7 @@ function dataDiff(){
 			if(!getActionCanClick(i)){
 				actionSpeed = n(0)
 				player['action'][i+'Cooldown'] = n(0)
+				player['action'][i+'Click'] = false
 			}
 
 			player['action'][i+'Cooldown'] = player['action'][i+'Cooldown'].add(n(actionSpeed).mul(DIFF)).min(n(getActionCooldown(i)).mul(20))
@@ -123,6 +128,7 @@ function dataDiff(){
 					player['action'][i+'Cooldown'] = n(0)
 				}
 				player['action'][i+'Click'] = false
+				MAIN['action'][i]['afterClick']?.()
 			}
 
 			if((hasActionClick(i) || !getActionCanClick(i)) && !getActionCoerciveClick(i)){
@@ -161,6 +167,7 @@ function dataDiff(){
 			if(!getCraftCanClick(i)){
 				actionSpeed = n(0)
 				player['craft'][i+'Cooldown'] = n(0)
+				player['craft'][i+'Click'] = false
 			}
 
 			player['craft'][i+'Cooldown'] = player['craft'][i+'Cooldown'].add(n(actionSpeed).mul(DIFF)).min(n(getCraftCooldown(i)).mul(20))
@@ -176,6 +183,7 @@ function dataDiff(){
 					player['craft'][i+'Cooldown'] = n(0)
 				}
 				player['craft'][i+'Click'] = false
+				MAIN['craft'][i]['afterClick']?.()
 			}
 
 			if((hasCraftClick(i) || !getCraftCanClick(i)) && !getCraftCoerciveClick(i)){
