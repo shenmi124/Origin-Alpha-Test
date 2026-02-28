@@ -155,7 +155,7 @@ var ResourceMain = {
     paper: {
         name(){return "纸"},
         tooltip(){return '制造资源<br>你一共有'+format(getCraftEfficient())+'锻造资源获取倍率'},
-        color(){return 'gery'},
+        color(){return '#000'},
         gain(){return n(0)},
         unlocked(){return getResourceUnlocked('paper')},
     },

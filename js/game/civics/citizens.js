@@ -232,7 +232,7 @@ var CivicsCitizens = {
             {
                 type(){return 'gain'},
                 formula(){return 'add'},
-                resource(){return 'paper'},
+                resource(){return 'manuscript'},
                 value(){return n(getCraftGain('crafManuscript')).mul(0.5).mul(getEfficient('happiness'))},
             }
         ],

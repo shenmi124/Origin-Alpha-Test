@@ -252,9 +252,9 @@ let MainCraft = {
         coerciveClick(){return this.canCraft()},
         canClick(){return this.canCraft()},
         tooltip(){
-            let gain = '<hr>'+format(this.cost())+getResourceText([this.resource()[0]], true)+' -> '+format(this.gain())+getResourceText([this.resource()[1]], true)
+            let gain = '<hr>'+format(this.cost())+getResourceText(this.resource()[0], true)+' -> '+format(this.gain())+getResourceText(this.resource()[1], true)
             if(player.craft.craftLeatherClick){
-                gain += '<br><grey>'+format(this.costSecond())+getResourceText([this.resource()[0]], true)+'/s -> '+format(this.gainSecond())+getResourceText([this.resource()[1]], true)+'/s</grey>'
+                gain += '<br><grey>'+format(this.costSecond())+getResourceText(this.resource()[0], true)+'/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
             }
             return '将毛皮加工成皮革'+gain+getCollectDisplay()
         },
@@ -300,9 +300,9 @@ let MainCraft = {
         coerciveClick(){return this.canCraft()},
         canClick(){return this.canCraft()},
         tooltip(){
-            let gain = '<hr>'+format(this.cost())+getResourceText([this.resource()[0]], true)+' -> '+format(this.gain())+getResourceText([this.resource()[1]], true)
+            let gain = '<hr>'+format(this.cost())+getResourceText(this.resource()[0], true)+' -> '+format(this.gain())+getResourceText(this.resource()[1], true)
             if(player.craft.craftPaperClick){
-                gain += '<br><grey>'+format(this.costSecond())+getResourceText([this.resource()[0]], true)+'/s -> '+format(this.gainSecond())+getResourceText([this.resource()[1]], true)+'/s</grey>'
+                gain += '<br><grey>'+format(this.costSecond())+getResourceText(this.resource()[0], true)+'/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
             }
             return '将皮革加工成纸'+gain+getCollectDisplay()
         },
@@ -358,9 +358,9 @@ let MainCraft = {
         coerciveClick(){return this.canCraft()},
         canClick(){return this.canCraft()},
         tooltip(){
-            let gain = '<hr>'+format(this.cost()[0])+getResourceText([this.resource()[0][0]], true)+'+'+format(this.cost()[1])+getResourceText([this.resource()[0][1]], true)+' -> '+format(this.gain())+getResourceText([this.resource()[1]], true)
+            let gain = '<hr>'+format(this.cost()[0])+getResourceText(this.resource()[0][0], true)+'+'+format(this.cost()[1])+getResourceText(this.resource()[0][1], true)+' -> '+format(this.gain())+getResourceText([this.resource()[1]], true)
             if(player.craft.crafManuscriptClick){
-                gain += '<br><grey>('+format(this.costSecond()[0])+getResourceText([this.resource()[0][0]], true)+'+'+format(this.costSecond()[1])+getResourceText([this.resource()[0]], true)+')/s -> '+format(this.gainSecond())+getResourceText([this.resource()[0][1]], true)+'/s</grey>'
+                gain += '<br><grey>('+format(this.costSecond()[0])+getResourceText(this.resource()[0][0], true)+'+'+format(this.costSecond()[1])+getResourceText(this.resource()[0][1], true)+')/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
             }
             return '将纸和知识加工成手稿'+gain+getCollectDisplay()
         },
