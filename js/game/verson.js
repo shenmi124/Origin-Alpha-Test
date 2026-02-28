@@ -1,4 +1,4 @@
-var VERSION = '0.1.0α'
+var VERSION = '0.2.0α'
 var VERSIONTIMES = n(1)
 
 function loadVersion(){

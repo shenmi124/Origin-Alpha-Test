@@ -72,7 +72,7 @@ function componentBuilding(id){
 }
 
 function componentCitizens(id){		
-    getByID(id+'LoadCitizensNameID', `<tooltip `+loadTooltip(id,'LoadTooltipCitizens',null)+`><div id="`+id+`CitizensNameID" style="display: inline-grid; width: 120px">`+CIVICS['citizens'][id]['name']()+`</div></tooltip>`)
+    getByID(id+'LoadCitizensNameID', `<tooltip `+loadTooltip(id,'LoadTooltipCitizens',null)+`><div id="`+id+`CitizensNameID" style="display: inline-grid; width: 120px; color: `+CIVICS['citizens'][id]['color']?.()+`">`+CIVICS['citizens'][id]['name']()+`</div></tooltip>`)
     let allocated = formatWhole(player['citizens'][id])
     let allocatedMax = n(Infinity)
     for(let i in CIVICS['citizens'][id]['allocated']){

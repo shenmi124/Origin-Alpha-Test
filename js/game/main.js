@@ -3,8 +3,12 @@ var TABBUTTON = {
         name(){return "主页"},
         subtab: {
             action: {
-                name(){return "行动"},
-                unlocked(){return false}
+                name(){return "主要"},
+                unlocked(){return true}
+            },
+            building: {
+                name(){return "建筑"},
+                unlocked(){return player.workshop.builderWorkshop}
             },
         }
     },
@@ -16,7 +20,7 @@ var TABBUTTON = {
                 unlocked(){return true}
             },
             workshop: {
-                name(){return "开发"},
+                name(){return "研究"},
                 unlocked(){return true}
             },
             network: {
@@ -57,6 +61,7 @@ var MAIN = {
     action: MainAction,
     building: MainBuilding,
     craft: MainCraft,
+    largeBuilding: MainLargeBuilding,
 }
 
 var CIVICS = {
@@ -68,7 +73,7 @@ var CIVICS = {
 var GAME = {
     RESOURCE,
     MAIN,
-    CIVICS
+    CIVICS,
 }
 
 var MainActionData = {

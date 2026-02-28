@@ -6,12 +6,18 @@ var MainAction = {
             addLog('头痛欲裂,我好像缺失了一些记忆')
             addLog('我想我应该先探索一下我所处的环境')
         },
-        tooltip(){return '我在哪...<hr>- 帮助1 -<br>点击进行行动<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'},
+        tooltip(){return '我在哪...<hr>- 帮助 -<br>点击进行行动<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'},
         unlocked(){return !player.stage.wakeUp},
         cooldown(){return n(2)},
     },
     explore: {
         name(){return '探索'},
+        max(){
+            if(player.workshop.mapWorkshop){
+                return n(6)
+            }
+            return n(5)
+        },
         onClick(){
             if(player.stage.explore.eq(0)){
                 addLog('意识逐渐清醒,随之而来的是强烈的饥饿')
@@ -19,21 +25,21 @@ var MainAction = {
                 addLog('四周未见活物,但好在我看见了有不少的浆果可以采集')
             }
             if(player.stage.explore.eq(1)){
-                gainResource('food', n(-10))
+                gainResource('food', n(-1))
 
                 addLog('我用浆果解决了我的饥饿感')
                 addLog('老实说我也不确定这些浆果是否有毒,不过当下的条件我也想不了那么多了,起码我现在没事,不是吗?')
                 addLog('饱腹之后,我想我应该去采集一些其他资源')
             }
             if(player.stage.explore.eq(2)){
-                gainResource('food', n(-20))
+                gainResource('food', n(-2))
 
                 addLog('很可惜,这次的探索并没有带来什么有价值的东西')
                 addLog('看来附近已经没有什么新鲜的东西了,我可能需要探索到更远的地方')
                 addLog('在此之前我可以先在此处安定下来并想一下我下一步的行动')
             }
             if(player.stage.explore.eq(3)){
-                gainResource('food', n(-60))
+                gainResource('food', n(-20))
 
                 addLog('我看见了一些“人”,他们徘徊,游荡,看似毫无目的,貌似是这里的“原住民”')
                 addLog('无论如何我需要人们去帮助我,如果我提供充足的食物与住所也许他们会追随我')
@@ -47,13 +53,13 @@ var MainAction = {
         tooltip(){
             let hint = ''
             if(player.stage.explore.eq(0)){
-                hint = '<hr>- 帮助2 -<br>日志记录了一些事件<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
+                hint = '<hr>- 帮助 -<br>日志记录了一些事件<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
             }
             if(player.stage.explore.eq(1)){
-                hint = '<hr>- 帮助3 -<br>你可以选择一项你想要进行的行为,随后行为将自动进行<br>但注意你同时只能进行一项行为,多次点击可以切换你想要进行的行为(亦或是什么也不干)<br>保持足够的食物可以获得速度的加成,左上角的效率对其有更加详细说明<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
+                hint = '<hr>- 帮助 -<br>你可以选择一项你想要进行的行为,随后行为将自动进行<br>但注意你同时只能进行一项行为,多次点击可以切换你想要进行的行为(亦或是什么也不干)<br>保持足够的食物可以获得速度的加成,左上角的效率对其有更加详细说明<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
             }
             if(player.stage.explore.eq(2)){
-                hint = '<hr>- 帮助4 -<br>将鼠标移动到资源的名字上可以看见其详细的计算<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
+                hint = '<hr>- 帮助 -<br>将鼠标移动到资源的名字上可以看见其详细的计算<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'
             }
             if(player.stage.explore.eq(3)){
                 hint = ''
@@ -61,28 +67,31 @@ var MainAction = {
 
             let cost = ''
             if(player.stage.explore.eq(1)){
-                cost = '<br>'+format(player.resource.food)+' / 10 '+getResourceColorText('food')
+                cost = '<br>'+format(player.resource.food)+' / 1 '+getResourceColorText('food')
             }
             if(player.stage.explore.eq(2)){
-                cost = '<br>'+format(player.resource.food)+' / 20 '+getResourceColorText('food')
+                cost = '<br>'+format(player.resource.food)+' / 2 '+getResourceColorText('food')
             }
             if(player.stage.explore.eq(3)){
-                cost = '<br>'+format(player.resource.food)+' / 60 '+getResourceColorText('food')
+                cost = '<br>'+format(player.resource.food)+' / 20 '+getResourceColorText('food')
             }
 
-            let explore = '( '+formatWhole(player.stage.explore.add(1))+' / 5 )'
+            let explore = '( '+formatWhole(player.stage.explore.add(1))+' / '+formatWhole(this.max())+' )'
             let display = player.stage.explore.eq(4) ? '暂时不需要探索了<br>' : '周边还有不少可以探索的东西<br>'
+            if(player.workshop.mapWorkshop){
+                display = '已达残局<br>'
+            }
             return display+explore+cost+hint
         },
         canClick(){
             if(player.stage.explore.eq(1)){
-                return player.resource.food.gte(10)
+                return player.resource.food.gte(1)
             }
             if(player.stage.explore.eq(2)){
-                return player.resource.food.gte(20)
+                return player.resource.food.gte(2)
             }
             if(player.stage.explore.eq(3)){
-                return player.resource.food.gte(60)
+                return player.resource.food.gte(20)
             }
             if(player.stage.explore.eq(4)){
                 return false
@@ -92,10 +101,20 @@ var MainAction = {
         unlocked(){return player.stage.wakeUp},
         cooldown(){return n(2).mul(player.stage.explore.pow(2).add(1))},
     },
+    hunting: {
+        name(){return '打猎'},
+        onClick(){
+            useHunting()
+        },
+        tooltip(){return '消耗全部'+getResourceColorText('power')+'进行打猎,'+getResourceColorText('power')+'越高带回来的东西就越好'},
+        unlocked(){return player.workshop.hunterWorkshop},
+        canClick(){return player.resource.power.gt(0)},
+        cooldown(){return n(1)},
+    },
 
     ideaOfPlant: {
         name(){return '种植的想法'},
-        tooltip(){return format(player.resource.idea)+' / 2 '+getResourceColorText('idea')+'<hr>思考如何种植<hr>允许购买建筑: 农田'},
+        tooltip(){return format(player.resource.idea)+' / 2 '+getResourceColorText('idea')+'<hr>思考如何种植<hr>解锁建筑: 农田'},
         onClick(){
             gainResource('idea', n(-2))
             player.action.ideaOfPlant.study = true
@@ -110,9 +129,9 @@ var MainAction = {
     },
     ideaOfCabin: {
         name(){return '居住的想法'},
-        tooltip(){return format(player.resource.idea)+' / 10 '+getResourceColorText('idea')+'<hr>建造小屋提供住所<hr>允许购买建筑: 小屋'},
+        tooltip(){return format(player.resource.idea)+' / 5 '+getResourceColorText('idea')+'<hr>建造小屋提供住所<hr>解锁建筑: 小屋'},
         onClick(){
-            gainResource('idea', n(-10))
+            gainResource('idea', n(-5))
             player.action.ideaOfCabin.study = true
             addLog('<darkblue>已学习: 居住的想法</darkblue>')
         },
@@ -120,7 +139,7 @@ var MainAction = {
             study(){return false}
         },
         unlocked(){return !player.action.ideaOfCabin.study && player.stage.explore.gte(4)},
-        canClick(){return player.resource.idea.gte(10)},
+        canClick(){return player.resource.idea.gte(5)},
         cooldown(){return n(10)},
     },
     ideaOfTool: {
@@ -138,7 +157,37 @@ var MainAction = {
         canClick(){return player.resource.idea.gte(20)},
         cooldown(){return n(20)},
     },
+    ideaOfProfessionalization: {
+        name(){return '专业化的想法'},
+        tooltip(){return format(player.resource.idea)+' / 500 '+getResourceColorText('idea')+'<hr>为一些多余的人口进行专职化训练<hr>在工坊中解锁有关更多职业的研究'},
+        onClick(){
+            gainResource('idea', n(-500))
+            player.action.ideaOfProfessionalization.study = true
+            addLog('<darkblue>已学习: 专业化的想法</darkblue>')
+        },
+        data: {
+            study(){return false}
+        },
+        unlocked(){return !player.action.ideaOfProfessionalization.study && player.workshop.marketWorkshop},
+        canClick(){return player.resource.idea.gte(500)},
+        cooldown(){return n(60)},
+    },
     /*
+    ideaOfLanguage: {
+        name(){return '语言的想法'},
+        tooltip(){return format(player.resource.idea)+' / 500 '+getResourceColorText('idea')+'<hr><grey><i>“「语言作为最重要的工具,主要不是一种用于表达思想的方式,而是扮演着更为实际的角色,那就是行为控制」——《技术史》”</i></grey><hr>效率+3%<br>在工坊中解锁有关文字的研究'},
+        onClick(){
+            gainResource('idea', n(-500))
+            player.action.ideaOfLanguage.study = true
+            addLog('<darkblue>已学习: 语言的想法</darkblue>')
+        },
+        data: {
+            study(){return false}
+        },
+        unlocked(){return !player.action.ideaOfLanguage.study && player.workshop.marketWorkshop},
+        canClick(){return player.resource.idea.gte(500)},
+        cooldown(){return n(40)},
+    },
     ideaOfTime: {
         name(){return '时间的想法'},
         tooltip(){return format(player.resource.idea)+' / 200 '+getResourceColorText('idea')+'<hr>设法观测时间<hr>在日志下方记录游戏时'},

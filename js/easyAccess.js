@@ -218,7 +218,10 @@ function getResourceColorText(id){
 	return "<a style='color:"+color+"' class='"+Class+"'>"+Text+"</a>"
 }
 
-function getResourceText(id){
+function getResourceText(id, find=false){
+    if(find){
+        return getResourceColorText(id)
+    }
     if(RESOURCE['main'][id]['unlocked']!==undefined){
         if(!RESOURCE['main'][id]['unlocked']()){
             return '<gery>???</gery>'

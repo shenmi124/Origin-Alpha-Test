@@ -101,6 +101,13 @@ function loadBase(){
 		getByID(i+'LoadBuilding',`<br id="`+i+`buildingBrID"><a id="`+i+`LoadBuildingID" style="display: inline-flex; padding-right: 8px"></a>`)
 		componentBuilding(i)
 	}
+	
+	let largeBuildingStr = '大型建筑'
+	getByID('buildingSubtab', '<a id="LargeBuildingLoadID"></a>')
+	for(let i in MAIN['largeBuilding']){
+		largeBuildingStr += '<a style="transition-duration: 1s;" id='+i+'LoadBuilding></a>'
+	}
+	getByID('LargeBuildingLoadID', largeBuildingStr)
 
 	let citizensStr = ''
 	citizensStr += `居民 <a id="CitizensTip" style="color: grey"></a><br>`
@@ -123,7 +130,7 @@ function loadBase(){
 	getByID('CitizensTip', CitizensTip())
 	
 	let workshopStr = ''
-	workshopStr += `工坊<input id="workshopInput" type="checkbox" onclick="switchWorkshopBought()"><br>`
+	workshopStr += `工坊<input title="查看已购买的升级" id="workshopInput" type="checkbox" onclick="switchWorkshopBought()"><br>`
 	for(let i in CIVICS['workshop']){
 		workshopStr += '<a style="transition-duration: 1s;" id='+i+'LoadWorkshop></a>'
 	}

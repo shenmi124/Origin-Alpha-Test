@@ -1,4 +1,4 @@
-function citizensAllocate(type,allocate){
+function citizensAllocate(type, allocate){
     let canAllocate = true
     for(let i in CIVICS['citizens'][type]['allocated']){
         if(n(getUnemployedJobs(i)).sub(n(CIVICS['citizens'][type]['allocated'][i]()).mul(allocate)).lt(0)){
@@ -11,10 +11,10 @@ function citizensAllocate(type,allocate){
             CIVICS['citizens'][type]['active']()
         }
     }else{
-        addLog('*无人任职','#888')
+        addLog('*无人任职', '#888')
     }
     CitizensFix()
-    intervalID()
+    CheckCitizensAllocation(type)
 }
 
 function getUnemployedJobs(job){

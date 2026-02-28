@@ -127,6 +127,9 @@ function Build(id){
 }
 
 function getBuildCost(building, res){
+    if(n(MAIN['building'][building]['cost'][res]()).eq(0)){
+        return n(0)
+    }
     let base = n(MAIN['building'][building]['cost'][res]()).add(1).mul(player['building'][building].mul(0.1).add(1)).pow(player['building'][building].mul(MAIN['building'][building]['costPower']()).add(1)).sub(1)
     return base
 }

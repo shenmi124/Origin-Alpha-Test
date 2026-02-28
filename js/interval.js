@@ -78,6 +78,8 @@ function getBr(){
 }
 
 function systemDiff(){
+	getEfficientValue()
+
 	for(let i in efficient){
 		let color = ''
 		if(n(getEfficient(i)).lt(1)){
@@ -331,11 +333,7 @@ function intervalID(){
 		if(CIVICS['citizens'][i]['unlocked']!==undefined){
 			unlocked = CIVICS['citizens'][i]['unlocked']()
 		}
-		for(let res in tmp.civics.citizens[i].effect?.gain){
-			if(Object.keys(tmp.civics.citizens[i].effect.gain[res])[0]=='sub'){
-				CheckCitizensAllocation(i, res)
-			}
-		}
+		CheckCitizensAllocation(i)
 		unlockedLoad(i+'LoadCitizens', unlocked)
 	}
 
@@ -365,6 +363,10 @@ function intervalID(){
 			preliminary = true
 		}
 		unlockedLoad(i+'LoadWorkshop', unlocked && preliminary && bought)
+	}
+
+	for(let i in efficient){
+		efficientValue[i] = getEfficient(i)
 	}
 
 	getBr()

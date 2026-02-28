@@ -1,12 +1,12 @@
 var TOOLTIPSEL
 
-function loadTooltip(id,id2,onClick=`onclick='document.getElementById("tooltip").style.display="none"`,Class=``){
+function loadTooltip(id, id2, onClick=`onclick='document.getElementById("tooltip").style.display="none"`, Class=``){
 	return `class="`+Class+`" onmouseenter='mouseLoad("`+id+`","`+id2+`")' onmouseleave='document.getElementById("tooltip").style.display="none";window.clearInterval(TOOLTIPSEL);TOOLTIPSEL=undefined'`+onClick+`;window.clearInterval(TOOLTIPSEL);TOOLTIPSEL=undefined'`
 }
 
-function mouseLoad(id,id2){
+function mouseLoad(id, id2){
 	document.getElementById("tooltip").style.display = ''
-	tooltip(id,id2)
+	tooltip(id, id2)
 	if(TOOLTIPSEL==undefined){
 		TOOLTIPSEL = self.setInterval(function(){
 			tooltip(id, id2)
@@ -100,6 +100,7 @@ function resourceTooltipDisplay(effect){
 		total = '<red>'+formatA(totalValue)+'</red>'
 	}
 	if(n(formatScientific(realValue, 8)).eq(n(formatScientific(totalValue, 8)))){
+		totalValue = n(formatScientific(totalValue, 8))
 		total = '<u>'+formatA(totalValue)+'</u>'
 		if(negative){total = '<u><red>'+formatA(totalValue)+'</red></u>'}
 		if(totalValue.lt(0)){
@@ -248,7 +249,7 @@ function tooltip(id,id2){
 					lastDisplay: type,
 					lastEffectDisplay: name,
 					value: target['value'](),
-					amount: player['resource'][id],
+					amount: tmp.resource.main[id].amount,
 					Class: Class,
 				})
 			}
@@ -429,7 +430,9 @@ function tooltip(id,id2){
 		if(MAIN['building'][id]['cost']!==undefined){
 			for(let i in MAIN['building'][id]['cost']){
 				let res = getBuildCost(id, i)
-				cost += costText(getResourceColorText(i), i, res)
+				if(res.neq(0)){
+					cost += costText(getResourceColorText(i), i, res)
+				}
 			}
 		}
 		cost += '</left>'
@@ -553,7 +556,7 @@ function tooltip(id,id2){
 				})
 			}
 			if(capped!==''){
-				capped = `<hr><a style='font-size: 14px'>生产</a>` + capped
+				capped = `<hr><a style='font-size: 14px'>上限</a>` + capped
 			}
 		}
 
@@ -643,6 +646,19 @@ function tooltip(id,id2){
 								multiplication: false,
 								firstEffectDisplay: getOperator(operator)=='add' ? '进度' : '速度',
 								value: tmp.civics.workshop[id].effect[act].auto[ia][operator].getValue(),
+								amount: player['workshop'][id],
+							})
+						}
+					}else if(it=='cooldown'){
+						for(let ia in tmp.civics.workshop[id].effect?.[act].cooldown){
+							let operator = Object.keys(tmp.civics.workshop[id].effect[act].cooldown[ia])[0]
+							action += effectText({
+								name: MAIN[act][ia]['name'](),
+								firstDisplay: getOperator(operator),
+								lastDisplay: '',
+								multiplication: false,
+								firstEffectDisplay: '冷却',
+								value: tmp.civics.workshop[id].effect[act].cooldown[ia][operator].getValue(),
 								amount: player['workshop'][id],
 							})
 						}

@@ -77,7 +77,7 @@ function getTmpValue(){
     for(let i in RESOURCE['main']){
         if(RESOURCE['main'][i]['type']?.()!=='node'){
             tmp.resource.main[i] = {}
-            tmp.resource.main[i].amount = player.resource[i]
+            tmp.resource.main[i].amount = RESOURCE['main'][i]['count']?.() ?? player.resource[i]
             tmp.resource.main[i].name = RESOURCE['main'][i]['name']?.() ?? ''
 
             if(RESOURCE['main'][i]['gain']!==undefined){
@@ -170,7 +170,7 @@ function getTmpValue(){
     tmp.main.building = {}
     for(let i in MAIN['building']){
         tmp.main.building[i] = {}
-        tmp.main.building[i].amount = player.building[i+'Allocation'] ??= player.building[i]
+        tmp.main.building[i].amount = player.building[i+'Allocation'] ?? player.building[i]
         tmp.main.building[i].name = MAIN['building'][i]['name']?.() ?? ''
 
         if(MAIN['building'][i]['effect']!==undefined){
@@ -228,7 +228,7 @@ function getTmpValue(){
             for(let it in temp){
                 tmp.civics.citizens[i].effect[temp[it]['type']()] ??= {}
 
-                let value = n(temp[it]['value']()).mul(getEfficient('happiness'))
+                let value = n(temp[it]['value']())
 
                 if(temp[it]['type']()=='gain' || temp[it]['type']()=='capped'){
                     tmp.civics.citizens[i].effect[temp[it]['type']()][temp[it]['resource']()] ??= {}
@@ -375,12 +375,16 @@ function getTmpEffectValue(){
                     if(effect['gain']!==undefined){
                         for(let i in effect['gain']){
                             for(let operator in effect['gain'][i]){
-                                let value = effect['gain'][i][operator].getValue()
+                                let base = effect['gain'][i][operator].getValue()
                                 if(target==i){amount = n(1)}
+                                let value = base.mul(amount)
+                                if(operator=='mul' && amount.eq(0)){
+                                    value = n(1)
+                                }
                                 tmpEffect.resource.main[i] ??= {}
                                 tmpEffect.resource.main[i]['gain'] ??= {}
                                 tmpEffect.resource.main[i]['gain'][operator] ??= {}
-                                tmpEffect.resource.main[i]['gain'][operator][target] = {value: value.mul(amount), base: value, amount: amount, type: type, side: side, target: target}
+                                tmpEffect.resource.main[i]['gain'][operator][target] = {value: value, base: base, amount: amount, type: type, side: side, target: target}
                             }
                         }
                     }
@@ -388,12 +392,16 @@ function getTmpEffectValue(){
                     if(effect['capped']!==undefined){
                         for(let i in effect['capped']){
                             for(let operator in effect['capped'][i]){
-                                let value = effect['capped'][i][operator].getValue()
+                                let base = effect['capped'][i][operator].getValue()
                                 if(target==i){amount = n(1)}
+                                let value = base.mul(amount)
+                                if(operator=='mul' && amount.eq(0)){
+                                    value = n(1)
+                                }
                                 tmpEffect.resource.main[i] ??= {}
                                 tmpEffect.resource.main[i]['capped'] ??= {}
                                 tmpEffect.resource.main[i]['capped'][operator] ??= {}
-                                tmpEffect.resource.main[i]['capped'][operator][target] = {value: value.mul(amount), base: value, amount: amount, type: type, side: side, target: target}
+                                tmpEffect.resource.main[i]['capped'][operator][target] = {value: value, base: base, amount: amount, type: type, side: side, target: target}
                             }
                         }
                     }
@@ -402,24 +410,32 @@ function getTmpEffectValue(){
                         if(effect['action']['auto']!==undefined){
                             for(let i in effect['action']['auto']){
                                 for(let operator in effect['action']['auto'][i]){
-                                    let value = effect['action']['auto'][i][operator].getValue()
+                                    let base = effect['action']['auto'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
+                                    let value = base.mul(amount)
+                                    if(operator=='mul' && amount.eq(0)){
+                                        value = n(1)
+                                    }
                                     tmpEffect.main.action[i] ??= {}
                                     tmpEffect.main.action[i]['auto'] ??= {}
                                     tmpEffect.main.action[i]['auto'][operator] ??= {}
-                                    tmpEffect.main.action[i]['auto'][operator][target] = {value: value.mul(amount), base: value, amount: amount, type: type, side: side, target: target}
+                                    tmpEffect.main.action[i]['auto'][operator][target] = {value: value, base: base, amount: amount, type: type, side: side, target: target}
                                 }
                             }
                         }
                         if(effect['action']['cooldown']!==undefined){
                             for(let i in effect['action']['cooldown']){
                                 for(let operator in effect['action']['cooldown'][i]){
-                                    let value = effect['action']['cooldown'][i][operator].getValue()
+                                    let base = effect['action']['cooldown'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
+                                    let value = base.mul(amount)
+                                    if(operator=='mul' && amount.eq(0)){
+                                        value = n(1)
+                                    }
                                     tmpEffect.main.action[i] ??= {}
                                     tmpEffect.main.action[i]['cooldown'] ??= {}
                                     tmpEffect.main.action[i]['cooldown'][operator] ??= {}
-                                    tmpEffect.main.action[i]['cooldown'][operator][target] = {value: value.mul(amount), base: value, amount: amount, type: type, side: side, target: target}
+                                    tmpEffect.main.action[i]['cooldown'][operator][target] = {value: value, base: base, amount: amount, type: type, side: side, target: target}
                                 }
                             }
                         }
@@ -429,24 +445,32 @@ function getTmpEffectValue(){
                         if(effect['craft']['auto']!==undefined){
                             for(let i in effect['craft']['auto']){
                                 for(let operator in effect['craft']['auto'][i]){
-                                    let value = effect['craft']['auto'][i][operator].getValue()
+                                    let base = effect['craft']['auto'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
+                                    let value = base.mul(amount)
+                                    if(operator=='mul' && amount.eq(0)){
+                                        value = n(1)
+                                    }
                                     tmpEffect.main.craft[i] ??= {}
                                     tmpEffect.main.craft[i]['auto'] ??= {}
                                     tmpEffect.main.craft[i]['auto'][operator] ??= {}
-                                    tmpEffect.main.craft[i]['auto'][operator][target] = {value: value.mul(amount), base: value, amount: amount, type: type, side: side, target: target}
+                                    tmpEffect.main.craft[i]['auto'][operator][target] = {value: value, base: base, amount: amount, type: type, side: side, target: target}
                                 }
                             }
                         }
                         if(effect['craft']['cooldown']!==undefined){
                             for(let i in effect['craft']['cooldown']){
                                 for(let operator in effect['craft']['cooldown'][i]){
-                                    let value = effect['craft']['cooldown'][i][operator].getValue()
+                                    let base = effect['craft']['cooldown'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
+                                    let value = base.mul(amount)
+                                    if(operator=='mul' && amount.eq(0)){
+                                        value = n(1)
+                                    }
                                     tmpEffect.main.craft[i] ??= {}
                                     tmpEffect.main.craft[i]['cooldown'] ??= {}
                                     tmpEffect.main.craft[i]['cooldown'][operator] ??= {}
-                                    tmpEffect.main.craft[i]['cooldown'][operator][target] = {value: value.mul(amount), base: value, amount: amount, type: type, side: side, target: target}
+                                    tmpEffect.main.craft[i]['cooldown'][operator][target] = {value: value, base: base, amount: amount, type: type, side: side, target: target}
                                 }
                             }
                         }
