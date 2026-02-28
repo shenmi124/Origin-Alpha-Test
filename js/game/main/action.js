@@ -4,7 +4,7 @@ var MainAction = {
         onClick(){
             player.stage.wakeUp = true
             addLog('头痛欲裂,我好像缺失了一些记忆')
-            addLog('我想我应该先探索一下我所处的环境')
+            addLog('我应该先探索一下我所处的环境')
         },
         tooltip(){return '我在哪...<hr>- 帮助 -<br>点击进行行动<br><grey>你可以在右侧“其他-记录”中再次查看你所见过的帮助</grey>'},
         unlocked(){return !player.stage.wakeUp},
