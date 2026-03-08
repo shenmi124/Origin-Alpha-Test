@@ -50,6 +50,9 @@ function getNetwork(){
 
     for(let i in CIVICS['workshop']){
         let color = '#000'
+        if(CIVICS['workshop'][i]['preliminary']==undefined){
+            color = 'green'
+        }
         if(CIVICS['workshop'][i]['keep']!==undefined){
             if(CIVICS['workshop'][i]['keep']()){
                 color = 'rgb(186, 0, 192)'

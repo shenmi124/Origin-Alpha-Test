@@ -169,8 +169,8 @@ function formatA(decimal) {
 }
 
 function formatTime(s) {
-    if (s < 60) return formatScientific(s) + "秒"
-    else if (s < 3600) return formatWhole(Math.floor(s / 60)) + "分" + formatScientific(s % 60) + "秒"
+    if (s < 60) return formatScientific(s, 1) + "秒"
+    else if (s < 3600) return formatWhole(Math.floor(s / 60)) + "分" + formatScientific(s % 60, 1) + "秒"
     else if (s < 86400) return formatWhole(Math.floor(s / 3600)) + "小时" + formatScientific((s / 60) % 60) + "分"
     else if (s < 31536000) return formatWhole(Math.floor(s / 86400) % 365) + "天" + formatScientific((s / 3600) % 24) + "小时"
     else return formatWhole(Math.floor(s / 31536000)) + "年" + formatWhole(Math.floor(s / 86400) % 365) + "天"

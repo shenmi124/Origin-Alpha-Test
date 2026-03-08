@@ -26,6 +26,7 @@ let MainCraft = {
         name(){return '交谈'},
         onClick(){
             gainResource('citizens', n(1))
+            CitizensFix()
             if(!getCraftCoerciveClick('talk')){
                 player.game.collecting = null
             }
@@ -220,6 +221,9 @@ let MainCraft = {
         },
         cost(){
             let base = n(10)
+            if(player.workshop.vegetableTanningWorkshop){
+                base = base.div(2)
+            }
             return base
         },
         costSecond(){

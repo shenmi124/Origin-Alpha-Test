@@ -117,8 +117,8 @@ var CivicsWorkshop = {
         ],
         preliminary(){return ['marketWorkshop']},
     },
-    storehouseWorkshop: { //粮仓
-        name(){return '粮仓'},
+    storehouseWorkshop: { //仓库
+        name(){return '仓库'},
         cost: {
             wood(){return n(25)},
             stone(){return n(50)},
@@ -131,9 +131,39 @@ var CivicsWorkshop = {
             CitizensFix()
         },
         unlockedDisplay: [
-            '解锁建筑: 粮仓',
+            '解锁建筑: 仓库',
         ],
         preliminary(){return ['marketWorkshop']},
+    },
+    brickReinforcementWorkshop: { //砖材加固
+        name(){return '砖材加固'},
+        cost: {
+            brick(){return n(20)},
+        },
+        effect: [
+            {
+                type(){return 'adjustment'},
+                main(){return 'main'},
+                submain(){return 'building'},
+                target(){return 'storehouse'},
+                side(){return ['capped', 'wood', 'add']},
+                formula(){return 'add'},
+                value(){return n(15)},
+            },
+            {
+                type(){return 'adjustment'},
+                main(){return 'main'},
+                submain(){return 'building'},
+                target(){return 'storehouse'},
+                side(){return ['capped', 'stone', 'add']},
+                formula(){return 'add'},
+                value(){return n(15)},
+            },
+        ],
+        unlockedDisplay: [
+            '轻微降低仓库的价格增长',
+        ],
+        preliminary(){return ['storehouseWorkshop']}
     },
     processingWorkshop: { //材料加工
         name(){return '材料加工'},
@@ -215,7 +245,7 @@ var CivicsWorkshop = {
         name(){return '学者'},
         tooltip(){return '培养一些学者进行研究'},
         cost: {
-            idea(){return n(200)},
+            idea(){return n(100)},
             brick(){return n(5)},
             paper(){return n(2)}
         },
@@ -271,7 +301,7 @@ var CivicsWorkshop = {
         ],
         unlockedDisplay: [
             '解锁建筑: 木屋',
-            '提升冥想的思想获取',
+            '提升冥想的思想获取(<mul>×</mul>10)',
         ],
         onBuy(){
             player.building.logCabin = player.building.logCabin.add(1)
@@ -290,7 +320,7 @@ var CivicsWorkshop = {
         effect: [
         ],
         unlockedDisplay: [
-            '解锁建筑: 粮仓',
+            '解锁建筑: 货仓',
         ],
         onBuy(){
             player.building.warehouse = player.building.warehouse.add(1)
@@ -337,7 +367,99 @@ var CivicsWorkshop = {
         ],
         preliminary(){return ['processingWorkshop']},
     },
-    toolWorkshop: { //磨制工具
+    mathWorkshop: { //数学 保留
+        name(){return '数学'},
+        keep(){return true},
+        tooltip(){return '人类抽象思维和逻辑推理的工具'},
+        cost: {
+            knowledge(){return n(100)}
+        },
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'efficient'},
+                formula(){return 'add'},
+                name(){return '效率'},
+                display(){return ['+','%']},
+                value(){return n(0.5)},
+            }
+        ],
+        unlockedDisplay: [
+            '显示行动与行为基础耗时与实际耗时',
+        ],
+        preliminary(){return ['scholarWorkshop']},
+    },
+    sundialWorkshop: { //计时器 保留
+        name(){return '计时器'},
+        keep(){return true},
+        tooltip(){return '利用日晷等器具记录并获得准确时间'},
+        cost: {
+            knowledge(){return n(100)}
+        },
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'efficient'},
+                formula(){return 'add'},
+                name(){return '效率'},
+                display(){return ['+','%']},
+                value(){return n(0.5)},
+            }
+        ],
+        unlockedDisplay: [
+            '在日志下方显示游戏时',
+        ],
+        preliminary(){return ['scholarWorkshop']},
+    },
+    n1: { //语言 未添加
+        name(){return '语言'},
+        tooltip(){return '<grey><i>“「语言作为最重要的工具,主要不是一种用于表达思想的方式,而是扮演着更为实际的角色,那就是行为控制」——《技术史》”</i></grey><hr>注:此研究在此版本暂无效果所以暂时无法被购买'},
+        cost: {
+            knowledge(){return n(100)},
+            disableUnlocked(){return n(10)},
+        },
+        effect: [
+        ],
+        unlockedDisplay: [
+        ],
+        preliminary(){return ['scholarWorkshop']},
+    },
+    vegetableTanningWorkshop: { //植物鞣制法
+        name(){return '植物鞣制法'},
+        tooltip(){return '研究一种更好的皮革制法'},
+        cost: {
+            knowledge(){return n(10)}
+        },
+        effect: [
+        ],
+        unlockedDisplay: [
+            '降低制造皮革的消耗(<mul>÷</mul>2)',
+        ],
+        preliminary(){return ['scholarWorkshop']},
+    },
+    airDryWorkshop: { //风干
+        name(){return '风干'},
+        tooltip(){return '储存食物的好方法'},
+        cost: {
+            knowledge(){return n(20)}
+        },
+        effect: [
+            {
+                type(){return 'adjustment'},
+                main(){return 'main'},
+                submain(){return 'building'},
+                target(){return 'storehouse'},
+                side(){return ['capped', 'food', 'add']},
+                formula(){return 'add'},
+                value(){return n(25)},
+            },
+        ],
+        unlockedDisplay: [
+        ],
+        preliminary(){return ['scholarWorkshop']},
+    },
+
+    toolWorkshop: { //磨制工具 工坊1
         name(){return '磨制工具'},
         tooltip(){return '制造更专业的工具'},
         cost: {
@@ -377,9 +499,27 @@ var CivicsWorkshop = {
         preliminary(){return ['artisanWorkshop']},
         unlocked(){return player.building.workshop.gte(1)}
     },
-    mapWorkshop: { //地图
+    spearWorkshop: { //长矛 工坊2
+        name(){return '长矛'},
+        tooltip(){return '比棍棒更好用'},
+        cost: {
+            power(){return n(500)},
+            wood(){return n(120)},
+        },
+        effect: [
+            {
+                type(){return 'gain'},
+                resource(){return 'power'},
+                formula(){return 'mul'},
+                value(){return n(1.1)},
+            }
+        ],
+        preliminary(){return ['artisanWorkshop']},
+        unlocked(){return player.building.workshop.gte(2)}
+    },
+    mapWorkshop: { //地图 工坊3
         name(){return '地图'},
-        tooltip(){return '记录地形以便更广泛的探索'},
+        tooltip(){return '记录地形以便更广泛的探索,或许这次能找到金属'},
         cost: {
             paper(){return n(10)},
         },
@@ -397,9 +537,39 @@ var CivicsWorkshop = {
             '探索行动上限增加',
         ],
         preliminary(){return ['artisanWorkshop']},
-        unlocked(){return player.building.workshop.gte(2)}
+        unlocked(){return player.building.workshop.gte(3)}
     },
-    manuscriptWorkshop: { //手稿
+    bowWorkshop: { //复合弓 工坊4
+        name(){return '复合弓'},
+        tooltip(){return '学合成弓与复合弓的制作并传授给猎人,提升他们的能力'},
+        cost: {
+            power(){return n(3000)},
+            wood(){return n(200)},
+        },
+        effect: [
+            {
+                type(){return 'adjustment'},
+                main(){return 'civics'},
+                submain(){return 'citizens'},
+                target(){return 'hunter'},
+                side(){return ['gain', 'power', 'add']},
+                formula(){return 'addmul'},
+                value(){return n(0.1)},
+            },
+            {
+                type(){return 'adjustment'},
+                main(){return 'civics'},
+                submain(){return 'citizens'},
+                target(){return 'hunter'},
+                side(){return ['capped', 'power', 'add']},
+                formula(){return 'addmul'},
+                value(){return n(0.1)},
+            },
+        ],
+        preliminary(){return ['artisanWorkshop']},
+        unlocked(){return player.building.workshop.gte(4)}
+    },
+    manuscriptWorkshop: { //手稿 工坊5
         name(){return '手稿'},
         tooltip(){return '将研究记录下来'},
         cost: {
@@ -412,7 +582,7 @@ var CivicsWorkshop = {
             '解锁行为: 制造手稿',
         ],
         preliminary(){return ['artisanWorkshop']},
-        unlocked(){return player.building.workshop.gte(3)}
+        unlocked(){return player.building.workshop.gte(5)}
     },
 }
 

@@ -175,7 +175,7 @@ var MainAction = {
     /*
     ideaOfLanguage: {
         name(){return '语言的想法'},
-        tooltip(){return format(player.resource.idea)+' / 500 '+getResourceColorText('idea')+'<hr><grey><i>“「语言作为最重要的工具,主要不是一种用于表达思想的方式,而是扮演着更为实际的角色,那就是行为控制」——《技术史》”</i></grey><hr>效率+3%<br>在工坊中解锁有关文字的研究'},
+        tooltip(){return format(player.resource.idea)+' / 500 '+getResourceColorText('idea')+'<hr>效率+3%<br>在工坊中解锁有关文字的研究'},
         onClick(){
             gainResource('idea', n(-500))
             player.action.ideaOfLanguage.study = true
@@ -233,4 +233,6 @@ var MainAction = {
     },*/
 }
 
-var ForecastActionTime = false
+function forecastActionTime(){
+    return player.workshop.mathWorkshop
+}

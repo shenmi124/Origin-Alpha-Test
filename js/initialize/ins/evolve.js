@@ -1,67 +1,77 @@
-// Forked form https://github.com/pmotschmann/Evolve/blob/master/evolve/evolve.js
-const loopN = 80;   // Store 80 samples of jitter history (10-20 seconds)
-var loopInterval;   // Target fastLoop interval with millisecond precision
-var loopHist;       // Sliding window of recent timer skew history
-var loopIdx = 0;    // Next index in loopHist[]
-var loopSkew;       // Sum of all entries in loopHist[]
-var loopTargTs;     // Target time for next timer to fire
-var timerId;        // For clearing the timer
-var loopRun;        // Safety guarantee against race condition in timer clear (possibly unnecessary)
 
-self.addEventListener('message', function(e){
-    const data = e.data;
-    switch (data.loop) {
-        case 'start':
-            loopInterval = data.period;
-            loopHist = new Array(loopN).fill(0);
-            loopSkew = 0;
-            loopRun = true;
-            loopTargTs = performance.now() + loopInterval;
-            timerId = setTimeout(lowDriftTimer, loopInterval);
-            break;
-        case 'clear':
-            loopRun = false;
-            clearTimeout(timerId);
-            break;
-    };
-  }, false);
+function createTimerWorker(){
+    const code = `
+        // Forked form https://github.com/pmotschmann/Evolve/blob/master/evolve/evolve.js
+        const loopN = 80;   // Store 80 samples of jitter history (10-20 seconds)
+        var loopInterval;   // Target fastLoop interval with millisecond precision
+        var loopHist;       // Sliding window of recent timer skew history
+        var loopIdx = 0;    // Next index in loopHist[]
+        var loopSkew;       // Sum of all entries in loopHist[]
+        var loopTargTs;     // Target time for next timer to fire
+        var timerId;        // For clearing the timer
+        var loopRun;        // Safety guarantee against race condition in timer clear (possibly unnecessary)
 
-function lowDriftTimer(){
-    const ts = performance.now();
-    const jitter = ts - loopTargTs;
-    let periods = 1;
+        self.addEventListener('message', function(e){
+            const data = e.data;
+            switch (data.loop) {
+                case 'start':
+                    loopInterval = data.period;
+                    loopHist = new Array(loopN).fill(0);
+                    loopSkew = 0;
+                    loopRun = true;
+                    loopTargTs = performance.now() + loopInterval;
+                    timerId = setTimeout(lowDriftTimer, loopInterval);
+                    break;
+                case 'clear':
+                    loopRun = false;
+                    clearTimeout(timerId);
+                    break;
+            };
+        }, false);
 
-    if (jitter > loopInterval){
-        // High error mode: run multiple fastLoop calls at once
-        periods += Math.floor(jitter / loopInterval);
+        function lowDriftTimer(){
+            const ts = performance.now();
+            const jitter = ts - loopTargTs;
+            let periods = 1;
 
-        // Slowly discard skew history in case it's related to the cause of high skew
-        loopSkew -= loopHist[loopIdx];
-        loopHist[loopIdx] = 0;
+            if (jitter > loopInterval){
+                // High error mode: run multiple fastLoop calls at once
+                periods += Math.floor(jitter / loopInterval);
 
-        // Create new baseline timestamp due to high drift
-        loopTargTs = ts + loopInterval;
-    }
-    else {
-        // Accumulate skew history normally
-        loopSkew += jitter - loopHist[loopIdx];
-        loopHist[loopIdx] = jitter;
+                // Slowly discard skew history in case it's related to the cause of high skew
+                loopSkew -= loopHist[loopIdx];
+                loopHist[loopIdx] = 0;
 
-        // Use existing baseline timestamp
-        loopTargTs += loopInterval;
-    }
+                // Create new baseline timestamp due to high drift
+                loopTargTs = ts + loopInterval;
+            }
+            else {
+                // Accumulate skew history normally
+                loopSkew += jitter - loopHist[loopIdx];
+                loopHist[loopIdx] = jitter;
 
-    // Cancel out recent skew to center jitter near zero
-    const timeout = (loopTargTs - ts) - (loopSkew / loopN);
+                // Use existing baseline timestamp
+                loopTargTs += loopInterval;
+            }
 
-    // Paranoid: in case clearTimeout does not take effect before the event loop calls
-    // the scheduled timeout for lowDriftTimer, these timeouts will continue forever
-    if (loopRun){
-        timerId = setTimeout(lowDriftTimer, timeout);
-    }
+            // Cancel out recent skew to center jitter near zero
+            const timeout = (loopTargTs - ts) - (loopSkew / loopN);
 
-    // Not wrapped in if(loopRun): the game loop has separate pause state tracking
-    self.postMessage({ loop: 'main', periods: periods });
+            // Paranoid: in case clearTimeout does not take effect before the event loop calls
+            // the scheduled timeout for lowDriftTimer, these timeouts will continue forever
+            if (loopRun){
+                timerId = setTimeout(lowDriftTimer, timeout);
+            }
 
-    if (++loopIdx === loopN){ loopIdx = 0; }
+            // Not wrapped in if(loopRun): the game loop has separate pause state tracking
+            self.postMessage({ loop: 'main', periods: periods });
+
+            if (++loopIdx === loopN){ loopIdx = 0; }
+        }
+    `
+    const blob = new Blob([code], {type: 'application/javascript'});
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    URL.revokeObjectURL(url);
+    return worker;
 }

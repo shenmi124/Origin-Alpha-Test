@@ -110,7 +110,7 @@ function resourceTooltipDisplay(effect){
 	}
 
 	return `<left><span><span style="`+Class+`">
-		<div style="width: 160px; display: table-cell">`+operator+` `+name+`</div>
+		<div style="width: 169px; display: table-cell">`+operator+` `+name+`</div>
 		<div style="width: 160px; display: table-cell">`+operatorDisplay+format(base)+amountDisplay+`</div></span>`+total+`
 	</span></left>`
 }
@@ -345,12 +345,10 @@ function tooltip(id,id2){
 			num += "<hr><a style='font-size: 14px'>资源数量</a>"
 			numAmount = numAmount.add(RESOURCE['main'][id]['amount']())
 			let now = format(numAmount)
-			if(numAmount.eq(getResourceBaseNumber(id))){
-				now = '<u>'+format(numAmount)+'</u>'
-			}
+			now = '<u>'+format(numAmount)+'</u>'
 			if(numAmount.neq(0)){
 				num += `<left><span>
-					<div style="width: 160px; display: table-cell"><green>+</green></i> 基础</div>
+					<div style="width: 169px; display: table-cell"><green>+</green></i> 基础</div>
 					<div style="width: 160px; display: table-cell">+`+format(RESOURCE['main'][id]['amount']())+`</div>`+now+`
 				</span></left>`
 			}
@@ -378,7 +376,7 @@ function tooltip(id,id2){
 		if(isNaN(n(getActionCooldown(id)).div(action))){
 			time = '<hr><left>'+format(player['action'][id+'Cooldown'])+' / '+format(getActionCooldown(id))+'</left>'
 		}
-		if(!ForecastActionTime){
+		if(!forecastActionTime()){
 			time = ''
 		}
 		if(MAIN['action'][id]['tooltip']!=undefined){
@@ -405,7 +403,7 @@ function tooltip(id,id2){
 		if(isNaN(n(getCraftCooldown(id)).div(craft))){
 			time = '<hr><left>'+format(player['craft'][id+'Cooldown'])+' / '+format(getCraftCooldown(id))+'</left>'
 		}
-		if(!ForecastActionTime){
+		if(!forecastActionTime()){
 			time = ''
 		}
 		if(MAIN['craft'][id]['tooltip']!=undefined){

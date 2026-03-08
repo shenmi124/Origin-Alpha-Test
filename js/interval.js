@@ -372,19 +372,58 @@ function intervalID(){
 	getBr()
 }
 
+var T = new Date()
+var TIMESTART = new Date()
+var OFFLINETIME = new Date()
+var REALTIME = 0.05
+var DIFF = 0.05
+
 setInterval(function(){
-	T = new Date()
-	var OFFLINETIMEGAIN = n((Number(OFFLINETIME.getTime())-player.data.offline)/1000)
-	player.data.offline = n((Number(T.getTime())))
-	DIFF = n(Math.min((Number(T.getTime())-TIMESTART)/1000,1e100))
-	var OFFLINEBOOST = n(1).mul(player.data.devSpeed)
-	DIFF=DIFF.mul(OFFLINEBOOST)
-	TIMESTART=T.getTime()
-	
 	for(let i in settings){
 		if(settings[i]['effect']!==undefined){
 			settings[i]['effect']()
 		}
 	}
-	intervalID()
 }, 50)
+
+const timerWorker = createTimerWorker()
+let frameCount = 0;
+let fpsCounter = 0;
+let lastFpsTime = performance.now();
+timerWorker.addEventListener('message', function(e) {
+    if(e.data.loop==='main'){
+        //if(isPaused){return}
+        const periods = e.data.periods
+
+        for(let i = 0; i < periods; i++){
+			DIFF = n(REALTIME).mul(player.data.devSpeed)
+            intervalID()
+        }
+    }
+})
+
+function startGameLoop(fps = 20){
+    timerWorker.postMessage({
+        loop: 'start',
+        period: 1000 / fps
+    })
+	REALTIME = 1 / fps
+}
+
+function stopGameLoop(){
+    timerWorker.postMessage({
+        loop: 'clear'
+    })
+}
+
+document.addEventListener('visibilitychange', function(){
+	if(document.visibilityState==='visible'){
+		stopGameLoop()
+		startGameLoop()
+	}else if(document.visibilityState==='hidden'){
+		stopGameLoop()
+		startGameLoop(1)
+	}
+})
+
+startGameLoop()

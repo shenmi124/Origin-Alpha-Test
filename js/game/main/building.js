@@ -78,12 +78,18 @@ var MainBuilding = {
         ]
     },
     storehouse: {
-        name(){return '粮仓'},
+        name(){return '仓库'},
         cost: {
             wood(){return n(25)},
             stone(){return n(50)},
         },
-        costPower(){return n(0.1)},
+        costPower(){
+            let base = n(0.1)
+            if(player.workshop.brickReinforcementWorkshop){
+                base = base.sub(0.005)
+            }
+            return n(0.1)
+        },
         effect: [
             {
                 type(){return 'capped'},
@@ -258,11 +264,11 @@ var MainBuilding = {
         name(){return '学院'},
         unlocked(){return player.workshop.scholarWorkshop},
         cost: {
-            idea(){return n(200)},
+            idea(){return n(100)},
             brick(){return n(5)},
             paper(){return n(2)}
         },
-        costPower(){return n(0.2)},
+        costPower(){return n(0.05)},
         effect: [
             {
                 type(){return 'capped'},
@@ -277,7 +283,7 @@ var MainBuilding = {
                 target(){return 'scholar'},
                 side(){return ['gain', 'knowledge', 'add']},
                 formula(){return 'addmul'},
-                value(){return n(0.2)},
+                value(){return n(0.05)},
             },
         ],
         onBuy(){

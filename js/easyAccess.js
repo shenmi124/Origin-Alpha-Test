@@ -143,7 +143,7 @@ function effectText(effect){
     let beginClass = ``
     let endClass = ``
     if(multiplication){
-        unique = `<grey><li-hid>(`+firstDisplay+format(value)+lastDisplay+`)</grey>`
+        unique = `<grey><li-hid>( `+firstDisplay+format(value)+lastDisplay+` )</grey>`
     }else{
         amount = n(1)
     }
@@ -159,7 +159,7 @@ function effectText(effect){
     }
     return `<left><span>
                 <div style="width: 80px; display: table-cell">`+name+`</div>
-                <div style="width: 124px; display: table-cell">`+beginClass+firstEffectDisplay+firstDisplay+format(total)+lastDisplay+lastEffectDisplay+endClass+`</div>
+                <div style="width: 149px; display: table-cell">`+beginClass+firstEffectDisplay+firstDisplay+format(total)+lastDisplay+lastEffectDisplay+endClass+`</div>
                 `+unique+`
             </span></left>`
 }
@@ -192,7 +192,7 @@ function costText(name, res, cost, type){
         </span>
         <span style="width: 30px; display: table-cell; color: rgb(31, 70, 71);"> / 
         </span>
-        <span style="width: 55px; display: table-cell; color: rgb(31, 70, 71);">
+        <span style="width: 80px; display: table-cell; color: rgb(31, 70, 71);">
                 <div style="color: `+((n(getResourceCapped(res)).gte(cost) || RESOURCE['main'][res]['capped']==undefined) ? `` : `red` )+`">`+format(cost)+`</div>
         </span>
 	</span>`+time+`<br>`

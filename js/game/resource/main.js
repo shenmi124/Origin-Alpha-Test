@@ -154,7 +154,7 @@ var ResourceMain = {
     },
     paper: {
         name(){return "纸"},
-        tooltip(){return '制造资源<br>你一共有'+format(getCraftEfficient())+'锻造资源获取倍率'},
+        tooltip(){return '制造资源<hr><joker>有人问为什么要用皮革造纸,因为我们没有获得蔡伦先生的版权</joker><hr>你一共有'+format(getCraftEfficient())+'锻造资源获取倍率'},
         color(){return '#000'},
         gain(){return n(0)},
         unlocked(){return getResourceUnlocked('paper')},
@@ -176,14 +176,26 @@ var ResourceMain = {
         unlocked(){return getResourceUnlocked('manuscript')},
     },
 
+    node: {
+        type(){return 'node'},
+        unlocked(){return true},
+    },
     disableUnlocked: {
         name(){return "不可解锁资源"},
         color(){return '#000'},
         gain(){return n(0)},
         unlocked(){return false},
     },
-    node: {
-        type(){return 'node'},
-        unlocked(){return true},
+    devSpeed: {
+        name(){return "测试速度"},
+        color(){return '#000'},
+        amount(){return player.data.devSpeed},
+        unlocked(){return player.data.devSpeed.neq(1)},
+    },
+    test: {
+        name(){return "测试"},
+        color(){return '#000'},
+        gain(){return n(0)},
+        unlocked(){return false},
     },
 }

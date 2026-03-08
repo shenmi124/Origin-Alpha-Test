@@ -1,8 +1,3 @@
-var T = new Date()
-var TIMESTART = new Date()
-var OFFLINETIME = new Date()
-var DIFF = 0
-
 function loadTab(){
 	let tabStr = ''
 	for(let i in TABBUTTON){

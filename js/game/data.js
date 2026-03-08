@@ -6,6 +6,8 @@ function getWorldTime(){
 }
 
 function getGametime(){
+    let getTime = player.workshop.sundialWorkshop
+
     let time = player.game.time.mul(600)
     let year = n(time).div(31104000)
     let month = n(time).div(2592000)
@@ -18,17 +20,17 @@ function getGametime(){
     let logHour = ''
     let logMinute = ''
     let night = true
-    if(false){
+    if(getTime){
         logMinute = n(minute%60).floor()+' 分 '
     }
-    if(false){
+    if(getTime){
         logHour = n(hour%24).floor()+' 时 '
     }
-    if(false){
+    if(getTime){
         logMonth = n(month).floor()+' 月 '
         logDay = n(day%30).floor()+' 天 '
     }
-    if(false){
+    if(getTime){
         logYear = n(year).floor()+' 年 '
         logMonth = n(month%12).floor()+' 月 '
     }
@@ -37,7 +39,7 @@ function getGametime(){
     }else{
         night = false
     }
-    if(false){
+    if(getTime){
         let logTime = ''
         if(night){
             logTime = ' <grey>(夜晚)</grey>'
@@ -46,8 +48,10 @@ function getGametime(){
         }
         getByID('logTime', '<small><grey>'+getWorldTime()+'</grey><br>'+logYear+logMonth+logDay+logHour+logMinute+logTime+'</small>')
         document.title = '起源 - '+logYear+logMonth+logDay
+    }else{
+        getByID('logTime', '<small><grey>'+getWorldTime()+'</grey></small>')
+        document.title = '起源'
     }
-    getByID('logTime', '<small><grey>'+getWorldTime()+'</grey></small>')
     return [logYear+logMonth+logDay+logHour, night]
 }
 
