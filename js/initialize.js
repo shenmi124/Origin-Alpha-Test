@@ -167,4 +167,10 @@ let loadingGame = function(){
 	
 	loadSetting()
 	loadInformation()
+	
+	if(document.visibilityState==='visible'){
+		startGameLoop()
+	}else if(document.visibilityState==='hidden'){
+		startGameLoop(1)
+	}
 }

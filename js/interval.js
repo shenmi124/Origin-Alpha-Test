@@ -372,6 +372,15 @@ function intervalID(){
 	getBr()
 }
 
+function renderInterval(){
+	
+}
+
+function calculateInterval(){
+
+}
+
+var visibilityState = true
 var T = new Date()
 var TIMESTART = new Date()
 var OFFLINETIME = new Date()
@@ -387,14 +396,14 @@ setInterval(function(){
 }, 50)
 
 const timerWorker = createTimerWorker()
-let frameCount = 0;
-let fpsCounter = 0;
-let lastFpsTime = performance.now();
 timerWorker.addEventListener('message', function(e) {
     if(e.data.loop==='main'){
         //if(isPaused){return}
         const periods = e.data.periods
 
+		if(periods!==1){
+			console.log('处理帧数: '+periods)
+		}
         for(let i = 0; i < periods; i++){
 			DIFF = n(REALTIME).mul(player.data.devSpeed)
             intervalID()
@@ -425,5 +434,3 @@ document.addEventListener('visibilitychange', function(){
 		startGameLoop(1)
 	}
 })
-
-startGameLoop()

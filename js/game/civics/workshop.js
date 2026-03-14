@@ -1,4 +1,22 @@
 var CivicsWorkshop = {
+    toolWorkshop: { //工具
+        name(){return '工具'},
+        tooltip(){return '工具的发明为生产力的提高提供了更多的可能性'},
+        cost: {
+            idea(){return n(20)},
+            stone(){return n(5)}
+        },
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'efficient'},
+                formula(){return 'add'},
+                name(){return '效率'},
+                display(){return ['+','%']},
+                value(){return n(3)},
+            }
+        ],
+    },
     axeWorkshop: { //燧石手斧
         name(){return '燧石手斧'},
         tooltip(){return '打磨,穿孔'},
@@ -9,7 +27,7 @@ var CivicsWorkshop = {
         unlockedDisplay: [
             '提升采集木头的获取',
         ],
-        unlocked(){return player.action.ideaOfTool.study},
+        preliminary(){return ['toolWorkshop']},
     },
     pickaxeWorkshop: { //燧石手镐
         name(){return '燧石手镐'},
@@ -21,7 +39,7 @@ var CivicsWorkshop = {
         unlockedDisplay: [
             '提升采集石头的获取',
         ],
-        unlocked(){return player.action.ideaOfTool.study},
+        preliminary(){return ['toolWorkshop']},
     },
     hoeWorkshop: { //燧石锄
         name(){return '燧石锄'},
@@ -53,7 +71,7 @@ var CivicsWorkshop = {
         unlockedDisplay: [
             '解锁职业: 农民',
         ],
-        unlocked(){return player.action.ideaOfTool.study},
+        preliminary(){return ['toolWorkshop']},
     },
     marketWorkshop: { //市场
         name(){return '市场'},
@@ -70,14 +88,10 @@ var CivicsWorkshop = {
                 formula(){return 'add'},
                 name(){return '效率'},
                 display(){return ['+','%']},
-                value(){return n(5)},
+                value(){return n(2)},
             }
         ],
-        unlockedDisplay: [
-            '解锁想法: 语言',
-            '解锁想法: 专业化',
-        ],
-        preliminary(){return ['axeWorkshop', 'pickaxeWorkshop', 'hoeWorkshop']},
+        preliminary(){return ['toolWorkshop']},
     },
     lumberyardWorkshop: { //伐木场
         name(){return '伐木场'},
@@ -181,6 +195,25 @@ var CivicsWorkshop = {
         ],
         preliminary(){return ['marketWorkshop']},
     },
+    professionalizationWorkshop: { //专业化
+        name(){return '专业化'},
+        tooltip(){return '为一些多余的人口进行专职化训练'},
+        cost: {
+            idea(){return n(500)},
+            food(){return n(150)}
+        },
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'efficient'},
+                formula(){return 'add'},
+                name(){return '效率'},
+                display(){return ['+','%']},
+                value(){return n(1)},
+            }
+        ],
+        preliminary(){return ['marketWorkshop']},
+    },
     hunterWorkshop: { //猎人
         name(){return '猎人'},
         tooltip(){return '制造一些武器用于打猎'},
@@ -195,8 +228,7 @@ var CivicsWorkshop = {
             '解锁资源: 力量',
             '解锁职业: 猎人',
         ],
-        preliminary(){return ['marketWorkshop']},
-        unlocked(){return player.action.ideaOfProfessionalization.study}
+        preliminary(){return ['professionalizationWorkshop']}
     },
     artisanWorkshop: { //工匠
         name(){return '工匠'},
@@ -217,8 +249,7 @@ var CivicsWorkshop = {
             addLog('<darkblue>已学习: '+getWorkshopUnlocked()[Number(player.building.workshop)]+'</darkblue>')
             CitizensFix()
         },
-        preliminary(){return ['marketWorkshop']},
-        unlocked(){return player.action.ideaOfProfessionalization.study}
+        preliminary(){return ['professionalizationWorkshop']}
     },
     jokerWorkshop: { //愚者
         name(){return '愚者'},
@@ -238,8 +269,7 @@ var CivicsWorkshop = {
             componentBuilding('circus')
             CitizensFix()
         },
-        preliminary(){return ['marketWorkshop']},
-        unlocked(){return player.action.ideaOfProfessionalization.study}
+        preliminary(){return ['professionalizationWorkshop']}
     },
     scholarWorkshop: { //学者
         name(){return '学者'},
@@ -261,8 +291,7 @@ var CivicsWorkshop = {
             componentBuilding('school')
             CitizensFix()
         },
-        preliminary(){return ['marketWorkshop']},
-        unlocked(){return player.action.ideaOfProfessionalization.study}
+        preliminary(){return ['professionalizationWorkshop']}
     },
     builderWorkshop: { //建筑工
         name(){return '建筑工'},
@@ -281,8 +310,7 @@ var CivicsWorkshop = {
             addLog('已解锁“建筑”子选项卡,位于“主页”选项卡中', 'red')
             addLog('大型建筑')
         },
-        preliminary(){return ['marketWorkshop']},
-        unlocked(){return player.action.ideaOfProfessionalization.study}
+        preliminary(){return ['professionalizationWorkshop']}
     },
     logCabinWorkshop: { //木屋
         name(){return '木屋'},
@@ -367,50 +395,6 @@ var CivicsWorkshop = {
         ],
         preliminary(){return ['processingWorkshop']},
     },
-    mathWorkshop: { //数学 保留
-        name(){return '数学'},
-        keep(){return true},
-        tooltip(){return '人类抽象思维和逻辑推理的工具'},
-        cost: {
-            knowledge(){return n(100)}
-        },
-        effect: [
-            {
-                type(){return 'special'},
-                side(){return 'efficient'},
-                formula(){return 'add'},
-                name(){return '效率'},
-                display(){return ['+','%']},
-                value(){return n(0.5)},
-            }
-        ],
-        unlockedDisplay: [
-            '显示行动与行为基础耗时与实际耗时',
-        ],
-        preliminary(){return ['scholarWorkshop']},
-    },
-    sundialWorkshop: { //计时器 保留
-        name(){return '计时器'},
-        keep(){return true},
-        tooltip(){return '利用日晷等器具记录并获得准确时间'},
-        cost: {
-            knowledge(){return n(100)}
-        },
-        effect: [
-            {
-                type(){return 'special'},
-                side(){return 'efficient'},
-                formula(){return 'add'},
-                name(){return '效率'},
-                display(){return ['+','%']},
-                value(){return n(0.5)},
-            }
-        ],
-        unlockedDisplay: [
-            '在日志下方显示游戏时',
-        ],
-        preliminary(){return ['scholarWorkshop']},
-    },
     n1: { //语言 未添加
         name(){return '语言'},
         tooltip(){return '<grey><i>“「语言作为最重要的工具,主要不是一种用于表达思想的方式,而是扮演着更为实际的角色,那就是行为控制」——《技术史》”</i></grey><hr>注:此研究在此版本暂无效果所以暂时无法被购买'},
@@ -458,8 +442,53 @@ var CivicsWorkshop = {
         ],
         preliminary(){return ['scholarWorkshop']},
     },
+    
+    mathWorkshop: { //数学 保留
+        name(){return '数学'},
+        keep(){return true},
+        tooltip(){return '人类抽象思维和逻辑推理的工具'},
+        cost: {
+            knowledge(){return n(100)}
+        },
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'efficient'},
+                formula(){return 'add'},
+                name(){return '效率'},
+                display(){return ['+','%']},
+                value(){return n(0.5)},
+            }
+        ],
+        unlockedDisplay: [
+            '显示行动与行为基础耗时与实际耗时',
+        ],
+        preliminary(){return ['scholarWorkshop']},
+    },
+    sundialWorkshop: { //计时器 保留
+        name(){return '计时器'},
+        keep(){return true},
+        tooltip(){return '利用日晷等器具记录并获得准确时间'},
+        cost: {
+            knowledge(){return n(100)}
+        },
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'efficient'},
+                formula(){return 'add'},
+                name(){return '效率'},
+                display(){return ['+','%']},
+                value(){return n(0.5)},
+            }
+        ],
+        unlockedDisplay: [
+            '在日志下方显示游戏时',
+        ],
+        preliminary(){return ['scholarWorkshop']},
+    },
 
-    toolWorkshop: { //磨制工具 工坊1
+    abrasiveToolWorkshop: { //磨制工具 工坊1
         name(){return '磨制工具'},
         tooltip(){return '制造更专业的工具'},
         cost: {
@@ -530,7 +559,7 @@ var CivicsWorkshop = {
                 formula(){return 'add'},
                 name(){return '效率'},
                 display(){return ['+','%']},
-                value(){return n(3)},
+                value(){return n(2)},
             },
         ],
         unlockedDisplay: [

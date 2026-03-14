@@ -28,7 +28,7 @@ var MainAction = {
                 gainResource('food', n(-1))
 
                 addLog('我用浆果解决了我的饥饿感')
-                addLog('老实说我也不确定这些浆果是否有毒,不过当下的条件我也想不了那么多了,起码我现在没事,不是吗?')
+                addLog('老实说我也不确定这些浆果是否有毒,不过当下的条件我也想不了那么多了,但起码我现在没事')
                 addLog('饱腹之后,我想我应该去采集一些其他资源')
             }
             if(player.stage.explore.eq(2)){
@@ -141,36 +141,6 @@ var MainAction = {
         unlocked(){return !player.action.ideaOfCabin.study && player.stage.explore.gte(4)},
         canClick(){return player.resource.idea.gte(5)},
         cooldown(){return n(10)},
-    },
-    ideaOfTool: {
-        name(){return '工具的想法'},
-        tooltip(){return format(player.resource.idea)+' / 20 '+getResourceColorText('idea')+'<hr>学习一些关键技术用于加工燧石并尝试制造工具<hr>在工坊中解锁有关工具的研究'},
-        onClick(){
-            gainResource('idea', n(-20))
-            player.action.ideaOfTool.study = true
-            addLog('<darkblue>已学习: 工具的想法</darkblue>')
-        },
-        data: {
-            study(){return false}
-        },
-        unlocked(){return !player.action.ideaOfTool.study && player.stage.explore.gte(4) && getResourceUnlocked('citizens')},
-        canClick(){return player.resource.idea.gte(20)},
-        cooldown(){return n(20)},
-    },
-    ideaOfProfessionalization: {
-        name(){return '专业化的想法'},
-        tooltip(){return format(player.resource.idea)+' / 500 '+getResourceColorText('idea')+'<hr>为一些多余的人口进行专职化训练<hr>在工坊中解锁有关更多职业的研究'},
-        onClick(){
-            gainResource('idea', n(-500))
-            player.action.ideaOfProfessionalization.study = true
-            addLog('<darkblue>已学习: 专业化的想法</darkblue>')
-        },
-        data: {
-            study(){return false}
-        },
-        unlocked(){return !player.action.ideaOfProfessionalization.study && player.workshop.marketWorkshop},
-        canClick(){return player.resource.idea.gte(500)},
-        cooldown(){return n(60)},
     },
     /*
     ideaOfLanguage: {
