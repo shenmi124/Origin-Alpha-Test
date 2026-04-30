@@ -45,6 +45,7 @@ function loadBase(){
 	let resourceStr = `
 		<div id="actionEfficientID" style="font-size: 12px"><tooltip `+loadTooltip(`action`, `efficient`, null)+`>效率</tooltip>: <span id="actionEfficient"></span></div>
 		<div id="happinessEfficientID" style="font-size: 12px"><tooltip `+loadTooltip(`happiness`, `efficient`, null)+`>幸福</tooltip>: <span id="happinessEfficient"></span></div>
+		<div id="stabilityEfficientID" style="font-size: 12px"><tooltip `+loadTooltip(`stability`, `efficient`, null)+`>稳定</tooltip>: <span id="stabilityEfficient"></span></div>
 		<br>
 	`
 	for(let i in RESOURCE['main']){
@@ -97,12 +98,27 @@ function loadBase(){
 		componentBuilding(i)
 	}
 	
-	let largeBuildingStr = '大型建筑'
+	let largeBuildingStr = '大型建筑<br><grey>建造速度: <a id="buildingSpeed">'+format(getBuildingSpeed())+'</a>/s</grey><br><br>'
+	largeBuildingStr += `
+		<div style="display: flex; border-right: 2px solid rgb(153, 153, 153); background: rgba(223, 223, 223, 0.33)">
+			<a style="display: inline-flex; width: 15%">建筑</a>
+			<a style="display: inline-flex; width: 15%">数量</a>
+			<a style="display: inline-flex; width: 30%">建造进度</a>
+		</div>
+	`
 	getByID('buildingSubtab', '<a id="LargeBuildingLoadID"></a>')
 	for(let i in MAIN['largeBuilding']){
-		largeBuildingStr += '<a style="transition-duration: 1s;" id='+i+'LoadBuilding></a>'
+		largeBuildingStr += '<a style="transition-duration: 1s;" id='+i+'LoadLargeBuilding></a>'
 	}
 	getByID('LargeBuildingLoadID', largeBuildingStr)
+	for(let i in MAIN['largeBuilding']){
+		getByID(i+'LoadLargeBuilding',`<div id="`+i+`LoadLargeBuildingID" style="display: flex; border-right: 2px solid rgb(153, 153, 153);"></div><a id="`+i+`LoadLargeBuildingBorderID" style="display: grid; border-right: 2px solid rgb(153, 153, 153);"></a>`)
+		componentLargeBuilding(i)
+		getByID(i+'LoadLargeBuildingBorderID', `
+			<div class="largeBuildingBorder" id="`+i+`BuildingTimesBorderID" style="background: #aaa; z-index: -1; transition-duration: 0.2s; clip-path: inset(0% 100% 0% 0%);"></div>
+			<div class="largeBuildingBorder" id="`+i+`BuildingBorderID" style="background: #000; z-index: 0; transition-duration: 0.2s; clip-path: inset(0% 100% 0% 0%); margin-top: -2px;"></div>
+		`)
+	}
 
 	let citizensStr = ''
 	citizensStr += `居民 <a id="CitizensTip" style="color: grey"></a><br>`
@@ -155,6 +171,7 @@ function loadGame(){
 let loadingGame = function(){
 	calcPlayer()
 
+	getTmpValue()
 	getTmpValue()
 
 	loadTab()

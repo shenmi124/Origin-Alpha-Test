@@ -8,30 +8,53 @@ function NumberFix(){
 }
 
 function CheckBuildAllocation(build, res){
-    let cost = n(tmp.main.building[build].effect.gain[res].sub.getValue().neg()).mul(player['building'][build+'Allocation'] ?? player['building'][build])
-    if(n(cost).lt(0)){
-        if(player['resource'][res].lte(n(cost).abs())){
-            if(player['building'][build+'Allocation']){
-                buildingAllocation(build, n(1).neg())
+    if(n(getResourceGain(res)).lt(0)){
+        let cost = n(tmp.main.building[build].effect.gain[res].sub.getValue().neg()).mul(player['building'][build+'Allocation'] ?? player['building'][build])
+        if(n(cost).lt(0)){
+            if(player['resource'][res].lte(n(cost).abs())){
+                if(player['building'][build+'Allocation']){
+                    addLog('因资源不足建筑'+MAIN['building'][build]['name']()+'自动停用')
+                    buildingAllocation(build, n(1).neg())
+                }
+                return n(0)
             }
-            return n(0)
+        }
+    }
+}
+
+function CheckLargeBuildAllocation(build, res){
+    if(n(getResourceGain(res)).lt(0)){
+        let cost = n(tmp.main.largeBuilding[build].effect.gain[res].sub.getValue().neg()).mul(player['largeBuilding'][build+'Allocation'] ?? player['largeBuilding'][build])
+        if(n(cost).lt(0)){
+            if(player['resource'][res].lte(n(cost).abs())){
+                if(player['largeBuilding'][build+'Allocation']){
+                    addLog('因资源不足大型建筑'+MAIN['building'][build]['name']()+'自动停用')
+                    largeBuildingAllocation(build, n(1).neg())
+                }
+                return n(0)
+            }
         }
     }
 }
 
 function CheckCitizensAllocation(citizen){
 	for(let res in tmp.civics.citizens[citizen].effect?.gain){
-		if(Object.keys(tmp.civics.citizens[citizen].effect.gain[res])[0]=='sub'){
-            let cost = n(tmp.civics.citizens[citizen].effect.gain[res].sub.getValue().neg()).mul(player['citizens'][citizen])
-            if(n(cost).lt(0)){
-                if(player['resource'][res].lte(n(cost).abs())){
-                    if(player['citizens'][citizen]!==undefined){
-                        citizensAllocate(citizen, n(1).neg())
+        if(n(getResourceGain(res)).lt(0)){
+            for(let operator in tmp.civics.citizens[citizen].effect.gain[res]){
+                if(operator=='sub'){
+                    let cost = n(tmp.civics.citizens[citizen].effect.gain[res].sub.getValue().neg()).mul(player['citizens'][citizen])
+                    if(n(cost).lt(0)){
+                        if(player['resource'][res].lte(n(cost).abs())){
+                            if(player['citizens'][citizen]!==undefined){
+                                addLog('因资源不足职业'+CIVICS['citizens'][citizen]['name']()+'变为无业游民')
+                                citizensAllocate(citizen, n(1).neg())
+                            }
+                            return n(0)
+                        }
                     }
-                    return n(0)
                 }
             }
-		}
+        }
 	}
 }
 

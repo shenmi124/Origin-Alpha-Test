@@ -1,6 +1,6 @@
 var TABBUTTON = {
     main: {
-        name(){return "主页"},
+        name(){return "建设"},
         subtab: {
             action: {
                 name(){return "主要"},
@@ -13,7 +13,7 @@ var TABBUTTON = {
         }
     },
     civics: {
-        name(){return '村庄'},
+        name(){return '文明'},
         subtab: {
             allocation: {
                 name(){return "调配"},

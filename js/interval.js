@@ -85,7 +85,7 @@ function systemDiff(){
 		if(n(getEfficient(i)).lt(1)){
 			color = 'red'
 		}
-		getByID(i+'Efficient','<span style="color: '+color+'">'+formatScientific(n(getEfficient(i)).mul(100),1)+'%</span>')
+		getByID(i+'Efficient','<span style="color: '+color+'">'+formatScientific(n(getEfficient(i)).mul(100), 1)+'%</span>')
 		if(efficient[i]['unlocked']()){
 			document.getElementById(i+'EfficientID').style.visibility = ''
 		}else{
@@ -313,11 +313,31 @@ function intervalID(){
 			unlocked = MAIN['building'][i]['unlocked']()
 		}
 		for(let res in tmp.main.building[i].effect?.gain){
-			if(Object.keys(tmp.main.building[i].effect.gain[res])[0]=='sub'){
-				CheckBuildAllocation(i, res)
+			for(let operator in tmp.main.building[i].effect?.gain[res]){
+				if(operator=='sub'){
+					CheckBuildAllocation(i, res)
+				}
 			}
 		}
 		unlockedLoad(i+'LoadBuilding', unlocked)
+	}
+	
+	for(let i in MAIN['largeBuilding']){
+		largeBuildingUpdate(i)
+		let unlocked = true
+		if(MAIN['largeBuilding'][i]['unlocked']!==undefined){
+			unlocked = MAIN['largeBuilding'][i]['unlocked']()
+		}
+		for(let res in tmp.main.largeBuilding[i].effect?.gain){
+			for(let operator in tmp.main.largeBuilding[i].effect?.gain[res]){
+				if(operator=='sub'){
+					CheckLargeBuildAllocation(i, res)
+				}
+			}
+		}
+		getByID('buildingSpeed', format(getBuildingSpeed()))
+		getLargeBuildingID(i)
+		unlockedLoad(i+'LoadLargeBuilding', unlocked)
 	}
 
 	for(let i in MAIN['craft']){

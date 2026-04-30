@@ -1,39 +1,4 @@
 var MainBuilding = {
-    foundation: {
-        name(){return '地基'},
-        tooltip(){return '清理出一块土地当做地基'},
-        unlocked(){return player.stage.explore.gte(4) && player.building.foundation.eq(0)},
-        unique(){return true},
-        onBuy(){
-            addLog('为了之后的探索,我找到了一片平地并决定作为暂时的定居点')
-        },
-        cost: {
-            wood(){return n(1)},
-            stone(){return n(10)},
-        },
-        costPower(){return n(0)},
-        effect: [
-            {
-                type(){return 'capped'},
-                formula(){return 'add'},
-                resource(){return 'food'},
-                value(){return n(30)},
-            },
-            {
-                type(){return 'capped'},
-                formula(){return 'add'},
-                resource(){return 'wood'},
-                value(){return n(30)},
-            },
-            {
-                type(){return 'capped'},
-                formula(){return 'add'},
-                resource(){return 'stone'},
-                value(){return n(50)},
-            },
-        ]
-    },
-
     cabin: {
         name(){
             return '小屋'
@@ -44,9 +9,15 @@ var MainBuilding = {
         unlocked(){return player.action.ideaOfCabin.study},
         cost: {
             wood(){return n(3)},
-            stone(){return n(10)},
+            stone(){return n(5)},
         },
-        costPower(){return n(0.2)},
+        costIncrease(){
+            let base = n(1.95)
+            if(player.workshop.beamWorkshop){
+                base = base.sub(0.1)
+            }
+            return base
+        },
         effect: [
             {
                 type(){return 'capped'},
@@ -67,7 +38,7 @@ var MainBuilding = {
         cost: {
             plank(){return n(5)},
         },
-        costPower(){return n(0.2)},
+        costIncrease(){return n(1.25)},
         effect: [
             {
                 type(){return 'capped'},
@@ -77,31 +48,54 @@ var MainBuilding = {
             },
         ]
     },
+    brickHouse: {
+        name(){
+            return '砖瓦房'
+        },
+        tooltip(){return '一个真正像模像样的房子'},
+        unlocked(){return player.workshop.brickHouseWorkshop},
+        cost: {
+            brick(){return n(30)},
+            ceramic(){return n(20)}
+        },
+        costIncrease(){return n(1.3)},
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'citizens'},
+                value(){return n(2)},
+            }
+        ]
+    },
     storehouse: {
         name(){return '仓库'},
         cost: {
-            wood(){return n(25)},
+            wood(){return n(20)},
             stone(){return n(50)},
         },
-        costPower(){
-            let base = n(0.1)
+        costIncrease(){
+            let base = n(1.5)
             if(player.workshop.brickReinforcementWorkshop){
-                base = base.sub(0.005)
+                base = base.sub(0.05)
             }
-            return n(0.1)
+            if(player.workshop.copperReinforcementWorkshop){
+                base = base.sub(0.1)
+            }
+            return base
         },
         effect: [
             {
                 type(){return 'capped'},
                 formula(){return 'add'},
                 resource(){return 'food'},
-                value(){return n(25)},
+                value(){return n(20)},
             },
             {
                 type(){return 'capped'},
                 formula(){return 'add'},
                 resource(){return 'wood'},
-                value(){return n(25)},
+                value(){return n(20)},
             },
             {
                 type(){return 'capped'},
@@ -115,28 +109,34 @@ var MainBuilding = {
     warehouse: {
         name(){return '货仓'},
         cost: {
-            plank(){return n(50)},
-            brick(){return n(20)},
+            plank(){return n(20)},
+            brick(){return n(10)},
         },
-        costPower(){return n(0.1)},
+        costIncrease(){return n(1.2)},
         effect: [
             {
                 type(){return 'capped'},
                 formula(){return 'add'},
-                resource(){return 'wood'},
-                value(){return n(50)},
+                resource(){return 'copper'},
+                value(){return n(20)},
             },
             {
                 type(){return 'capped'},
                 formula(){return 'add'},
-                resource(){return 'stone'},
+                resource(){return 'clay'},
+                value(){return n(20)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'ceramic'},
                 value(){return n(50)},
             },
             {
                 type(){return 'capped'},
                 formula(){return 'add'},
                 resource(){return 'fur'},
-                value(){return n(50)},
+                value(){return n(25)},
             },
         ],
         unlocked(){return player.workshop.warehouseWorkshop},
@@ -145,9 +145,9 @@ var MainBuilding = {
         name(){return '农田'},
         unlocked(){return player.action.ideaOfPlant.study},
         cost: {
-            food(){return n(2.5)}
+            food(){return n(5)}
         },
-        costPower(){return n(0.15)},
+        costIncrease(){return n(1.15)},
         effect: [
             {
                 type(){return 'gain'},
@@ -165,20 +165,34 @@ var MainBuilding = {
     },
     lumberyard: {
         name(){return '伐木场'},
-        tooltip(){return '伐木场将会提供伐木工的工作岗位并以较低的速率被动生产木材<joker>为什么伐木场会自动生产木材,这不合理</joker><hr>伐木场的基础产量基于采集木头<br>每三个伐木场将提供一个工作岗位'},
+        tooltip(){return '伐木场将会提供伐木工的工作岗位并以较低的速率被动生产木材<funny>为什么伐木场会自动生产木材,这不合理</funny>'},
         unlocked(){return player.workshop.lumberyardWorkshop},
         cost: {
             wood(){return n(10)},
-            stone(){return n(25)}
+            stone(){return n(20)}
         },
-        costPower(){return n(0.05)},
+        costIncrease(){return n(1.15)},
         effect: [
             {
                 type(){return 'gain'},
                 formula(){return 'add'},
                 resource(){return 'wood'},
                 value(){return n(getCraftEfficiency('collectWood')).mul(0.25)},
-            }
+            },
+            {
+                type(){return 'adjustment'},
+                main(){return 'civics'},
+                submain(){return 'citizens'},
+                target(){return 'logger'},
+                side(){return ['gain', 'wood', 'add']},
+                formula(){return 'addmul'},
+                value(){
+                    if(player.workshop.copperAxeWorkshop){
+                        return n(0.05)
+                    }
+                    return n(0)
+                },
+            },
         ],
         onBuy(){
             CitizensFix()
@@ -186,65 +200,131 @@ var MainBuilding = {
     },
     quarry: {
         name(){return '采石场'},
-        tooltip(){return '采石场将会提供采石工的工作岗位并以较低的速率被动生产石材<hr>采石场的基础产量基于采集石头<br>每两个采石场将提供一个工作岗位'},
+        tooltip(){return '采石场将会提供采石工的工作岗位并以较低的速率被动生产石材'},
         unlocked(){return player.workshop.quarryWorkshop},
         cost: {
-            wood(){return n(25)},
+            wood(){return n(20)},
             stone(){return n(40)},
         },
-        costPower(){return n(0.075)},
+        costIncrease(){return n(1.15)},
         effect: [
             {
                 type(){return 'gain'},
                 formula(){return 'add'},
                 resource(){return 'stone'},
-                value(){return n(getCraftEfficiency('collectStone')).mul(0.15)},
-            }
+                value(){return n(getCraftEfficiency('collectStone')).mul(0.2)},
+            },
+            {
+                type(){return 'adjustment'},
+                main(){return 'civics'},
+                submain(){return 'citizens'},
+                target(){return 'stonecutter'},
+                side(){return ['gain', 'stone', 'add']},
+                formula(){return 'addmul'},
+                value(){
+                    if(player.workshop.copperPickaxeWorkshop){
+                        return n(0.05)
+                    }
+                    return n(0)
+                },
+            },
         ],
         onBuy(){
             CitizensFix()
         },
     },
-    circus: {
-        name(){
-            return '马戏团'
+    mine: {
+        name(){return '矿井'},
+        tooltip(){return '每两个矿井将提供一个工作岗位'},
+        unlocked(){return player.workshop.shallowMineWorkshop},
+        cost: {
+            stone(){return n(300)},
+            plank(){return n(10)},
         },
-        tooltip(){
-            return '每个马戏团将提供一个工作岗位'
+        costIncrease(){return n(1.2)},
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'stone'},
+                value(){return n(0.3)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'copper'},
+                value(){return n(0.05)},
+            },
+        ],
+        onBuy(){
+            CitizensFix()
         },
+    },
+    theater: {
+        name(){return '剧院'},
+        tooltip(){return '每两个剧院将提供一个工作岗位'},
         cost: {
             idea(){return n(500)},
             leather(){return n(20)},
         },
-        costPower(){return n(0.02)},
+        costIncrease(){return n(1.2)},
         effect: [
             {
                 type(){return 'capped'},
                 formula(){return 'add'},
                 resource(){return 'idea'},
-                value(){return n(100)},
+                value(){return n(200)},
+            },
+            {
+                type(){return 'special'},
+                side(){return 'happiness'},
+                formula(){return 'add'},
+                name(){return '幸福'},
+                display(){return ['+','%']},
+                value(){
+                    let base = n(1)
+                    return n(base)
+                },
             },
         ],
         onBuy(){
             CitizensFix()
         },
-        unlocked(){return player.workshop.jokerWorkshop},
+        unlocked(){return player.workshop.artistWorkshop},
     },
     workshop: {
         name(){return '工坊'},
-        tooltip(){return '工坊可以提升制造资源的获取倍率<br>制造资源是与木板同类的资源<br><gery>鼠标移动到对应资源名称上查看详情</gery><hr>每个工坊都会解锁一项新的研究<br>每五个工坊都会使自身增加一种消耗的资源种类<br>每两个工坊将提供一个工作岗位'},
+        tooltip(){return '每五个工坊会增加一种自身需要的资源种类<br>每两个工坊将提供一个工作岗位'},
         unlocked(){return player.workshop.artisanWorkshop},
         cost: {
-            plank(){return n(5)},
-            brick(){return n(5)},
-            disableUnlocked(){
+            plank(){return n(3)},
+            brick(){return n(3)},
+            copper(){
                 if(player.building.workshop.gte(5)){
                     return n(1)
                 }
                 return n(0)
             },
+            ceramic(){
+                if(player.building.workshop.gte(10)){
+                    return n(2.5)
+                }
+                return n(0)
+            },
+            manuscript(){
+                if(player.building.workshop.gte(15)){
+                    return n(0.5)
+                }
+                return n(0)
+            },
+            disableUnlocked(){
+                if(player.building.workshop.gte(20)){
+                    return n(0.25)
+                }
+                return n(0)
+            },
         },
-        costPower(){return n(0.25)},
+        costIncrease(){return n(1.3)},
         effect: [
             {
                 type(){return 'special'},
@@ -256,19 +336,43 @@ var MainBuilding = {
             }
         ],
         onBuy(){
-            addLog('<darkblue>已学习: '+getWorkshopUnlocked()[Number(player.building.workshop)]+'</darkblue>')
             CitizensFix()
         },
+    },
+    church: {
+        name(){return '教堂'},
+        unlocked(){return player.largeBuilding.temple.gte(1)},
+        cost: {
+            faith(){return n(50)},
+            brick(){return n(10)},
+        },
+        costIncrease(){return n(1.25)},
+        effect: [
+            {
+                type(){return 'capped'},
+                resource(){return 'faith'},
+                formula(){return 'add'},
+                value(){return n(50)},
+            },
+            {
+                type(){return 'special'},
+                side(){return 'faithPower'},
+                formula(){return 'add'},
+                name(){return '信仰力量'},
+                display(){return ['+','%']},
+                value(){return n(10)},
+            },
+        ],
     },
     school: {
         name(){return '学院'},
         unlocked(){return player.workshop.scholarWorkshop},
         cost: {
             idea(){return n(100)},
-            brick(){return n(5)},
+            brick(){return n(10)},
             paper(){return n(2)}
         },
-        costPower(){return n(0.05)},
+        costIncrease(){return n(1.15)},
         effect: [
             {
                 type(){return 'capped'},
@@ -283,11 +387,91 @@ var MainBuilding = {
                 target(){return 'scholar'},
                 side(){return ['gain', 'knowledge', 'add']},
                 formula(){return 'addmul'},
-                value(){return n(0.05)},
+                value(){return n(0.1)},
             },
         ],
         onBuy(){
             CitizensFix()
         },
     },
+    library: {
+        name(){return '图书馆'},
+        unlocked(){return player.workshop.libraryWorkshop},
+        cost: {
+            ceramic(){return n(50)},
+            manuscript(){return n(10)}
+        },
+        costIncrease(){return n(1.15)},
+        effect: [
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'idea'},
+                value(){return n(200)},
+            },
+            {
+                type(){return 'capped'},
+                formula(){return 'add'},
+                resource(){return 'knowledge'},
+                value(){return n(200)},
+            },
+            {
+                type(){return 'adjustment'},
+                main(){return 'civics'},
+                submain(){return 'citizens'},
+                target(){return 'scholar'},
+                side(){return ['gain', 'knowledge', 'add']},
+                formula(){return 'addmul'},
+                value(){return n(0.2)},
+            },
+        ],
+        onBuy(){
+            CitizensFix()
+        },
+    },
+    kiln: {
+        name(){return '窑炉'},
+        tooltip(){return '将松散黏土烧成砖瓦'},
+        unlocked(){return player.workshop.kilnWorkshop},
+        allocation(){return true},
+        cost: {
+            stone(){return n(200)},
+            clay(){return n(10)},
+        },
+        costIncrease(){return n(1.2)},
+        effect: [
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'wood'},
+                value(){return n(1)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'sub'},
+                resource(){return 'clay'},
+                value(){return n(1)},
+            },
+            {
+                type(){return 'gain'},
+                formula(){return 'add'},
+                resource(){return 'ceramic'},
+                value(){return n(0.1)},
+            },
+        ],
+    },
+}
+
+function getBuildingSpeed(){
+    let value = n(0)
+    for(let type in tmp){
+        for(let side in tmp[type]){
+            for(let i in tmp[type][side]){
+                if(tmp[type][side][i]?.special?.buildingSpeed?.value.getValue().neq(0)){
+                    value = value.add(n(tmp[type][side][i].special.buildingSpeed.value.getValue()).mul(tmp[type][side][i].amount))
+                }
+            }
+        }
+    }
+    return value
 }

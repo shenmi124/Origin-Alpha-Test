@@ -42,6 +42,17 @@ function calcAutomator(){
         }
 	}
 
+    for(let i in MAIN['largeBuilding']){
+		loader(['largeBuilding', i], n(0))
+		loader(['largeBuilding', i+'Times'], n(0))
+		loader(['largeBuilding', i+'Building'], n(0))
+        if(MAIN['largeBuilding'][i]['allocation']!==undefined){
+            if(MAIN['largeBuilding'][i]['allocation']()){
+                loader(['largeBuilding', i+'Allocation'], n(0))
+            }
+        }
+	}
+
     for(let i in MAIN['craft']){
         loader(['craft', i+'Total'], n(0))
         if(MAIN['craft'][i]['cooldown']!==undefined){
@@ -56,11 +67,11 @@ function calcAutomator(){
     }
 
     for(let i in CIVICS['citizens']){
-        loader(['citizens',i], n(0))
+        loader(['citizens', i], n(0))
     }
 
     for(let i in CIVICS['workshop']){
-        loader(['workshop',i], false)
+        loader(['workshop', i], false)
     }
 
     for(let i in settings){
@@ -68,7 +79,11 @@ function calcAutomator(){
             loader(['setting', i], settings[i]['boolean']())
         }
         if(settings[i]['type']()=="choose"){
-            loader(['setting', i], 'default')
+            if(settings[i]['default']?.()!==undefined){
+                loader(['setting', i], settings[i]['default']())
+            }else{
+                loader(['setting', i], 'default')
+            }
         }
 	}
 }

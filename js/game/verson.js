@@ -1,4 +1,4 @@
-var VERSION = '0.2.2α'
+var VERSION = '0.3.0α'
 var VERSIONTIMES = n(1)
 
 function loadVersion(){
@@ -8,8 +8,8 @@ function loadVersion(){
 		player.data.version = VERSION
 		player.data.versiontimes = VERSIONTIMES
 	}else if(player.data.version!==VERSION){
-		addLog('已更新至<span style="font-family: cursive;">'+VERSION+'</span>','#888')
-		addLog('此版本为测试版,请自行备份存档','#888')
+		addLog('已更新至<span style="font-family: cursive;">'+VERSION+'</span>', '#888')
+		addLog('此版本为测试版,请自行备份存档', '#888')
 		addLog('<br>')
 		save()
 		

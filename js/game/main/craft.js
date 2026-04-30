@@ -4,7 +4,7 @@ let MainCraft = {
         gain(){
             let mul = n(1)
             if(player.workshop.logCabinWorkshop){
-                mul = mul.mul(10)
+                mul = mul.mul(5)
             }
             return [n(1).mul(mul)]
         },
@@ -19,7 +19,7 @@ let MainCraft = {
         },
         coerciveClick(){return true},
         tooltip(){return '思考现状'+(getResourceUnlocked('citizens') ? '<hr>'+format(getCraftEfficiency('meditation'))+getResourceColorText('idea')+'/s' : '')+getCollectDisplay()},
-        unlocked(){return player.stage.explore.gte(3)},
+        unlocked(){return player.stage.explore.gte(2)},
         cooldown(){return n(15)},
     },
     talk: {
@@ -40,7 +40,7 @@ let MainCraft = {
         coerciveClick(){return n(getResourceCapped('citizens')).sub(player.resource.citizens).gte(1)},
         canClick(){return n(getResourceCapped('citizens')).sub(player.resource.citizens).gte(1)},
         tooltip(){return '提供住所和食物,尝试让这的原住民追随你'+getCollectDisplay()},
-        unlocked(){return player.stage.explore.gte(4)},
+        unlocked(){return player.stage.explore.gte(3)},
         cooldown(){return n(30)},
     },
     collectFood: {
@@ -66,8 +66,14 @@ let MainCraft = {
         name(){return '采集木头'},
         gain(){
             let mul = n(1)
+            if(player.workshop.delicateToolsWorkshop){
+                mul = mul.mul(1.25)
+            }
             if(player.workshop.axeWorkshop){
-                mul = n(1.5)
+                mul = mul.mul(1.5)
+            }
+            if(player.workshop.copperAxeWorkshop){
+                mul = mul.mul(1.5)
             }
             return [n(0.25).mul(mul), n(1).mul(mul)]
         },
@@ -84,7 +90,7 @@ let MainCraft = {
         tooltip(){
             return '花费一些时间采集一些木头'+(getResourceUnlocked('citizens') ? '<hr>'+format(getCraftEfficiency('collectWood'))+getResourceColorText('wood')+'/s' : '')+getCollectDisplay()
         },
-        unlocked(){return player.stage.explore.gte(2)},
+        unlocked(){return player.stage.explore.gte(3)},
         cooldown(){
             let mul = n(1)
             if(player.workshop.axeWorkshop){
@@ -97,8 +103,14 @@ let MainCraft = {
         name(){return '采集石头'},
         gain(){
             let mul = n(1)
+            if(player.workshop.delicateToolsWorkshop){
+                mul = mul.mul(1.25)
+            }
             if(player.workshop.pickaxeWorkshop){
-                mul = n(1.5)
+                mul = mul.mul(1.5)
+            }
+            if(player.workshop.copperPickaxeWorkshop){
+                mul = mul.mul(1.5)
             }
             return [n(1).mul(mul), n(3).mul(mul)]
         },
@@ -115,7 +127,7 @@ let MainCraft = {
         tooltip(){
             return '花费一些时间采集一些石头'+(getResourceUnlocked('citizens') ? '<hr>'+format(getCraftEfficiency('collectStone'))+getResourceColorText('stone')+'/s' : '')+getCollectDisplay()
         },
-        unlocked(){return player.stage.explore.gte(2)},
+        unlocked(){return player.stage.explore.gte(3)},
         cooldown(){
             let mul = n(1)
             if(player.workshop.pickaxeWorkshop){
@@ -124,10 +136,78 @@ let MainCraft = {
             return n(10).div(mul)
         },
     },
+    collectClay: {
+        name(){return '采集黏土'},
+        gain(){
+            let mul = n(1)
+            if(player.workshop.shovelWorkshop){
+                mul = mul.mul(1.5)
+            }
+            if(player.workshop.copperShovelWorkshop){
+                mul = mul.mul(1.5)
+            }
+            return [n(0.6).mul(mul), n(1.2).mul(mul)]
+        },
+        onClick(){
+            gainResource('clay', n(MAIN['craft']['collectClay']['gain']()[0]).add(n(Math.random()).mul(MAIN['craft']['collectClay']['gain']()[1])))
+        },
+        afterClick(){
+            player.craft.collectClayClick = true
+        },
+        handoff(){
+            handoffCollect('collectClay')
+        },
+        coerciveClick(){return true},
+        tooltip(){
+            return '花费一些时间采集一些黏土'+(getResourceUnlocked('citizens') ? '<hr>'+format(getCraftEfficiency('collectClay'))+getResourceColorText('clay')+'/s' : '')+getCollectDisplay()
+        },
+        unlocked(){return player.stage.explore.gte(4)},
+        cooldown(){
+            let mul = n(1)
+            return n(5).div(mul)
+        },
+    },
+    collectCopper: {
+        name(){return '采集金属粒'},
+        gain(){
+            let mul = n(1)
+            return [n(0.5).mul(mul), n(1).mul(mul), n(0.1).mul(mul), n(0.2).mul(mul)]
+        },
+        onClick(){
+            gainResource('copper', n(MAIN['craft']['collectCopper']['gain']()[0]).add(n(Math.random()).mul(MAIN['craft']['collectCopper']['gain']()[1])))
+            if(Math.random() > 0.9){
+                gainResource('gold', n(MAIN['craft']['collectCopper']['gain']()[2]).add(n(Math.random()).mul(MAIN['craft']['collectCopper']['gain']()[3])))
+            }
+        },
+        afterClick(){
+            player.craft.collectCopperClick = true
+        },
+        handoff(){
+            handoffCollect('collectCopper')
+        },
+        coerciveClick(){return true},
+        tooltip(){
+            return '花费一些时间在河边采集一些金属粒'+(getResourceUnlocked('citizens') ? '<hr>'+format(getCraftEfficiency('collectCopper'))+getResourceColorText('copper')+'/s' : '')+getCollectDisplay()
+        },
+        unlocked(){return player.stage.explore.gte(4)},
+        cooldown(){
+            let mul = n(1)
+            return n(30).div(mul)
+        },
+    },
     craftPlank: {
         name(){return '制造木板'},
         cost(){
-            let base = n(25)
+            let base = n(20)
+            if(player.workshop.latheWorkshop){
+                base = base.div(1.1)
+            }
+            if(player.workshop.specializedToolsWorkshop){
+                base = base.div(1.25)
+            }
+            if(player.workshop.copperSawWorkshop){
+                base = base.div(4)
+            }
             return base
         },
         costSecond(){
@@ -161,9 +241,7 @@ let MainCraft = {
         canClick(){return this.canCraft()},
         tooltip(){
             let gain = '<hr>'+format(this.cost())+getResourceText('wood', true)+' -> '+format(this.gain())+getResourceText('plank', true)
-            if(player.craft.craftPlankClick){
-                gain += '<br><grey>'+format(this.costSecond())+getResourceText('wood', true)+'/s -> '+format(this.gainSecond())+getResourceText('plank', true)+'/s</grey>'
-            }
+            gain += '<br><grey>'+format(this.costSecond())+getResourceText('wood', true)+'/s -> '+format(this.gainSecond())+getResourceText('plank', true)+'/s</grey>'
             return '将木材加工成木板'+gain+getCollectDisplay()
         },
         unlocked(){return player.workshop.processingWorkshop},
@@ -173,6 +251,15 @@ let MainCraft = {
         name(){return '制造石砖'},
         cost(){
             let base = n(75)
+            if(player.workshop.latheWorkshop){
+                base = base.div(1.1)
+            }
+            if(player.workshop.specializedToolsWorkshop){
+                base = base.div(1.25)
+            }
+            if(player.workshop.copperChiselWorkshop){
+                base = base.div(4)
+            }
             return base
         },
         costSecond(){
@@ -206,9 +293,7 @@ let MainCraft = {
         canClick(){return this.canCraft()},
         tooltip(){
             let gain = '<hr>'+format(this.cost())+getResourceText('stone', true)+' -> '+format(this.gain())+getResourceText('brick', true)
-            if(player.craft.craftBrickClick){
-                gain += '<br><grey>'+format(this.costSecond())+getResourceText('stone', true)+'/s -> '+format(this.gainSecond())+getResourceText('brick', true)+'/s</grey>'
-            }
+            gain += '<br><grey>'+format(this.costSecond())+getResourceText('stone', true)+'/s -> '+format(this.gainSecond())+getResourceText('brick', true)+'/s</grey>'
             return '将石材加工成石砖'+gain+getCollectDisplay()
         },
         unlocked(){return player.workshop.processingWorkshop},
@@ -257,9 +342,7 @@ let MainCraft = {
         canClick(){return this.canCraft()},
         tooltip(){
             let gain = '<hr>'+format(this.cost())+getResourceText(this.resource()[0], true)+' -> '+format(this.gain())+getResourceText(this.resource()[1], true)
-            if(player.craft.craftLeatherClick){
-                gain += '<br><grey>'+format(this.costSecond())+getResourceText(this.resource()[0], true)+'/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
-            }
+            gain += '<br><grey>'+format(this.costSecond())+getResourceText(this.resource()[0], true)+'/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
             return '将毛皮加工成皮革'+gain+getCollectDisplay()
         },
         unlocked(){return player.workshop.processingWorkshop},
@@ -305,13 +388,11 @@ let MainCraft = {
         canClick(){return this.canCraft()},
         tooltip(){
             let gain = '<hr>'+format(this.cost())+getResourceText(this.resource()[0], true)+' -> '+format(this.gain())+getResourceText(this.resource()[1], true)
-            if(player.craft.craftPaperClick){
-                gain += '<br><grey>'+format(this.costSecond())+getResourceText(this.resource()[0], true)+'/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
-            }
+            gain += '<br><grey>'+format(this.costSecond())+getResourceText(this.resource()[0], true)+'/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
             return '将皮革加工成纸'+gain+getCollectDisplay()
         },
         unlocked(){return player.workshop.paperWorkshop},
-        cooldown(){return n(80)},
+        cooldown(){return n(60)},
     },
     crafManuscript: {
         name(){return '制造手稿'},
@@ -363,12 +444,10 @@ let MainCraft = {
         canClick(){return this.canCraft()},
         tooltip(){
             let gain = '<hr>'+format(this.cost()[0])+getResourceText(this.resource()[0][0], true)+'+'+format(this.cost()[1])+getResourceText(this.resource()[0][1], true)+' -> '+format(this.gain())+getResourceText([this.resource()[1]], true)
-            if(player.craft.crafManuscriptClick){
-                gain += '<br><grey>('+format(this.costSecond()[0])+getResourceText(this.resource()[0][0], true)+'+'+format(this.costSecond()[1])+getResourceText(this.resource()[0][1], true)+')/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
-            }
+            gain += '<br><grey>('+format(this.costSecond()[0])+getResourceText(this.resource()[0][0], true)+'+'+format(this.costSecond()[1])+getResourceText(this.resource()[0][1], true)+')/s -> '+format(this.gainSecond())+getResourceText(this.resource()[1], true)+'/s</grey>'
             return '将纸和知识加工成手稿'+gain+getCollectDisplay()
         },
         unlocked(){return player.workshop.manuscriptWorkshop},
-        cooldown(){return n(100)},
+        cooldown(){return n(120)},
     },
 }

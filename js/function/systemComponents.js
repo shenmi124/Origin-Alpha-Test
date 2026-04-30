@@ -19,7 +19,7 @@ function componentBuilding(id){
     <tooltip `+loadTooltip(id, 'LoadTooltipBuilding', `onclick='document.getElementById("tooltip").style.display="none"`, 'building')+`>
         <a id="`+id+`LoadBuildingAmountID"></a>
         <a id="`+id+`LoadBuildingAllocationID"></a>
-        <button id="`+id+`BuildingButtonID" onclick="Build('`+id+`')">`+MAIN['building'][id]['name']()+`</button>
+        <button id="`+id+`BuildingButtonID" onclick="buildBuilding('`+id+`')">`+MAIN['building'][id]['name']()+`</button>
     </tooltip>
     `)
 
@@ -31,7 +31,7 @@ function componentBuilding(id){
     }
     let buildingAmount = 
     `<div style="width: 0;">
-        <div class="buildingAmount" onclick="Build('`+id+`')">`+revised+`</div>
+        <div class="buildingAmount" onclick="buildBuilding('`+id+`')">`+revised+`</div>
     </div>`
     if(MAIN['building'][id]['unique'] ?? false){
         buildingAmount = ``
@@ -71,8 +71,48 @@ function componentBuilding(id){
     }
 }
 
+function componentLargeBuilding(id){
+    getByID('buildingSpeed', format(getBuildingSpeed()))
+    
+    getByID(id+'LoadLargeBuildingID',`
+        <a id="`+id+`LoadLargeBuildingNameID" style="display: inline-flex; width: 15%"></a>
+        <a id="`+id+`LoadLargeBuildingAmountID" style="display: inline-flex; width: 15%"></a>
+        <a id="`+id+`LoadLargeBuildingTimesID" style="display: inline-flex"></a>
+        <a id="`+id+`LoadLargeBuildingBuildButtonID" style="display: inline-flex; width: 10%"></a>
+        <a id="`+id+`LoadLargeBuildingBuildID" style="display: inline-flex; width: 40%"></a>
+        <a id="`+id+`LoadLargeBuildingBuildingID" style="margin-left: auto"></a>
+    `)
+    
+    getByID(id+'LoadLargeBuildingNameID', `<tooltip `+loadTooltip(id, 'LoadTooltipLargeBuilding', null)+`><a id="`+id+`LargeBuildingNameID" style="width: 100%">`+MAIN['largeBuilding'][id]['name']?.()+`</a></tooltip>`)
+    getByID(id+'LoadLargeBuildingAmountID', formatWhole(player['largeBuilding'][id]))
+    getByID(id+'LoadLargeBuildingTimesID', 
+        `<tooltip `+loadTooltip(id, 'LoadTooltipLargeBuilding', null, null, 'cost')+`>
+            `+formatWhole(player['largeBuilding'][id+'Times'])+' / '+formatWhole(MAIN['largeBuilding'][id]['buildingTimes']())+`
+        </tooltip>`
+    )
+    if(getLargeBuildingComplete(id)){
+        getByID(id+'LoadLargeBuildingBuildButtonID', ``)
+    }else{
+        getByID(id+'LoadLargeBuildingBuildButtonID', `
+            <tooltip `+loadTooltip(id, 'LoadTooltipLargeBuilding', `onclick='document.getElementById("tooltip").style.display="none"`, null, 'cost')+`>
+                <button id="`+id+`LargeBuildingTimes" class="buildLargeBuilding" onclick="buildLargeBuilding('`+id+`')">+</button>
+            </tooltip>`
+        )
+    }
+    if(player['largeBuilding'][id+'Times'].neq(0)){
+        getByID(id+'LoadLargeBuildingBuildID', `<a>`+format(player.largeBuilding[id+'Building'])+` / `+format(n(MAIN['largeBuilding'][id]['buildingDifficulty']()).mul(player.largeBuilding[id+'Times'].div(MAIN['largeBuilding'][id]['buildingTimes']())))+` <grey>(+`+format(getBuildingSpeedBase(id))+`/s)</grey></a>`)
+    }else{
+        getByID(id+'LoadLargeBuildingBuildID', '')
+    }
+    if(getLargeBuildingCanBuild(id)){
+        getByID(id+'LoadLargeBuildingBuildingID', '建造<input id="'+id+'LargeBuildingCheckbox" title="建造速度将平均分配给所有正在建造的大型建筑" type="checkbox" checked>')
+    }else{
+        getByID(id+'LoadLargeBuildingBuildingID', '')
+    }
+}
+
 function componentCitizens(id){		
-    getByID(id+'LoadCitizensNameID', `<tooltip `+loadTooltip(id,'LoadTooltipCitizens',null)+`><div id="`+id+`CitizensNameID" style="display: inline-grid; width: 120px; color: `+CIVICS['citizens'][id]['color']?.()+`">`+CIVICS['citizens'][id]['name']()+`</div></tooltip>`)
+    getByID(id+'LoadCitizensNameID', `<tooltip `+loadTooltip(id, 'LoadTooltipCitizens', null)+`><div id="`+id+`CitizensNameID" style="display: inline-grid; width: 120px; color: `+CIVICS['citizens'][id]['color']?.()+`">`+CIVICS['citizens'][id]['name']()+`</div></tooltip>`)
     let allocated = formatWhole(player['citizens'][id])
     let allocatedMax = n(Infinity)
     for(let i in CIVICS['citizens'][id]['allocated']){
@@ -89,8 +129,10 @@ function componentCitizens(id){
     }
     getByID(id+'LoadCitizensAllocatedID', '<div style="display: inline-grid; width: 100px">'+allocated+'</div>')
     getByID(id+'LoadCitizensButtonID', `
-        <div style="display: inline-grid; width: 30px"><button onclick="citizensAllocate('`+id+`', -1); CitizensFix()" style="display: inline-grid;" class="citizens"> < </button></div>
-        <div style="display: inline-grid; width: 30px"><button onclick="citizensAllocate('`+id+`', 1); CitizensFix()" style="display: inline-grid;" class="citizens"> > </button></div>
+        <tooltip `+loadTooltip(id, 'LoadTooltipCitizens', null)+`>
+            <div style="display: inline-grid; width: 30px"><button onclick="citizensAllocate('`+id+`', -1)" style="display: inline-grid;" class="citizens"> < </button></div>
+            <div style="display: inline-grid; width: 30px"><button onclick="citizensAllocate('`+id+`', 1)" style="display: inline-grid;" class="citizens"> > </button></div>
+        </tooltip>
     `)
 }
 

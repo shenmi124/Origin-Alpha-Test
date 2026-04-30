@@ -22,9 +22,7 @@ function getResourceTitleID(id, res){
 	}
 	if(RESOURCE['main'][res]['type']!==undefined){
         if(RESOURCE['main'][res]['type']()=='node'){
-            getByID(id+'TitleID', `
-                <div class="resourceTitle resourceName `+Class+`" style="position: relative; visibility: hidden;">null</div>`
-            )
+            getByID(id+'TitleID', `<div class="resourceTitle resourceName `+Class+`" style="position: relative; visibility: hidden;">null</div>`)
             getByID(id+'BorderID', `<div class="resourceBorder" id="`+res+`BorderID" style="background: `+colorText(res)[0]+`; z-index: -1; transition-duration: 0.2s; clip-path: inset(0% 100% 0% 0%);"></div>`)
             return null
         }
@@ -150,10 +148,18 @@ function getResourceID(res){
 	getResourceDoc(res)
 }
 
+var CONSOLEMOD = false
 function resourceUpdate(id){
 	if(RESOURCE['main'][id]['amount']!==undefined){
 		player['resource'][id] = n(RESOURCE['main'][id]['amount']())
 	}else{
+        if(CONSOLEMOD){
+            if(n(getResourceCapped(id)).eq(0)){
+                gainResource(id, n(1000))
+            }else{
+                gainResource(id, n(getResourceCapped(id)))
+            }
+        }
 		if(getResourceGain(id)!==null){
             gainResource(id, n(getResourceGain(id)).mul(DIFF))
 		}
@@ -162,7 +168,7 @@ function resourceUpdate(id){
 }
 
 function getResourceGain(res){
-    return getEffectValue(tmpEffect.resource.main[res]?.gain, RESOURCE['main'][res]['gain']!==undefined)
+    return n(regularFormat(getEffectValue(tmpEffect.resource.main[res]?.gain, RESOURCE['main'][res]['gain']!==undefined), 8))
 }
 
 function getResourceCapped(res){

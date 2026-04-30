@@ -1,6 +1,9 @@
 var tmp = {}
 var tmpAjustment = {}
 var tmpEffect = {}
+var temp = {}
+
+var APRILFOOL = false
 
 class Values {
     constructor(dec=0){
@@ -67,11 +70,31 @@ function getSpecialTmp(temp, it, i, main){
         name: temp[it]['name']?.(),
         side: temp[it]['side'](),
         display: temp[it]['display'](),
-        value: temp[it]['value'](),
+        value: v(temp[it]['value']()),
+        formula: temp[it]['formula'](),
+        Class: temp[it]['Class']?.(),
+    }
+}
+
+function getTempValue(){
+    temp = {}
+    for(let type in tmp){
+        temp[type] ??= {}
+        for(let side in tmp[type]){
+            temp[type][side] ??= {}
+            for(let target in tmp[type][side]){
+                temp[type][side][target] ??= {}
+                if(side=='building'){
+                    temp[type][side][target] = tmp[type][side][target]['effect']
+                }
+            }
+        }
     }
 }
 
 function getTmpValue(){
+    getTempValue()
+
     tmp.resource = {}
     tmp.resource.main = {}
     for(let i in RESOURCE['main']){
@@ -124,8 +147,14 @@ function getTmpValue(){
                     tmp.resource.main[i].effect[temp[it]['type']()] ??= {}
 
                     if(temp[it]['type']()=='gain' || temp[it]['type']()=='capped'){
-                        tmp.resource.main[i].effect[temp[it]['type']()][temp[it]['resource']()] ??= {}
-                        tmp.resource.main[i].effect[temp[it]['type']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(temp[it]['value']())
+                        if(APRILFOOL){
+                            let random = Object.keys(RESOURCE['main'])[Math.floor(Math.random() * Object.keys(RESOURCE['main']).length)]
+                            tmp.resource.main[i].effect[temp[it]['type']()][random] ??= {}
+                            tmp.resource.main[i].effect[temp[it]['type']()][random][temp[it]['formula']()] ??= v(temp[it]['value']())
+                        }else{
+                            tmp.resource.main[i].effect[temp[it]['type']()][temp[it]['resource']()] ??= {}
+                            tmp.resource.main[i].effect[temp[it]['type']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(temp[it]['value']())
+                        }
                     }
 
                     if(temp[it]['type']()=='special'){
@@ -181,25 +210,13 @@ function getTmpValue(){
                 tmp.main.building[i].effect[temp[it]['type']()] ??= {}
 
                 if(temp[it]['type']()=='gain' || temp[it]['type']()=='capped'){
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['resource']()] ??= {}
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(n(temp[it]['value']()))
-                }
-
-                if(temp[it]['type']()=='resource'){
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['side']()] ??= {}
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['resource']()] ??= {}
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['side']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(temp[it]['value']())
-                }
-
-                if(temp[it]['type']()=='citizens'){
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['target']()] ??= {}
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()] ??= {}
-                    tmp.main.building[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['formula']()] ??= {}
-                    if(temp[it]['side']()=='effect'){
-                        tmp.main.building[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['formula']()]['effect'] ??= v(temp[it]['value']())
-                    }
-                    if(temp[it]['type']()=='gain' || temp[it]['type']()=='capped'){
-                        tmp.main.building[i].effect[temp[it]['type']()][temp[it]['target']()][temp[it]['side']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(temp[it]['value']())
+                    if(APRILFOOL){
+                        let random = Object.keys(RESOURCE['main'])[Math.floor(Math.random() * Object.keys(RESOURCE['main']).length)]
+                        tmp.main.building[i].effect[temp[it]['type']()][random] ??= {}
+                        tmp.main.building[i].effect[temp[it]['type']()][random][temp[it]['formula']()] ??= v(n(temp[it]['value']()))
+                    }else{
+                        tmp.main.building[i].effect[temp[it]['type']()][temp[it]['resource']()] ??= {}
+                        tmp.main.building[i].effect[temp[it]['type']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(n(temp[it]['value']()))
                     }
                 }
 
@@ -209,6 +226,40 @@ function getTmpValue(){
 
                 if(temp[it]['type']()=='adjustment'){
                     getAjustmentTmp(temp, it, i, tmp.main.building[i])
+                }
+            }
+        }
+    }
+    tmp.main.largeBuilding = {}
+    for(let i in MAIN['largeBuilding']){
+        tmp.main.largeBuilding[i] = {}
+        tmp.main.largeBuilding[i].amount = player.largeBuilding[i+'Allocation'] ?? player.largeBuilding[i]
+        tmp.main.largeBuilding[i].name = MAIN['largeBuilding'][i]['name']?.() ?? ''
+
+        if(MAIN['largeBuilding'][i]['effect']!==undefined){
+            tmp.main.largeBuilding[i].effect = {}
+
+            let temp = MAIN['largeBuilding'][i]['effect']
+            for(let it in temp){
+                tmp.main.largeBuilding[i].effect[temp[it]['type']()] ??= {}
+
+                if(temp[it]['type']()=='gain' || temp[it]['type']()=='capped'){
+                    if(APRILFOOL){
+                        let random = Object.keys(RESOURCE['main'])[Math.floor(Math.random() * Object.keys(RESOURCE['main']).length)]
+                        tmp.main.largeBuilding[i].effect[temp[it]['type']()][random] ??= {}
+                        tmp.main.largeBuilding[i].effect[temp[it]['type']()][random][temp[it]['formula']()] ??= v(n(temp[it]['value']()))
+                    }else{
+                        tmp.main.largeBuilding[i].effect[temp[it]['type']()][temp[it]['resource']()] ??= {}
+                        tmp.main.largeBuilding[i].effect[temp[it]['type']()][temp[it]['resource']()][temp[it]['formula']()] ??= v(n(temp[it]['value']()))
+                    }
+                }
+
+                if(temp[it]['type']()=='special'){
+                    getSpecialTmp(temp, it, i, tmp.main.largeBuilding[i])
+                }
+
+                if(temp[it]['type']()=='adjustment'){
+                    getAjustmentTmp(temp, it, i, tmp.main.largeBuilding[i])
                 }
             }
         }
@@ -341,11 +392,30 @@ function getTmpAjustment(){
             for(let target in tmpAjustment[type][side]){
                 let tmpSide = tmpAjustment[type][side][target]
                 for(let i in tmpSide){
-                    let adjustment = tmp[type][side][target]['effect']
-                    let amount = tmpSide[i]['amount'] ??= n(0)
-                    for(let effect of tmpSide[i]['side']){
-                        adjustment = adjustment[effect]
+                    let adjustment = null
+                    if(tmpSide[i]['side'][0]=='special'){
+                        adjustment = tmp[type][side][target]['special']
+                        for(let [index, effect] of tmpSide[i]['side'].entries()){
+                            if(effect=='special'){continue}
+                            if(adjustment[effect]==undefined){
+                                adjustment[effect] = {[tmpSide[i]['side'][Number(index+1)]]: tmpSide[i]['side'][Number(index+2)]!==undefined ? undefined : v(0)}
+                            }
+                            adjustment = adjustment[effect]
+                        }
+                    }else{
+                        adjustment = tmp[type][side][target]['effect']
+                        for(let [index, effect] of tmpSide[i]['side'].entries()){
+                            if(adjustment[effect]==undefined){
+                                if(tmpSide[i]['side'][Number(index+1)]!==undefined){
+                                    adjustment[effect] = {[tmpSide[i]['side'][Number(index+1)]]: tmpSide[i]['side'][Number(index+2)]!==undefined ? undefined : v(0)}
+                                }else{
+                                    adjustment[effect] = v(0)
+                                }
+                            }
+                            adjustment = adjustment[effect]
+                        }
                     }
+                    let amount = tmpSide[i]['amount'] ??= n(0)
                     if(tmpSide[i]['formula']=='add'){
                         adjustment.setAdd(n(tmpSide[i]['value']).mul(amount))
                     }else if(tmpSide[i]['formula']=='addmul'){
@@ -362,6 +432,7 @@ function getTmpAjustment(){
 }
 
 function getTmpEffectValue(){
+    tmpEffect = {}
     for(let type in tmp){
         tmpEffect[type] ??= {}
         for(let side in tmp[type]){
@@ -378,8 +449,8 @@ function getTmpEffectValue(){
                                 let base = effect['gain'][i][operator].getValue()
                                 if(target==i){amount = n(1)}
                                 let value = base.mul(amount)
-                                if(operator=='mul' && amount.eq(0)){
-                                    value = n(1)
+                                if(operator=='mul' || operator=='div'){
+                                    value = base.pow(amount)
                                 }
                                 tmpEffect.resource.main[i] ??= {}
                                 tmpEffect.resource.main[i]['gain'] ??= {}
@@ -395,8 +466,8 @@ function getTmpEffectValue(){
                                 let base = effect['capped'][i][operator].getValue()
                                 if(target==i){amount = n(1)}
                                 let value = base.mul(amount)
-                                if(operator=='mul' && amount.eq(0)){
-                                    value = n(1)
+                                if(operator=='mul' || operator=='div'){
+                                    value = base.pow(amount)
                                 }
                                 tmpEffect.resource.main[i] ??= {}
                                 tmpEffect.resource.main[i]['capped'] ??= {}
@@ -413,9 +484,9 @@ function getTmpEffectValue(){
                                     let base = effect['action']['auto'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
                                     let value = base.mul(amount)
-                                    if(operator=='mul' && amount.eq(0)){
-                                        value = n(1)
-                                    }
+                                if(operator=='mul' || operator=='div'){
+                                    value = base.pow(amount)
+                                }
                                     tmpEffect.main.action[i] ??= {}
                                     tmpEffect.main.action[i]['auto'] ??= {}
                                     tmpEffect.main.action[i]['auto'][operator] ??= {}
@@ -429,8 +500,8 @@ function getTmpEffectValue(){
                                     let base = effect['action']['cooldown'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
                                     let value = base.mul(amount)
-                                    if(operator=='mul' && amount.eq(0)){
-                                        value = n(1)
+                                    if(operator=='mul' || operator=='div'){
+                                        value = base.pow(amount)
                                     }
                                     tmpEffect.main.action[i] ??= {}
                                     tmpEffect.main.action[i]['cooldown'] ??= {}
@@ -448,8 +519,8 @@ function getTmpEffectValue(){
                                     let base = effect['craft']['auto'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
                                     let value = base.mul(amount)
-                                    if(operator=='mul' && amount.eq(0)){
-                                        value = n(1)
+                                    if(operator=='mul' || operator=='div'){
+                                        value = base.pow(amount)
                                     }
                                     tmpEffect.main.craft[i] ??= {}
                                     tmpEffect.main.craft[i]['auto'] ??= {}
@@ -464,8 +535,8 @@ function getTmpEffectValue(){
                                     let base = effect['craft']['cooldown'][i][operator].getValue()
                                     if(target==i){amount = n(1)}
                                     let value = base.mul(amount)
-                                    if(operator=='mul' && amount.eq(0)){
-                                        value = n(1)
+                                    if(operator=='mul' || operator=='div'){
+                                        value = base.pow(amount)
                                     }
                                     tmpEffect.main.craft[i] ??= {}
                                     tmpEffect.main.craft[i]['cooldown'] ??= {}

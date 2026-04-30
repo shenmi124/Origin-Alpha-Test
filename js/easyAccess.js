@@ -10,18 +10,6 @@ function getCitizensspecialEffect(citizens, effect){
     return n(tmp.civics.citizens[citizens].special[effect].value).mul(tmp.civics.citizens[citizens].amount)
 }
 
-function getTitleName(type, side){
-	if(type=='resource' && side=='main'){
-		return '资源'
-	}else if(type=='main' && side=='building'){
-		return '建筑'
-	}else if(type=='civics' && side=='citizens'){
-		return '居民'
-	}else if(type=='civics' && side=='workshop'){
-		return '工坊'
-	}
-}
-
 function getAmount(type, side, id){
 	if(type=='resource' && side=='main'){
 		return player[type][id]
@@ -39,9 +27,9 @@ function getOperator(target, display='normal'){
 	if(target=='add'){
 		operator = '+'
 	}else if(target=='addmul'){
-		operator = '+<mul>×</mul>'
-		if(display='effet' && player.setting.effectDisplay=='default'){
-			operator = '+'
+		operator = '+'
+		if(display=='effect' && player.setting.effectDisplay=='short'){
+		    operator = '+<mul>×</mul>'
 		}
 	}else if(target=='mul'){
 		operator = '<mul>×</mul>'
@@ -56,7 +44,9 @@ function getOperator(target, display='normal'){
 function setOperator(base, operator, value){
 	if(operator=='add'){
 		base = base.add(value)
-	}else if(operator=='addmul' || operator=='mul'){
+	}else if(operator=='addmul'){
+		base = base.mul(n(value).add(1))
+    }else if(operator=='mul'){
 		base = base.mul(value)
 	}else if(operator=='sub'){
 		base = base.sub(value)
@@ -115,7 +105,7 @@ function getEffectValue(tmp, value=true){
         }
         return value
     }
-    return n(add()).mul(addmul()).mul(mul()).sub(sub()).div(div())
+    return n(add()).mul(addmul()).mul(mul()).div(div()).sub(sub())
 }
 
 function nameCorrection(type, old, name){
@@ -125,77 +115,6 @@ function nameCorrection(type, old, name){
     if(type=='citiznes'){
         getByID(old+'CitizensNameID', name)
     }
-}
-
-function effectText(effect){
-    let name = effect.name ?? ''
-    let firstEffectDisplay = effect.firstEffectDisplay ?? ''
-    let lastEffectDisplay = effect.lastEffectDisplay ?? ''
-    let firstDisplay = effect.firstDisplay ?? ''
-    let lastDisplay = effect.lastDisplay ?? ''
-    let value = effect.value ?? n(0)
-    let amount = effect.amount ?? n(0)
-    let multiplication = effect.multiplication ?? true
-    let operator = effect.operator ?? 'add'
-    let Class = effect.Class ?? null
-
-    let unique = ``
-    let beginClass = ``
-    let endClass = ``
-    if(multiplication){
-        unique = `<grey><li-hid>( `+firstDisplay+format(value)+lastDisplay+` )</grey>`
-    }else{
-        amount = n(1)
-    }
-    if(Class!==null){
-        beginClass = `<`+Class+`>`
-        endClass = `</`+Class+`>`
-    }
-    let total = n(0)
-    if(operator=='add'){
-        total = n(value).mul(amount)
-    }else if(operator=='mul'){
-        total = n(value).pow(amount)
-    }
-    return `<left><span>
-                <div style="width: 80px; display: table-cell">`+name+`</div>
-                <div style="width: 149px; display: table-cell">`+beginClass+firstEffectDisplay+firstDisplay+format(total)+lastDisplay+lastEffectDisplay+endClass+`</div>
-                `+unique+`
-            </span></left>`
-}
-
-function costText(name, res, cost, type){
-    let time = ''
-    if(player['resource'][res].lt(cost)){
-        if((n(getResourceGain(res)).gt(0)) && (n(getResourceCapped(res)).gte(cost) || getResourceCapped(res)==null)){
-            time = '( '+formatTime(n(cost).sub(player['resource'][res]).div(getResourceGain(res)))+' )'
-        }else if(n(getResourceCapped(res)).lt(cost) && getResourceCapped(res)!==null){
-            time = '<grey>( '+format(n(getResourceCapped(res)).sub(cost))+' )</grey>'
-        }
-    }
-    if(RESOURCE['main'][res]['unlocked']!==undefined){
-        if(!RESOURCE['main'][res]['unlocked']()){
-            name = '<gery>???</gery>'
-            time = ''
-        }
-    }
-    if(type=="workshop" && WORKSHOPBOUGHT){
-        return `<span>
-            <div style="width: 80px; display: table-cell">`+name+`</div>
-            <div style="width: 55px; display: table-cell; color: rgb(31, 70, 71)">`+format(cost)+`</div>
-        </span><br>`
-    }
-    return `<span>
-        <span>
-            <div style="width: 80px; display: table-cell">`+name+`</div>
-            <div style="width: 55px; display: table-cell; color: `+(player['resource'][res].gte(cost) ? `rgb(31, 70, 71)` : `red` )+`">`+format(player['resource'][res])+`</div>
-        </span>
-        <span style="width: 30px; display: table-cell; color: rgb(31, 70, 71);"> / 
-        </span>
-        <span style="width: 80px; display: table-cell; color: rgb(31, 70, 71);">
-                <div style="color: `+((n(getResourceCapped(res)).gte(cost) || RESOURCE['main'][res]['capped']==undefined) ? `` : `red` )+`">`+format(cost)+`</div>
-        </span>
-	</span>`+time+`<br>`
 }
 
 function getResourceColorText(id){
@@ -256,4 +175,45 @@ function colorText(id){
 
 function getCraftName(id){
     return MAIN['craft'][id]['name']()
+}
+
+function getUpdateContent(lastContent=null){
+	let resourceAmount = -3
+	for(let i in RESOURCE['main']){
+		if(RESOURCE['main'][i]['type']==undefined){
+			resourceAmount++
+			continue
+		}
+		if(RESOURCE['main'][i]['type']!=='node'){
+			continue
+		}
+	}
+
+    console.log('资源种类:', resourceAmount)
+    console.log('行动种类:', Object.keys(MAIN['action']).length)
+    console.log('行为种类:', Object.keys(MAIN['craft']).length)
+    console.log('建筑种类:', Object.keys(MAIN['building']).length)
+    console.log('大型建筑种类:', Object.keys(MAIN['largeBuilding']).length)
+    console.log('职业种类:', Object.keys(CIVICS['citizens']).length)
+    console.log('研究种类:', Object.keys(CIVICS['workshop']).length)
+
+	if(lastContent!==null){
+		console.log('新增了'+(resourceAmount - lastContent[0])+'种资源')
+		console.log('新增了'+(Object.keys(MAIN['action']).length - lastContent[1])+'种行动')
+		console.log('新增了'+(Object.keys(MAIN['craft']).length - lastContent[2])+'种行为')
+		console.log('新增了'+(Object.keys(MAIN['building']).length - lastContent[3])+'种建筑')
+		console.log('新增了'+(Object.keys(MAIN['largeBuilding']).length - lastContent[4])+'种大型建筑')
+		console.log('新增了'+(Object.keys(CIVICS['citizens']).length - lastContent[5])+'种职业')
+		console.log('新增了'+(Object.keys(CIVICS['workshop']).length - lastContent[6])+'种研究')
+	}
+
+	return [
+		resourceAmount,
+		Object.keys(MAIN['action']).length,
+		Object.keys(MAIN['craft']).length,
+		Object.keys(MAIN['building']).length,
+		Object.keys(MAIN['largeBuilding']).length,
+		Object.keys(CIVICS['citizens']).length,
+		Object.keys(CIVICS['workshop']).length,
+	]
 }

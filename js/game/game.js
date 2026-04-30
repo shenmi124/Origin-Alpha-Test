@@ -2,15 +2,17 @@ function gameDiff(){
 	player.game.time = player.game.time.add(n(1).mul(DIFF))
     getGametime()
 
-    /*if(player.resource.food.lte(0) && player.resource.citizens.gte(1)){
-        let leave = n(Math.random() * 10000).round()
-        if(leave.lte(n(1).mul(player.resource.citizens))){
-            player.resource.citizens = player.resource.citizens.sub(1)
-            CitizensFix()
-            GameCraftFix()
-            addLog('一位居民因为饥饿离开了你','#888')
+    if(n(getEfficient('stability')).lt(1) && player.resource.citizens.gte(1)){
+        let leave = Math.floor(Math.random() * (1 / Number(DIFF)) * 60 * 20)
+        if(leave<=(Number(player.resource.citizens.root(2)))){
+            let sta = Math.random()
+            if(n(sta).gt(getEfficient('stability'))){
+                player.resource.citizens = player.resource.citizens.sub(1)
+                CitizensFix()
+                addLog('一位居民离开了你','#888')
+            }
         }
-    }*/
+    }
 }
 
 function calcGame(){
@@ -31,18 +33,6 @@ function gameLoader(){
 	}
 }
 
-function getWorkshopUnlocked(){
-    return [
-        '',
-        '磨制工具 <red>注:由于内容不完整,后续内容暂未平衡</red>',
-        '长矛',
-        '地图',
-        '复合弓',
-        '手稿',
-        '占位符 已达残局',
-    ]
-}
-
 function useHunting(){
     function getPower(){
         let base = player.resource.power
@@ -55,8 +45,9 @@ function useHunting(){
         return probability >= roll
     }
     function getGain(adj){
+        let base = n(getPower()).div(adj)
         let roll = Math.random()
-        return n(getPower()).div(adj).mul(roll)
+        return n(base.mul(0.25)).add(base.mul(0.75).mul(roll))
     }
 
     let type = [
@@ -112,33 +103,13 @@ function getCraftEfficiency(id){
     return base.div(getCraftCooldown(id)).mul(efficientValue.action)
 }
 
-function getWorkshopEfficient(){
-    let value = n(0)
-    for(let i in tmp.civics.workshop){
-        if(tmp.civics.workshop[i]?.special?.efficient?.value.neq(0) && player.workshop[i]){
-            value = value.add(tmp.civics.workshop[i].special.efficient.value)
-        }
-    }
-    return value
-}
-
-function getWorkshopHappiness(){
-    let value = n(0)
-    for(let i in tmp.civics.workshop){
-        if(tmp.civics.workshop[i]?.special?.happiness?.value.neq(0) && player.workshop[i]){
-            value = value.add(tmp.civics.workshop[i].special.happiness.value)
-        }
-    }
-    return value
-}
-
 function getCraftEfficient(){
     let value = n(100)
     for(let type in tmp){
         for(let side in tmp[type]){
             for(let i in tmp[type][side]){
-                if(tmp[type][side][i]?.special?.handicraft?.value.neq(0)){
-                    value = value.add(n(tmp[type][side][i].special.handicraft.value).mul(tmp[type][side][i].amount))
+                if(tmp[type][side][i]?.special?.handicraft?.value.getValue().neq(0)){
+                    value = value.add(n(tmp[type][side][i].special.handicraft.value.getValue()).mul(tmp[type][side][i].amount))
                 }
             }
         }
@@ -152,4 +123,8 @@ function getCraftCost(id){
 
 function getCraftGain(id){
     return MAIN.craft[id].gainSecond()
+}
+
+function getFaithPower(){
+    return player.resource.faith.max(1).log10().mul(player.building.church.mul(0.1).add(1))
 }

@@ -1,5 +1,5 @@
 function getWorldTime(){
-    if(getResourceUnlocked('citizens')){
+    if(player.workshop.cityRevolutionWorkshop){
         return '城市革命'
     }
     return ''

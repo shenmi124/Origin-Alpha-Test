@@ -22,7 +22,7 @@ var settings = {
 					save()
 					HARDRESTCLICK = 6
 				}
-				getByID('AUTOSAVETIME',formatScientific(AUTOSAVETIME, 1))
+				getByID('AUTOSAVETIME', formatScientific(AUTOSAVETIME, 1))
 			}else{
 				AUTOSAVETIME = 60
 				if(AUTOSAVET){
@@ -125,7 +125,7 @@ var settings = {
 		type(){return 'choose'},
 		choose:{
 			default:{
-				name(){return '默认'},
+				name(){return '普通'},
 			},
 			short:{
 				name(){return '简短'}
@@ -176,7 +176,7 @@ var settings = {
 	},
 	network: {
 		title(){return '实验性玩法'},
-		name(){return '工坊网状图'},
+		name(){return '工坊网状图(残局前不建议开启)'},
 		type(){return 'boolean'},
 		boolean(){return false}
 	},

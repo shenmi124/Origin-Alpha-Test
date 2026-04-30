@@ -1,16 +1,107 @@
 var TOOLTIPSEL
 
-function loadTooltip(id, id2, onClick=`onclick='document.getElementById("tooltip").style.display="none"`, Class=``){
-	return `class="`+Class+`" onmouseenter='mouseLoad("`+id+`","`+id2+`")' onmouseleave='document.getElementById("tooltip").style.display="none";window.clearInterval(TOOLTIPSEL);TOOLTIPSEL=undefined'`+onClick+`;window.clearInterval(TOOLTIPSEL);TOOLTIPSEL=undefined'`
+function loadTooltip(id, id2, onClick=`onclick='document.getElementById("tooltip").style.display="none"`, Class=``, id3='normal'){
+	return `class="`+Class+`" onmouseenter='mouseLoad("`+id+`","`+id2+`","`+id3+`")' onmouseleave='document.getElementById("tooltip").style.display="none";window.clearInterval(TOOLTIPSEL);TOOLTIPSEL=undefined'`+onClick+`;window.clearInterval(TOOLTIPSEL);TOOLTIPSEL=undefined'`
 }
 
-function mouseLoad(id, id2){
+function mouseLoad(id, id2, id3){
 	document.getElementById("tooltip").style.display = ''
-	tooltip(id, id2)
+	tooltip(id, id2, id3)
 	if(TOOLTIPSEL==undefined){
 		TOOLTIPSEL = self.setInterval(function(){
-			tooltip(id, id2)
+			tooltip(id, id2, id3)
 		},50)
+	}
+}
+
+function effectText(effect){
+    let name = effect.name ?? ''
+    let firstEffectDisplay = effect.firstEffectDisplay ?? ''
+    let lastEffectDisplay = effect.lastEffectDisplay ?? ''
+    let firstDisplay = effect.firstDisplay ?? ''
+    let lastDisplay = effect.lastDisplay ?? ''
+    let value = effect.value ?? n(0)
+    let amount = effect.amount ?? n(0)
+    let multiplication = effect.multiplication ?? true
+    let operator = effect.operator ?? 'add'
+    let Class = effect.Class ?? null
+
+	if(value.eq(0)){
+		return ''
+	}
+
+    let unique = ``
+    let beginClass = ``
+    let endClass = ``
+    if(multiplication){
+        unique = `<grey><li-hid>( `+firstDisplay+format(value)+lastDisplay+` )</grey>`
+    }else{
+        amount = n(1)
+    }
+    if(Class!==null){
+        beginClass = `<`+Class+`>`
+        endClass = `</`+Class+`>`
+    }
+    let total = n(0)
+    if(operator=='add' || operator=='sub'){
+        total = n(value).mul(amount)
+    }else if(operator=='addmul'){
+        total = n(value).mul(amount)
+    }else if(operator=='mul'){
+        total = n(value).pow(amount)
+    }
+    return `<left><span>
+                <div style="width: 80px; display: table-cell">`+name+`</div>
+                <div style="width: 149px; display: table-cell">`+beginClass+firstEffectDisplay+firstDisplay+format(total)+lastDisplay+lastEffectDisplay+endClass+`</div>
+                `+unique+`
+            </span></left>`
+}
+
+function costText(name, res, cost, type){
+    let time = ''
+    if(player['resource'][res].lt(cost)){
+        if((n(getResourceGain(res)).gt(0)) && (n(getResourceCapped(res)).gte(cost) || getResourceCapped(res)==null)){
+            time = '( '+formatTime(n(cost).sub(player['resource'][res]).div(getResourceGain(res)))+' )'
+        }else if(n(getResourceCapped(res)).lt(cost) && getResourceCapped(res)!==null){
+            time = '<grey>( '+format(n(getResourceCapped(res)).sub(cost))+' )</grey>'
+        }
+    }
+    if(RESOURCE['main'][res]['unlocked']!==undefined){
+        if(!RESOURCE['main'][res]['unlocked']()){
+            name = '<gery>???</gery>'
+            time = ''
+        }
+    }
+    if(type=="workshop" && WORKSHOPBOUGHT){
+        return `<span>
+            <div style="width: 80px; display: table-cell">`+name+`</div>
+            <div style="width: 55px; display: table-cell; color: rgb(31, 70, 71)">`+format(cost)+`</div>
+        </span><br>`
+    }
+    return `<span>
+        <span>
+            <div style="width: 80px; display: table-cell">`+name+`</div>
+            <div style="width: 55px; display: table-cell; color: `+(player['resource'][res].gte(cost) ? `rgb(31, 70, 71)` : `red` )+`">`+format(player['resource'][res])+`</div>
+        </span>
+        <span style="width: 30px; display: table-cell; color: rgb(31, 70, 71);"> / 
+        </span>
+        <span style="width: 80px; display: table-cell; color: rgb(31, 70, 71);">
+                <div style="color: `+((n(getResourceCapped(res)).gte(cost) || RESOURCE['main'][res]['capped']==undefined) ? `` : `red` )+`">`+format(cost)+`</div>
+        </span>
+	</span>`+time+`<br>`
+}
+
+function getTitleName(type, side){
+	if(type=='resource' && side=='main'){
+		return '资源'
+	}else if(type=='main' && side=='building'){
+		return '建筑'
+	}else if(type=='main' && side=='largeBuilding'){
+		return '大型建筑'
+	}else if(type=='civics' && side=='citizens'){
+		return '居民'
+	}else if(type=='civics' && side=='workshop'){
+		return '工坊'
 	}
 }
 
@@ -86,11 +177,19 @@ function resourceTooltipDisplay(effect){
 	}
 
 	let amountDisplay = ` <mul>×</mul> `+formatWhole(amount)
+	let brackets = ''
 	if(n(amount.floor()).neq(amount)){
 		amountDisplay = ` <mul>×</mul> `+format(amount)
 	}
+	if(amount.eq(0)){
+		return ''
+	}
 	if(amount.eq(1)){
 		amountDisplay = ''
+	}
+	if(tooltipOperator=='addmul'){
+		brackets = '('
+		amountDisplay += ' + 1)'
 	}
 
 	let total = formatA(totalValue)
@@ -99,8 +198,8 @@ function resourceTooltipDisplay(effect){
 	}else if(negative){
 		total = '<red>'+formatA(totalValue)+'</red>'
 	}
-	if(n(formatScientific(realValue, 8)).eq(n(formatScientific(totalValue, 8)))){
-		totalValue = n(formatScientific(totalValue, 8))
+	if(n(regularFormat(realValue, 8)).eq(n(regularFormat(totalValue, 8)))){
+		totalValue = n(regularFormat(totalValue, 8))
 		total = '<u>'+formatA(totalValue)+'</u>'
 		if(negative){total = '<u><red>'+formatA(totalValue)+'</red></u>'}
 		if(totalValue.lt(0)){
@@ -111,7 +210,7 @@ function resourceTooltipDisplay(effect){
 
 	return `<left><span><span style="`+Class+`">
 		<div style="width: 169px; display: table-cell">`+operator+` `+name+`</div>
-		<div style="width: 160px; display: table-cell">`+operatorDisplay+format(base)+amountDisplay+`</div></span>`+total+`
+		<div style="width: 160px; display: table-cell">`+operatorDisplay+brackets+format(base)+amountDisplay+`</div></span>`+total+`
 	</span></left>`
 }
 
@@ -120,32 +219,39 @@ function gainTooltipDisplay(effect){
 	let side = effect.side
 	let target = effect.target
 	let effectType = effect.effectType
-	let i = effect.i
-	let multiplication = true
+	let resource = effect.resource
+	let operator = effect.operator
+	let multiplication = effect.multiplication ?? true
 
-	let operator = Object.keys(tmp[main][side][target].effect[effectType][i])[0]
 	let base = n(0)
 	if(side=='building'){
-		base = getBuildBase(target, effectType, i, operator)
+		base = getBuildBase(target, effectType, resource, operator)
+	}else if(side=='largeBuilding'){
+		base = getLargeBuildingBase(target, effectType, resource, operator)
 	}else if(side=='citizens'){
-		base = getCitizensBase(target, effectType, i, operator)
+		base = getCitizensBase(target, effectType, resource, operator)
 	}else if(side=='workshop'){
-		base = tmp[main][side][target].effect[effectType][i][operator].getValue()
+		base = tmp[main][side][target].effect[effectType][resource][operator].getValue()
 		multiplication = false
 	}
 	let display = ''
+	let effectDisplay = ''
 	if(effectType=='gain'){
 		if(operator=='add' || operator=='sub'){
 			display = '/s'
+		}else if(operator=='addmul'){
+			effectDisplay += '获取'
 		}
+	}if(operator=='addmul' && player.setting.effectDisplay=='default'){
+		effectDisplay += '乘数'
 	}
 	let color = null
 	if(operator=='sub'){
 		color = 'red'
 	}
 	let negative = false
-	if(RESOURCE['main'][i]['negative']!==undefined){
-		negative = RESOURCE['main'][i]['negative']()
+	if(RESOURCE['main'][resource]['negative']!==undefined){
+		negative = RESOURCE['main'][resource]['negative']()
 	}
 	if(negative){
 		if(color==null){
@@ -156,14 +262,18 @@ function gainTooltipDisplay(effect){
 	}
 	if(n(base).neq(0)){
 		return effectText({
-			name: getResourceText(i), 
-			firstDisplay: getOperator(operator),
+			name: getResourceText(resource), 
+			firstDisplay: getOperator(operator, 'effect'),
 			lastDisplay: display,
+			lastEffectDisplay: effectDisplay,
 			value: n(base).abs(),
 			amount: tmp[main][side][target].amount,
+			operator: operator,
 			multiplication: multiplication,
 			Class: color
 		})
+	}else{
+		return ''
 	}
 }
 
@@ -176,16 +286,19 @@ function adjustmentTooltipDisplay(id, i, type, side, multiplication='true'){
 
 	let Class = temp['Class'] ?? null
 
+	let firstEffectDisplay = ''
 	let lastEffectDisplay = ''
 	if(temp['side'][0]=='gain' || temp['side'][0]=='capped'){
 		lastEffectDisplay += getResourceColorText(temp['side'][1])
 
-		if(temp['side'][2]=='add'){
-			if(temp['side'][0]=='gain'){
-				lastEffectDisplay += '获取每秒'
-			}else{
-				lastEffectDisplay += '储存'
-			}
+		if(temp['side'][0]=='gain'){
+			lastEffectDisplay += '获取'
+		}else{
+			lastEffectDisplay += '储存'
+		}
+		if(temp['side'][2]=='addmul'){
+			firstEffectDisplay += '效果'
+			lastEffectDisplay += '乘数'
 		}
 		if(temp['side'][2]=='sub'){
 			lastEffectDisplay += '消耗'
@@ -194,11 +307,18 @@ function adjustmentTooltipDisplay(id, i, type, side, multiplication='true'){
 		if(operator=='addmul' && player.setting.effectDisplay=='default'){
 			lastEffectDisplay += '乘数'
 		}
+	}else if(temp['side'][0]=='special'){
+		lastEffectDisplay += tmp[temp['main']][temp['submain']][target]['special'][temp['side'][1]]['name']
+		
+		if(operator=='addmul' && player.setting.effectDisplay=='default'){
+			lastEffectDisplay += '乘数'
+		}
 	}
 
 	return effectText({
 		name: name,
 		firstDisplay: getOperator(operator, 'effect'),
+		firstEffectDisplay: firstEffectDisplay,
 		lastEffectDisplay: lastEffectDisplay,
 		value: temp['value'],
 		amount: player[side][id+'Allocation'] ?? player[side][id],
@@ -213,14 +333,15 @@ function specialTooltipDisplay(id, i, type, side, multiplication='true'){
 		name: temp['name'],
 		firstDisplay: temp['display'][0],
 		lastDisplay: temp['display'][1],
-		value: temp['value'],
+		value: temp['value'].getValue(),
 		amount: getAmount(type, side, id),
+		Class: temp['Class'] ?? null,
 		multiplication: multiplication,
 	})
 }
 
-let tooltipOperator = ['add', 'addmul', 'mul', 'sub', 'div']
-function tooltip(id,id2){
+let tooltipOperator = ['add', 'addmul', 'mul', 'div', 'sub']
+function tooltip(id, id2, id3){
 	if(id2=='LoadTooltipResource'){
 		let tool = ''
 		if(RESOURCE['main'][id]['tooltip']!=undefined){
@@ -228,32 +349,36 @@ function tooltip(id,id2){
 		}
 
 		let effect = ''
-		for(let i in RESOURCE['main'][id]['effect']){
-			let target = RESOURCE['main'][id]['effect'][i]
-			if(target['type']()=='gain' || target['type']()=='capped'){
-				let type = ''
-				let operator = target['formula']()
-				let name = ''
-				let Class = null
-				if(target['type']()=='capped'){
-					name = '上限'
-				}else{
-					type = '/s'
+		for(let type in tmp.resource.main[id].effect){
+			if(type=='gain' || type=='capped'){
+				let side = tmp.resource.main[id].effect[type]
+				for(let target in side){
+					if(target==id){continue}
+					for(let operator in side[target]){
+						let display = ''
+						let name = ''
+						let Class = null
+						if(type=='capped'){
+							name = '上限'
+						}else{
+							display = '/s'
+						}
+						if(operator=='sub'){
+							Class = 'red'
+						}
+						effect += effectText({
+							name: getResourceColorText(target),
+							firstDisplay: getOperator(operator),
+							lastDisplay: display,
+							lastEffectDisplay: name,
+							value: side[target][operator].getValue(),
+							amount: tmp.resource.main[id].amount,
+							Class: Class,
+						})
+					}
 				}
-				if(operator=='sub'){
-					Class = 'red'
-				}
-				effect += effectText({
-					name: getResourceColorText(target['resource']()),
-					firstDisplay: getOperator(operator),
-					lastDisplay: type,
-					lastEffectDisplay: name,
-					value: target['value'](),
-					amount: tmp.resource.main[id].amount,
-					Class: Class,
-				})
 			}
-			if(target['type']()=='special'){
+			if(type=='special'){
 				for(let i in tmp.resource.main[id].special){
 					effect += specialTooltipDisplay(id, i, 'resource', 'main')
 				}
@@ -435,16 +560,24 @@ function tooltip(id,id2){
 		}
 		cost += '</left>'
 	
+		let multiplication = true
+		if(MAIN['building'][id]['unique']?.()){
+			multiplication = false
+		}
 		let gain = ''
 		if(tmp.main.building[id].effect?.gain!==undefined){
-			for(let i in tmp.main.building[id].effect.gain){
-				gain += gainTooltipDisplay({
-					main: 'main',
-					side: 'building',
-					target: id,
-					effectType: 'gain',
-					i: i,
-				})
+			for(let resource in tmp.main.building[id].effect.gain){
+				for(let operator in tmp.main.building[id].effect.gain[resource]){
+					gain += gainTooltipDisplay({
+						main: 'main',
+						side: 'building',
+						target: id,
+						effectType: 'gain',
+						resource: resource,
+						operator: operator,
+						multiplication: multiplication,
+					})
+				}
 			}
 			if(gain!==''){
 				gain = `<hr><a style='font-size: 14px'>生产</a>` + gain
@@ -453,14 +586,18 @@ function tooltip(id,id2){
 
 		let capped = ''
 		if(tmp.main.building[id].effect?.capped!==undefined){
-			for(let i in tmp.main.building[id].effect.capped){
-				capped += gainTooltipDisplay({
-					main: 'main',
-					side: 'building',
-					target: id,
-					effectType: 'capped',
-					i: i,
-				})
+			for(let resource in tmp.main.building[id].effect.capped){
+				for(let operator in tmp.main.building[id].effect.capped[resource]){
+					capped += gainTooltipDisplay({
+						main: 'main',
+						side: 'building',
+						target: id,
+						effectType: 'capped',
+						resource: resource,
+						operator: operator,
+						multiplication: multiplication
+					})
+				}
 			}
 			if(capped!==''){
 				capped = `<hr><a style='font-size: 14px'>上限</a>` + capped
@@ -493,7 +630,150 @@ function tooltip(id,id2){
 				amount = '<hr>('+formatWhole(player['building'][id+'Allocation'],0)+' / '+formatWhole(player['building'][id],0)+')'
 			}
 		}
+
 		return getTooltipID(name+'<small>'+amount+tool+cost+gain+capped+adjustment+special+'</samll>')
+	}
+
+	if(id2=='LoadTooltipLargeBuilding'){
+		let name = '未命名'
+		if(MAIN['largeBuilding'][id]['name']!==undefined){
+			name = MAIN['largeBuilding'][id]['name']()
+		}
+
+		let tool = ''
+		if(MAIN['largeBuilding'][id]['tooltip']!==undefined){
+			tool = '<hr>'+MAIN['largeBuilding'][id]['tooltip']()
+		}
+
+		let cost = `<hr><a style='font-size: 14px'>需求</a><left>`
+		if(MAIN['largeBuilding'][id]['cost']!==undefined){
+			for(let i in MAIN['largeBuilding'][id]['cost']){
+				let res = getLargeBuildingCost(id, i)
+				if(res.neq(0)){
+					cost += costText(getResourceColorText(i), i, res)
+				}
+			}
+		}
+		cost += '</left>'
+
+		let build = ``
+		build += `<hr><a style='font-size: 14px'>进度</a><left>`
+		if(MAIN['largeBuilding'][id]['buildingTimes']!==undefined){
+			build += `<span>
+				<span>
+					<div style="width: 80px; display: table-cell">备材次数</div>
+					<div style="width: 55px; display: table-cell">`+formatWhole(player.largeBuilding[id+'Times'])+`</div>
+				</span>
+				<span style="width: 30px; display: table-cell; color: rgb(31, 70, 71);"> / 
+				</span>
+				<span style="width: 80px; display: table-cell; color: rgb(31, 70, 71);">
+						<div>`+formatWhole(MAIN['largeBuilding'][id]['buildingTimes']())+`</div>
+				</span>
+			</span>`
+			build += `<br><span>
+				<span>
+					<div style="width: 80px; display: table-cell">建造进度</div>
+					<div style="width: 55px; display: table-cell">`+format(player.largeBuilding[id+'Building'])+`</div>
+				</span>
+				<span style="width: 30px; display: table-cell; color: rgb(31, 70, 71);"> / 
+				</span>
+				<span style="width: 80px; display: table-cell; color: rgb(31, 70, 71);">
+					<div>`+format(n(MAIN['largeBuilding'][id]['buildingDifficulty']()).mul(n(player.largeBuilding[id+'Times']).div(MAIN['largeBuilding'][id]['buildingTimes']())))+`</div>
+				</span>
+			</span>
+			<grey>( `+format(MAIN['largeBuilding'][id]['buildingDifficulty']())+` )</grey>`
+		}
+		build += '</left>'
+
+		if(id3=='cost'){
+			return getTooltipID(name+'<small>'+tool+cost+build+'</samll>')
+		}
+
+		if(player.largeBuilding[id].eq(0)){
+			return getTooltipID(name+'<small>'+tool+'<hr>- 建造完成后揭露效果 -'+cost+build+'</samll>')
+		}
+	
+		let multiplication = true
+		if(MAIN['largeBuilding'][id]['unique']?.()){
+			multiplication = false
+		}
+		let gain = ''
+		if(tmp.main.largeBuilding[id].effect?.gain!==undefined){
+			for(let resource in tmp.main.largeBuilding[id].effect.gain){
+				for(let operator in tmp.main.largeBuilding[id].effect.gain[resource]){
+					gain += gainTooltipDisplay({
+						main: 'main',
+						side: 'largeBuilding',
+						target: id,
+						effectType: 'gain',
+						resource: resource,
+						operator: operator,
+						multiplication: multiplication,
+					})
+				}
+			}
+			if(gain!==''){
+				gain = `<hr><a style='font-size: 14px'>生产</a>` + gain
+			}
+		}
+
+		let capped = ''
+		if(tmp.main.largeBuilding[id].effect?.capped!==undefined){
+			for(let resource in tmp.main.largeBuilding[id].effect.capped){
+				for(let operator in tmp.main.largeBuilding[id].effect.gain[resource]){
+					capped += gainTooltipDisplay({
+						main: 'main',
+						side: 'largeBuilding',
+						target: id,
+						effectType: 'capped',
+						resource: resource,
+						operator: operator,
+						multiplication: multiplication,
+					})
+				}
+			}
+			if(capped!==''){
+				capped = `<hr><a style='font-size: 14px'>上限</a>` + capped
+			}
+		}
+
+		let adjustment = ''
+		if(tmp.main.largeBuilding[id].adjustment!==undefined){
+			for(let i in tmp.main.largeBuilding[id].adjustment){
+				adjustment += adjustmentTooltipDisplay(id, i, 'main', 'largeBuilding')
+			}
+			if(adjustment!==''){
+				adjustment = `<hr><a style='font-size: 14px'>修正</a>` + adjustment
+			}
+		}
+
+		let special = ''
+		if(tmp.main.largeBuilding[id].special!==undefined){
+			for(let i in tmp.main.largeBuilding[id].special){
+				special += specialTooltipDisplay(id, i, 'main', 'largeBuilding')
+			}
+			if(special!==''){
+				special = `<hr><a style='font-size: 14px'>特殊</a>` + special
+			}
+		}
+
+		let amount = ''
+		if(MAIN['largeBuilding'][id]['allocation']!==undefined){
+			if(MAIN['largeBuilding'][id]['allocation']()){
+				amount = '<hr>('+formatWhole(player['largeBuilding'][id+'Allocation'],0)+' / '+formatWhole(player['largeBuilding'][id],0)+')'
+			}
+		}
+
+		let unlocked = ''
+		if(MAIN['largeBuilding'][id]['unlockedDisplay']!==undefined){
+			for(let i in MAIN['largeBuilding'][id]['unlockedDisplay']){
+				unlocked += `<left><green>+</green> `+MAIN['largeBuilding'][id]['unlockedDisplay'][i]+`</left>`
+			}
+			if(unlocked!==''){
+				unlocked = `<hr><a style='font-size: 14px'>解锁</a>` + unlocked
+			}
+		}
+		return getTooltipID(name+'<small>'+amount+tool+cost+gain+capped+adjustment+special+unlocked+'</samll>')
 	}
 
 	if(id2=='LoadTooltipCitizens'){
@@ -528,14 +808,17 @@ function tooltip(id,id2){
 		
 		let gain = ''
 		if(tmp.civics.citizens[id].effect?.gain!==undefined){
-			for(let i in tmp.civics.citizens[id].effect.gain){
-				gain += gainTooltipDisplay({
-					main: 'civics',
-					side: 'citizens',
-					target: id,
-					effectType: 'gain',
-					i: i,
-				})
+			for(let resource in tmp.civics.citizens[id].effect.gain){
+				for(let operator in tmp.civics.citizens[id].effect.gain[resource]){
+					gain += gainTooltipDisplay({
+						main: 'civics',
+						side: 'citizens',
+						target: id,
+						effectType: 'gain',
+						resource: resource,
+						operator: operator,
+					})
+				}
 			}
 			if(gain!==''){
 				gain = `<hr><a style='font-size: 14px'>生产</a>` + gain
@@ -544,17 +827,30 @@ function tooltip(id,id2){
 
 		let capped = ''
 		if(tmp.civics.citizens[id].effect?.capped!==undefined){
-			for(let i in tmp.civics.citizens[id].effect.capped){
-				capped += gainTooltipDisplay({
-					main: 'civics',
-					side: 'citizens',
-					target: id,
-					effectType: 'capped',
-					i: i,
-				})
+			for(let resource in tmp.civics.citizens[id].effect.capped){
+				for(let operator in tmp.civics.citizens[id].effect.capped[resource]){
+					capped += gainTooltipDisplay({
+						main: 'civics',
+						side: 'citizens',
+						target: id,
+						effectType: 'capped',
+						resource: resource,
+						operator: operator,
+					})
+				}
 			}
 			if(capped!==''){
 				capped = `<hr><a style='font-size: 14px'>上限</a>` + capped
+			}
+		}
+
+		let adjustment = ''
+		if(tmp.civics.citizens[id].adjustment!==undefined){
+			for(let i in tmp.civics.citizens[id].adjustment){
+				adjustment += adjustmentTooltipDisplay(id, i, 'civics', 'citizens')
+			}
+			if(adjustment!==''){
+				adjustment = `<hr><a style='font-size: 14px'>修正</a>` + adjustment
 			}
 		}
 
@@ -567,7 +863,8 @@ function tooltip(id,id2){
 				special = `<hr><a style='font-size: 14px'>特殊</a>` + special
 			}
 		}
-		return getTooltipID(CIVICS['citizens'][id]['name']()+'<small>'+too+action+gain+capped+special+'</small>')
+
+		return getTooltipID(CIVICS['citizens'][id]['name']()+'<small>'+too+action+gain+capped+special+adjustment+'</small>')
 	}
 
 	if(id2=='LoadTooltipCitizenJobs'){
@@ -600,14 +897,17 @@ function tooltip(id,id2){
 
 		let gain = ''
 		if(tmp.civics.workshop[id].effect?.gain!==undefined){
-			for(let i in tmp.civics.workshop[id].effect.gain){
-				gain += gainTooltipDisplay({
-					main: 'civics',
-					side: 'workshop',
-					target: id,
-					effectType: 'gain',
-					i: i,
-				})
+			for(let resource in tmp.civics.workshop[id].effect.gain){
+				for(let operator in tmp.civics.workshop[id].effect.gain[resource]){
+					gain += gainTooltipDisplay({
+						main: 'civics',
+						side: 'workshop',
+						target: id,
+						effectType: 'gain',
+						resource: resource,
+						operator: operator,
+					})
+				}
 			}
 			if(gain!==''){
 				gain = `<hr><a style='font-size: 14px'>生产</a>` + gain
@@ -616,14 +916,17 @@ function tooltip(id,id2){
 
 		let capped = ''
 		if(tmp.civics.workshop[id].effect?.capped!==undefined){
-			for(let i in tmp.civics.workshop[id].effect.capped){
-				capped += gainTooltipDisplay({
-					main: 'civics',
-					side: 'workshop',
-					target: id,
-					effectType: 'capped',
-					i: i,
-				})
+			for(let resource in tmp.civics.workshop[id].effect.capped){
+				for(let operator in tmp.civics.workshop[id].effect.capped[resource]){
+					capped += gainTooltipDisplay({
+						main: 'civics',
+						side: 'workshop',
+						target: id,
+						effectType: 'capped',
+						resource: resource,
+						operator: operator,
+					})
+				}
 			}
 			if(capped!==''){
 				capped = `<hr><a style='font-size: 14px'>上限</a>` + capped
@@ -724,16 +1027,16 @@ function tooltip(id,id2){
 				if(n(efficient[id][i]['effect']()).lt(0)){
 					too += `<red><left><span>
 						<span style="width: 100px; display: table-cell"><red>-</red> `+efficient[id][i]['name']()+`:</span>
-						<span>`+formatScientific(n(efficient[id][i]['effect']()),1)+`%</span>
+						<span>`+formatScientific(n(efficient[id][i]['effect']()), 1)+`%</span>
 					</span></left></red>`
 				}else if(n(efficient[id][i]['effect']()).gt(0)){
 					too += `<left><span>
 						<span style="width: 100px; display: table-cell"><green>+</green> `+efficient[id][i]['name']()+`:</span>
-						<span>`+formatScientific(n(efficient[id][i]['effect']()),1)+`%</span>
+						<span>`+formatScientific(n(efficient[id][i]['effect']()), 1)+`%</span>
 					</span></left>`
 				}
 			}
 		}
-		return getTooltipID(name+'<hr><small>'+too+'<left><li-hid>-> 总计: '+formatScientific(n(getEfficient(id)).mul(100),1)+'%</left></small>')
+		return getTooltipID(name+'<hr><small>'+too+'<left><li-hid>-> 总计: '+formatScientific(n(getEfficient(id)).mul(100), 1)+'%</left></small>')
 	}
 }

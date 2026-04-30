@@ -5,6 +5,24 @@ function citizensAllocate(type, allocate){
             canAllocate = false
         }
     }
+    if(canAllocate>=1){
+        for(let res in tmp.civics.citizens[type].effect?.gain){
+            for(let operator in tmp.civics.citizens[type].effect.gain[res]){
+                if(operator=='sub'){
+                    let cost = n(tmp.civics.citizens[type].effect.gain[res].sub.getValue().neg()).mul(allocate)
+                    if(n(cost).lt(0)){
+                        if(player['resource'][res].lte(n(cost).abs())){
+                            if(player['citizens'][type]!==undefined){
+                                addLog('*因资源不足职业'+CIVICS['citizens'][type]['name']()+'无法分配*', '#888')
+                                CitizensFix()
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     if(canAllocate){
         player['citizens'][type] = player['citizens'][type].add(allocate).max(0)
         if(CIVICS['citizens'][type]['active']!==undefined){
@@ -14,7 +32,6 @@ function citizensAllocate(type, allocate){
         addLog('*无人任职', '#888')
     }
     CitizensFix()
-    CheckCitizensAllocation(type)
 }
 
 function getUnemployedJobs(job){
@@ -58,6 +75,17 @@ function getNetwork(){
                 color = 'rgb(186, 0, 192)'
             }
         }
+        if(CIVICS['workshop'][i]['unlocked']!==undefined){
+            const funcString = CIVICS['workshop'][i]['unlocked'].toString().replace(/\s+/g, ' ').trim();  
+            const patterns = [
+                /function\s*\w*\s*\([^)]*\)\s*{\s*return\s+true\s*;?\s*}/,
+                /\([^)]*\)\s*=>\s*true/,
+                /\([^)]*\)\s*=>\s*{\s*return\s+true\s*;?\s*}/
+            ]
+            if(!patterns.some(pattern => pattern.test(funcString))){
+                color = '#FF9224'
+            }
+        }
         networkNodes.push({id: i, label: CIVICS['workshop'][i]['name'](), color: {border: color}})
 
         if(CIVICS['workshop'][i]['preliminary']!==undefined){
@@ -96,6 +124,10 @@ function getNetwork(){
                     scaleFactor: 0.8,
                 },
             },
+            smooth: {
+                type: 'dynamic',
+                roundness: 0.2
+            }
         },
     }
     var network = new vis.Network(container, data, options);
@@ -142,6 +174,10 @@ function getCitizensBase(citizen, type, res, operator){
         return n(0)
     }
     if(operator=='add'){
+        return tmp.civics.citizens[citizen].effect[type][res][operator].getValue()
+    }else if(operator=='addmul'){
+        return tmp.civics.citizens[citizen].effect[type][res][operator].getValue()
+    }else if(operator=='mul'){
         return tmp.civics.citizens[citizen].effect[type][res][operator].getValue()
     }else if(operator=='sub'){
         return tmp.civics.citizens[citizen].effect[type][res][operator].getValue().neg()

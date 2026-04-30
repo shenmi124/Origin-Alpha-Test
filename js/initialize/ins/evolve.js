@@ -1,4 +1,3 @@
-
 function createTimerWorker(){
     const code = `
         // Forked form https://github.com/pmotschmann/Evolve/blob/master/evolve/evolve.js
@@ -10,6 +9,8 @@ function createTimerWorker(){
         var loopTargTs;     // Target time for next timer to fire
         var timerId;        // For clearing the timer
         var loopRun;        // Safety guarantee against race condition in timer clear (possibly unnecessary)
+        
+        self.postMessage({ loop: 'ready' });
 
         self.addEventListener('message', function(e){
             const data = e.data;
