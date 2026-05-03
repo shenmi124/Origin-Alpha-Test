@@ -43,3 +43,17 @@ var MainLargeBuilding = {
         unlocked(){return player.workshop.builderWorkshop}
     }
 }
+
+function getBuildingSpeed(){
+    let value = n(0)
+    for(let type in tmp){
+        for(let side in tmp[type]){
+            for(let i in tmp[type][side]){
+                if(tmp[type][side][i]?.special?.buildingSpeed?.value.getValue().neq(0)){
+                    value = value.add(n(tmp[type][side][i].special.buildingSpeed.value.getValue()).mul(tmp[type][side][i].amount))
+                }
+            }
+        }
+    }
+    return value
+}

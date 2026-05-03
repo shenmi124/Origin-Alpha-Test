@@ -200,7 +200,7 @@ var MainBuilding = {
     },
     quarry: {
         name(){return '采石场'},
-        tooltip(){return '采石场将会提供采石工的工作岗位并以较低的速率被动生产石材'},
+        tooltip(){return '采石场将会提供采石工的工作岗位并以较低的速率被动生产石材<funny>同一个梗不玩两遍</funny>'},
         unlocked(){return player.workshop.quarryWorkshop},
         cost: {
             wood(){return n(20)},
@@ -460,18 +460,4 @@ var MainBuilding = {
             },
         ],
     },
-}
-
-function getBuildingSpeed(){
-    let value = n(0)
-    for(let type in tmp){
-        for(let side in tmp[type]){
-            for(let i in tmp[type][side]){
-                if(tmp[type][side][i]?.special?.buildingSpeed?.value.getValue().neq(0)){
-                    value = value.add(n(tmp[type][side][i].special.buildingSpeed.value.getValue()).mul(tmp[type][side][i].amount))
-                }
-            }
-        }
-    }
-    return value
 }

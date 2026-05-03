@@ -91,7 +91,7 @@ var ResourceMain = {
     },
     power: {
         name(){return "力量"},
-        color(){return 'rgb(217 0 96)'},
+        color(){return 'rgb(233, 85, 0)'},
         gain(){return n(0)},
         capped(){return n(0)},
         tooltip(){return '力量是一种概念,它是你的部队实力的象征'},
@@ -147,7 +147,7 @@ var ResourceMain = {
     },
     gold: {
         name(){return "金"},
-        color(){return 'rgb(171 152 0)'},
+        color(){return 'rgb(204, 180, 0)'},
         capped(){return n(100)},
         gain(){return n(0)},
         unlocked(){return getResourceUnlocked('gold')},

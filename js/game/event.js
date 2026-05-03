@@ -1,5 +1,6 @@
 function getEvent(){
     getCiviznesLeaveEvent()
+    getMineEvent()
 }
 
 function getCiviznesLeaveEvent(){
@@ -17,7 +18,7 @@ function getCiviznesLeaveEvent(){
 }
 
 function getMineEvent(){
-    if(player.resource.gold.lt(getResourceCapped('gold'))){
+    if(player.resource.gold.lt(getResourceCapped('gold')) && player.building.mine.gte(1) && player.citizens.metalworker.gte(1)){
         let gold = Math.floor(Math.random() * (1 / Number(DIFF)) * 1800)
         if(gold<=0){
             let amount = player.building.mine.add(1).mul(player.citizens.metalworker.add(1)).mul(n(1).add(Math.random()))

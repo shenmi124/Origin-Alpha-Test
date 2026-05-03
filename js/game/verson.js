@@ -11,6 +11,8 @@ function loadVersion(){
 		addLog('已更新至<span style="font-family: cursive;">'+VERSION+'</span>', '#888')
 		addLog('此版本为测试版,请自行备份存档', '#888')
 		addLog('<br>')
+		NumberFix()
+		CitizensFix()
 		save()
 		
 		if(!player.data.versiontimes.eq(VERSIONTIMES)){
