@@ -1,18 +1,7 @@
 function gameDiff(){
 	player.game.time = player.game.time.add(n(1).mul(DIFF))
     getGametime()
-
-    if(n(getEfficient('stability')).lt(1) && player.resource.citizens.gte(1)){
-        let leave = Math.floor(Math.random() * (1 / Number(DIFF)) * 60 * 20)
-        if(leave<=(Number(player.resource.citizens.root(2)))){
-            let sta = Math.random()
-            if(n(sta).gt(getEfficient('stability'))){
-                player.resource.citizens = player.resource.citizens.sub(1)
-                CitizensFix()
-                addLog('一位居民离开了你','#888')
-            }
-        }
-    }
+    getEvent()
 }
 
 function calcGame(){
@@ -126,5 +115,5 @@ function getCraftGain(id){
 }
 
 function getFaithPower(){
-    return player.resource.faith.max(1).log10().mul(player.building.church.mul(0.1).add(1))
+    return player.resource.faith.max(1).log10().mul(player.building.church.mul(0.05).add(1))
 }

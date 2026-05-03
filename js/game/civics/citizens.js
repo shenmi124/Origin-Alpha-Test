@@ -223,7 +223,7 @@ var CivicsCitizens = {
                 formula(){return 'add'},
                 name(){return '制造资源获取'},
                 display(){return ['+','%']},
-                value(){return n(3)},
+                value(){return n(2)},
             }
         ],
         unlocked(){return player.workshop.artisanWorkshop},
@@ -475,8 +475,8 @@ var CivicsJobs = {
     },
     temple: {
         name(){return '空闲神殿'},
-        tooltip(){return '每个神殿能够容纳三位牧师'},
-        amount(){return n(player.largeBuilding.temple).mul(3)}
+        tooltip(){return '初始可以招募两位牧师,每个神殿能够额外容纳一位牧师'},
+        amount(){return n(player.largeBuilding.temple).add(2)}
     },
     priest: {
         name(){return '空闲牧师'},

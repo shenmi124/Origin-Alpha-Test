@@ -87,7 +87,7 @@ var MainAction = {
                 cost = '<br>'+format(player.resource.food)+' / 1000 '+getResourceColorText('food')
             }
             if(player.stage.explore.eq(5)){
-                cost = '<br>'+format(player.resource.food)+' / 1600 '+getResourceColorText('food')
+                cost = '<br>'+format(player.resource.food)+' / 2000 '+getResourceColorText('food')
             }
 
             let explore = '( '+formatWhole(player.stage.explore.add(1))+' / '+formatWhole(n(this.max()).add(1))+' )'
@@ -108,7 +108,7 @@ var MainAction = {
                 gainResource('food', n(-1000))
             }
             if(player.stage.explore.eq(5)){
-                gainResource('food', n(-1600))
+                gainResource('food', n(-2000))
             }
         },
         canClick(){
@@ -131,7 +131,7 @@ var MainAction = {
                 return player.resource.food.gte(1000)
             }
             if(player.stage.explore.eq(5)){
-                return player.resource.food.gte(1600)
+                return player.resource.food.gte(2000)
             }
             return true
         },

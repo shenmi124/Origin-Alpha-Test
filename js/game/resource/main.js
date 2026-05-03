@@ -80,7 +80,7 @@ var ResourceMain = {
             let power = '信仰力量: '+format(getFaithPower())+'<hr>'
             let formula = '信仰力量公式: lg(信仰)'
             if(player.building.church.gte(1)){
-                formula += '<hr>教堂加成: +'+format(player.building.church.mul(10))+'%'
+                formula += '<hr>教堂加成: +'+format(player.building.church.mul(5))+'%'
             }
             return display + power + formula
         },
@@ -199,28 +199,28 @@ var ResourceMain = {
     
     plank: {
         name(){return "木板"},
-        tooltip(){return '制造资源<br>你一共有'+format(getCraftEfficient())+'锻造资源获取倍率'},
+        tooltip(){return '制造资源<br>你一共有'+format(n(getCraftEfficient()).mul(100))+'%锻造资源获取倍率'},
         color(){return 'rgb(158 103 19)'},
         gain(){return n(0)},
         unlocked(){return getResourceUnlocked('plank')},
     },
     brick: {
         name(){return "石砖"},
-        tooltip(){return '制造资源<br>你一共有'+format(getCraftEfficient())+'锻造资源获取倍率'},
+        tooltip(){return '制造资源<br>你一共有'+format(n(getCraftEfficient()).mul(100))+'%锻造资源获取倍率'},
         color(){return '#68533f'},
         gain(){return n(0)},
         unlocked(){return getResourceUnlocked('brick')},
     },
     leather: {
         name(){return "皮革"},
-        tooltip(){return '制造资源<br>你一共有'+format(getCraftEfficient())+'锻造资源获取倍率'},
+        tooltip(){return '制造资源<br>你一共有'+format(n(getCraftEfficient()).mul(100))+'%锻造资源获取倍率'},
         color(){return '#763f00'},
         gain(){return n(0)},
         unlocked(){return getResourceUnlocked('leather')},
     },
     paper: {
         name(){return "纸"},
-        tooltip(){return '制造资源<hr>你一共有'+format(getCraftEfficient())+'锻造资源获取倍率'},
+        tooltip(){return '制造资源<hr>你一共有'+format(n(getCraftEfficient()).mul(100))+'%锻造资源获取倍率'},
         color(){return '#000'},
         gain(){return n(0)},
         unlocked(){return getResourceUnlocked('paper')},

@@ -13,7 +13,7 @@ function CheckBuildAllocation(build, res){
         if(n(cost).lt(0)){
             if(player['resource'][res].lte(n(cost).abs())){
                 if(player['building'][build+'Allocation']){
-                    addLog('因资源不足建筑'+MAIN['building'][build]['name']()+'自动停用')
+                    addLog(MAIN['building'][build]['name']()+'因资源不足自动停用')
                     buildingAllocation(build, n(1).neg())
                 }
                 return n(0)
@@ -28,7 +28,7 @@ function CheckLargeBuildAllocation(build, res){
         if(n(cost).lt(0)){
             if(player['resource'][res].lte(n(cost).abs())){
                 if(player['largeBuilding'][build+'Allocation']){
-                    addLog('因资源不足大型建筑'+MAIN['building'][build]['name']()+'自动停用')
+                    addLog(MAIN['building'][build]['name']()+'因资源不足自动停用')
                     largeBuildingAllocation(build, n(1).neg())
                 }
                 return n(0)
@@ -46,7 +46,7 @@ function CheckCitizensAllocation(citizen){
                     if(n(cost).lt(0)){
                         if(player['resource'][res].lte(n(cost).abs())){
                             if(player['citizens'][citizen]!==undefined){
-                                addLog('因资源不足职业'+CIVICS['citizens'][citizen]['name']()+'变为无业游民')
+                                addLog(CIVICS['citizens'][citizen]['name']()+'因资源不足变为无业游民')
                                 citizensAllocate(citizen, n(1).neg())
                             }
                             return n(0)

@@ -12,7 +12,7 @@ var MainBuilding = {
             stone(){return n(5)},
         },
         costIncrease(){
-            let base = n(1.95)
+            let base = n(1.9)
             if(player.workshop.beamWorkshop){
                 base = base.sub(0.1)
             }
@@ -38,7 +38,7 @@ var MainBuilding = {
         cost: {
             plank(){return n(5)},
         },
-        costIncrease(){return n(1.25)},
+        costIncrease(){return n(1.3)},
         effect: [
             {
                 type(){return 'capped'},
@@ -55,8 +55,8 @@ var MainBuilding = {
         tooltip(){return '一个真正像模像样的房子'},
         unlocked(){return player.workshop.brickHouseWorkshop},
         cost: {
-            brick(){return n(30)},
-            ceramic(){return n(20)}
+            brick(){return n(300)},
+            ceramic(){return n(200)}
         },
         costIncrease(){return n(1.3)},
         effect: [
@@ -64,7 +64,7 @@ var MainBuilding = {
                 type(){return 'capped'},
                 formula(){return 'add'},
                 resource(){return 'citizens'},
-                value(){return n(2)},
+                value(){return n(1)},
             }
         ]
     },
@@ -239,7 +239,7 @@ var MainBuilding = {
         unlocked(){return player.workshop.shallowMineWorkshop},
         cost: {
             stone(){return n(300)},
-            plank(){return n(10)},
+            plank(){return n(20)},
         },
         costIncrease(){return n(1.2)},
         effect: [
@@ -305,15 +305,15 @@ var MainBuilding = {
                 }
                 return n(0)
             },
-            ceramic(){
+            manuscript(){
                 if(player.building.workshop.gte(10)){
-                    return n(2.5)
+                    return n(0.25)
                 }
                 return n(0)
             },
-            manuscript(){
+            ceramic(){
                 if(player.building.workshop.gte(15)){
-                    return n(0.5)
+                    return n(5)
                 }
                 return n(0)
             },
@@ -332,7 +332,7 @@ var MainBuilding = {
                 formula(){return 'add'},
                 name(){return '制造资源获取'},
                 display(){return ['+','%']},
-                value(){return n(6)},
+                value(){return n(4)},
             }
         ],
         onBuy(){
@@ -360,7 +360,7 @@ var MainBuilding = {
                 formula(){return 'add'},
                 name(){return '信仰力量'},
                 display(){return ['+','%']},
-                value(){return n(10)},
+                value(){return n(5)},
             },
         ],
     },

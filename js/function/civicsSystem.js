@@ -13,7 +13,7 @@ function citizensAllocate(type, allocate){
                     if(n(cost).lt(0)){
                         if(player['resource'][res].lte(n(cost).abs())){
                             if(player['citizens'][type]!==undefined){
-                                addLog('*因资源不足职业'+CIVICS['citizens'][type]['name']()+'无法分配*', '#888')
+                                addLog(CIVICS['citizens'][type]['name']()+'因资源不足无法分配*', '#888')
                                 CitizensFix()
                                 return
                             }

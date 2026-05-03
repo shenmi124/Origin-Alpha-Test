@@ -363,6 +363,25 @@ var CivicsWorkshop = {
         ],
         preliminary(){return ['kilnWorkshop']}
     },
+    ceramicJarWorkshop: { //陶翁
+        name(){return '陶翁'},
+        tooltip(){return '用陶翁储存粮食'},
+        cost: {
+            ceramic(){return n(500)},
+        },
+        effect: [
+            {
+                type(){return 'adjustment'},
+                main(){return 'main'},
+                submain(){return 'building'},
+                target(){return 'storehouse'},
+                side(){return ['capped', 'food', 'add']},
+                formula(){return 'add'},
+                value(){return n(25)},
+            },
+        ],
+        preliminary(){return ['kilnWorkshop']}
+    },
     shipWorkshop: { //船
         name(){return '船'},
         tooltip(){return '水能载舟'},
@@ -655,7 +674,7 @@ var CivicsWorkshop = {
                 target(){return 'artist'},
                 side(){return ['special', 'happiness', 'value']},
                 formula(){return 'add'},
-                value(){return n(1)},
+                value(){return n(0.5)},
             },
         ],
         preliminary(){return ['artistWorkshop']},
@@ -683,7 +702,7 @@ var CivicsWorkshop = {
                 target(){return 'artist'},
                 side(){return ['special', 'happiness', 'value']},
                 formula(){return 'add'},
-                value(){return n(1)},
+                value(){return n(0.5)},
             },
         ],
         preliminary(){return ['artistWorkshop']},
@@ -1182,7 +1201,7 @@ var CivicsWorkshop = {
                 target(){return 'citizens'},
                 side(){return ['capped', 'gold', 'add']},
                 formula(){return 'add'},
-                value(){return n(20)},
+                value(){return n(5)},
             },
             {
                 type(){return 'special'},
@@ -1203,7 +1222,7 @@ var CivicsWorkshop = {
         tooltip(){return '在矿脉附近挖掘竖井或斜井'},
         cost: {
             stone(){return n(300)},
-            plank(){return n(10)}
+            plank(){return n(20)}
         },
         effect: [
         ],
@@ -1297,8 +1316,8 @@ var CivicsWorkshop = {
         name(){return '砖瓦房'},
         tooltip(){return '更更加坚固的房屋'},
         cost: {
-            brick(){return n(30)},
-            ceramic(){return n(20)},
+            brick(){return n(300)},
+            ceramic(){return n(200)},
         },
         effect: [
         ],
@@ -1309,7 +1328,7 @@ var CivicsWorkshop = {
             player.building.brickHouse = player.building.brickHouse.add(1)
             componentBuilding('brickHouse')
         },
-        preliminary(){return ['processingWorkshop', 'cityRevolutionWorkshop']},
+        preliminary(){return ['cityRevolutionWorkshop']},
     },
     hymnWorkshop: { //颂歌
         name(){return '颂歌'},
@@ -1334,7 +1353,7 @@ var CivicsWorkshop = {
                 target(){return 'artist'},
                 side(){return ['special', 'happiness', 'value']},
                 formula(){return 'add'},
-                value(){return n(1)},
+                value(){return n(0.5)},
             },
         ],
         onBuy(){
@@ -1357,13 +1376,33 @@ var CivicsWorkshop = {
                 target(){return 'artist'},
                 side(){return ['special', 'happiness', 'value']},
                 formula(){return 'add'},
-                value(){return n(1)},
+                value(){return n(0.5)},
             },
         ],
         onBuy(){
         },
         unlocked(){return player.largeBuilding.temple.gte(1)},
         preliminary(){return ['artistWorkshop']},
+    },
+    bleachingWorkshop: { //漂白土
+        name(){return '漂白土'},
+        tooltip(){return '在黏土中发现的天然白色矿物,常用于纺织品与纸张的漂白'},
+        cost: {
+            clay(){return n(200)},
+        },
+        effect: [
+            {
+                type(){return 'special'},
+                side(){return 'efficient'},
+                formula(){return 'add'},
+                name(){return '效率'},
+                display(){return ['+','%']},
+                value(){return n(3)},
+            },
+        ],
+        onBuy(){
+        },
+        preliminary(){return ['pigmentWorkshop']},
     },
     religiousThoughtWorkshop: { //宗教思想
         name(){return '宗教思想'},
